@@ -46,7 +46,7 @@ FEATURE_COLUMNS = [
 # ---------------------------------------------------------------------------
 # STEP 1: rule-based labels
 # ---------------------------------------------------------------------------
-def label_item(row, median_quantity):
+def label_item(row, median_quantity, profit_low, profit_high):
     if (
         row["profit_percentage"] > 50
         and row["total_quantity_sold"] > median_quantity
@@ -56,8 +56,7 @@ def label_item(row, median_quantity):
 
     if (
         row["total_quantity_sold"] > (median_quantity * 0.7)
-        and row["profit_percentage"] <= 55
-        and row["profit_percentage"] >= 15
+        and profit_low <= row["profit_percentage"] <= profit_high
     ):
         return 1  # Volume Driver
 
@@ -80,7 +79,16 @@ def label_item(row, median_quantity):
 
 def create_labels(df):
     median_quantity = df["total_quantity_sold"].median()
-    return df.apply(label_item, axis=1, median_quantity=median_quantity)
+    # Volume Driver band is the lower-middle slice of the margin distribution
+    # (decent sales, not top-tier margin). Percentile-based so it adapts to
+    # wherever this dataset's margins actually cluster, instead of a fixed
+    # band that can miss the data entirely.
+    profit_low = df["profit_percentage"].quantile(0.25)
+    profit_high = df["profit_percentage"].quantile(0.60)
+    return df.apply(
+        label_item, axis=1,
+        median_quantity=median_quantity, profit_low=profit_low, profit_high=profit_high,
+    )
 
 
 # ---------------------------------------------------------------------------
