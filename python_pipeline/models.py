@@ -56,7 +56,8 @@ def label_item(row, median_quantity):
 
     if (
         row["total_quantity_sold"] > (median_quantity * 0.7)
-        and 20 <= row["profit_percentage"] <= 55
+        and row["profit_percentage"] <= 55
+        and row["profit_percentage"] >= 15
     ):
         return 1  # Volume Driver
 
@@ -97,7 +98,11 @@ def train_and_evaluate(X_train, X_test, y_train, y_test, num_classes):
 
     results = {}
     for name, model in models.items():
-        model.fit(X_train, y_train)
+        try:
+            model.fit(X_train, y_train)
+        except Exception as e:
+            print(f"  {name} error: {e}")
+            continue
         y_pred = model.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
         f1 = f1_score(y_test, y_pred, average="macro")
