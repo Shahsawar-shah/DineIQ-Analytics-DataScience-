@@ -1,0 +1,34 @@
+================================================
+DineIQ Analytics - Data Quality Report
+================================================
+
+TABLE: orders (102,000 rows)
+  ⚠ Missing customer_id:  3,069 (3.0%)
+  ⚠ Duplicate records:    2,000 (2.0%)
+  ℹ Cancelled orders:     1,013 (1.0%)
+  ✓ Negative totals:      0 (0.0%)
+
+TABLE: order_items (1,000,000 rows)
+  ⚠ Negative quantities:  10,000 (1.0%)
+  ℹ Loss-making lines:    10,000 (1.0%)
+
+TABLE: ratings (100,000 rows)
+  ⚠ Missing rating:       2,000 (2.0%)
+  ✗ Invalid rating > 5:   487 (0.5%)
+  ✓ Invalid rating < 1:   513 (0.5%)
+
+TABLE: wastage (50,000 rows)
+  ✗ Impossible wastage:   500 (1.0%)
+
+TABLE: menu_items (150 rows)
+  ℹ Loss-making items:    5 (3.3%)
+
+================================================
+SUMMARY
+================================================
+✗ ERRORS:    3  (must fix before ML)
+⚠ WARNINGS:  3  (clean before ML)
+ℹ INFO:      3  (expected/intentional)
+================================================
+
+Completed in 0:00:01.525931
