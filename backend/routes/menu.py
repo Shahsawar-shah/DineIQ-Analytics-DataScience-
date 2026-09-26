@@ -91,6 +91,7 @@ def get_menu_summary():
 
     return {
         "total_items": len(features),
+        "total_revenue": round(features["total_revenue"].sum(), 2),
         "avg_profit_percentage": round(
             features["profit_percentage"].mean(), 2),
         "avg_rating": round(

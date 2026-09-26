@@ -56,11 +56,26 @@ def register(req: RegisterRequest):
     conn = get_db()
     cur = conn.cursor()
     try:
+        # The very first account on the system becomes Admin automatically.
+        # After that, self-registration cannot grant Admin — every other
+        # requested role (Customer / Restaurant Manager / Inventory Manager)
+        # is honored as-is.
+        cur.execute("SELECT COUNT(*) FROM users")
+        count = cur.fetchone()[0]
+        if count == 0:
+            actual_role = "Admin"
+        elif req.role == "Admin":
+            raise HTTPException(
+                status_code=403,
+                detail="Admin registration is closed — ask an existing admin to create your account")
+        else:
+            actual_role = req.role
+
         password_hash = bcrypt.hashpw(
             req.password.encode(), bcrypt.gensalt()).decode()
         cur.execute(
             "INSERT INTO users (name, email, password_hash, role) VALUES (%s, %s, %s, %s) RETURNING id",
-            (req.name, req.email, password_hash, req.role)
+            (req.name, req.email, password_hash, actual_role)
         )
         user_id = cur.fetchone()[0]
         conn.commit()
@@ -68,12 +83,12 @@ def register(req: RegisterRequest):
             "user_id": user_id,
             "email": req.email,
             "name": req.name,
-            "role": req.role
+            "role": actual_role
         })
         return {
             "token": token,
             "user": {"id": user_id, "name": req.name,
-                     "email": req.email, "role": req.role}
+                     "email": req.email, "role": actual_role}
         }
     except psycopg2.errors.UniqueViolation:
         conn.rollback()
