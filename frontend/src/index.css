@@ -70,6 +70,10 @@ body {
   50% { opacity: 0.3; }
 }
 
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
@@ -88,6 +92,9 @@ body {
 }
 .animate-blink {
   animation: blink 1.6s ease-in-out infinite;
+}
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
 }
 
 .fade-up-hidden {

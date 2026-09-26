@@ -1,32 +1,58 @@
 import { useEffect, useRef, useState } from 'react'
 
 const NAV_LINKS = [
+  { label: 'Capabilities', href: '#capabilities' },
   { label: 'Features', href: '#features' },
-  { label: 'Tech Stack', href: '#tech-stack' },
-  { label: 'Dashboard', href: '#cta' },
+  { label: 'Pipeline', href: '#pipeline' },
+  { label: 'FAQ', href: '#faq' },
+]
+
+const CAPABILITY_HIGHLIGHTS = [
+  {
+    icon: '🔥',
+    color: 'from-red-500/20 to-orange-500/20 text-red-400',
+    tag: 'Menu',
+    title: 'Menu Intelligence',
+    description:
+      'Classifies every item into Profit Driver, Volume Driver, Hidden Opportunity, or Low Performer.',
+  },
+  {
+    icon: '👥',
+    color: 'from-indigo-500/20 to-purple-500/20 text-indigo-400',
+    tag: 'Customers',
+    title: 'Customer Segmentation',
+    description: 'RFM analysis groups 50K+ customers into behavioral segments worth acting on.',
+  },
+  {
+    icon: '📊',
+    color: 'from-emerald-500/20 to-teal-500/20 text-emerald-400',
+    tag: 'Forecast',
+    title: 'Demand Forecasting',
+    description: 'Chronological models predict demand with MAE/RMSE-validated accuracy.',
+  },
+]
+
+const EXPERTISE_POINTS = [
+  {
+    icon: '⚙️',
+    title: 'Data Evaluation & Intelligence',
+    description:
+      'Every order, menu item, and customer record is cleaned, validated, and structured before it ever reaches a model.',
+  },
+  {
+    icon: '📈',
+    title: 'Analytics & Business Insights',
+    description:
+      'Model outputs are translated into prioritized, evidence-based recommendations — not just raw numbers.',
+  },
 ]
 
 const STATS = [
-  {
-    target: 1300000,
-    label: 'Records Processed',
-    format: (v) => `${formatCompact(v)}+`,
-  },
-  {
-    target: 150,
-    label: 'Menu Items Analyzed',
-    format: (v) => `${Math.round(v)}`,
-  },
-  {
-    target: 50000,
-    label: 'Customers Segmented',
-    format: (v) => `${formatCompact(v)}+`,
-  },
-  {
-    target: 99,
-    label: 'Model Accuracy',
-    format: (v) => `${Math.round(v)}%`,
-  },
+  { icon: '📊', target: 1300000, label: 'Records Processed', format: (v) => `${formatCompact(v)}+` },
+  { icon: '🍽️', target: 150, label: 'Menu Items Analyzed', format: (v) => `${Math.round(v)}` },
+  { icon: '👥', target: 50000, label: 'Customers Segmented', format: (v) => `${formatCompact(v)}+` },
+  { icon: '⚡', target: 1000000, label: 'Orders via Spark', format: (v) => `${formatCompact(v)}+` },
+  { icon: '🎯', target: 99, label: 'Model Accuracy', format: (v) => `${Math.round(v)}%` },
 ]
 
 const FEATURES = [
@@ -82,6 +108,103 @@ const TECH_STACK = [
   { icon: '🐼', name: 'Pandas' },
   { icon: '🔢', name: 'NumPy' },
   { icon: '📦', name: 'Parquet' },
+]
+
+const PIPELINE_STAGES = [
+  { icon: '📥', title: 'Ingest', description: 'Raw order, menu, and customer CSVs loaded into Spark.', gradient: 'from-indigo-600/30 to-indigo-900/30' },
+  { icon: '⚙️', title: 'Process', description: 'Spark SQL cleans, joins, and aggregates at scale.', gradient: 'from-cyan-600/30 to-cyan-900/30' },
+  { icon: '🧠', title: 'Model', description: 'Dual ML pipelines train and cross-validate results.', gradient: 'from-purple-600/30 to-purple-900/30' },
+  { icon: '💡', title: 'Recommend', description: 'FastAPI serves ranked insights to the dashboard.', gradient: 'from-emerald-600/30 to-emerald-900/30' },
+]
+
+const BENEFITS = [
+  {
+    title: 'Innovate with Machine Learning',
+    description: 'Dual pipelines mean every prediction is cross-checked before it reaches your dashboard.',
+  },
+  {
+    title: 'Maximize Data Impact',
+    description: 'Recommendations come ranked by priority and business impact — not just raw model scores.',
+  },
+]
+
+const FAQS = [
+  {
+    q: 'How accurate are the machine learning models?',
+    a: 'Classification and forecasting models are validated with MAE/RMSE on chronological splits, and the Spark MLlib and XGBoost pipelines are compared independently before either is trusted for a recommendation.',
+  },
+  {
+    q: 'What data powers the platform?',
+    a: 'Over 1 million order records, 150+ menu items, and 50K+ customer profiles, processed through PySpark and Spark SQL before reaching the API layer.',
+  },
+  {
+    q: 'What is the Dual ML Pipeline?',
+    a: 'Every prediction task runs through two independent implementations — Spark MLlib and Python/XGBoost — so results can be cross-validated rather than taken on faith.',
+  },
+  {
+    q: 'Can this scale to a real restaurant deployment?',
+    a: 'The pipeline is built on Apache Spark for distributed processing, with a FastAPI backend and PostgreSQL storage designed to handle production-scale data volumes.',
+  },
+]
+
+const PIPELINE_STEPS = [
+  {
+    title: 'Ingest & Clean',
+    description: 'Raw order, menu, and customer data ingested via PySpark, cleaned and validated at scale.',
+  },
+  {
+    title: 'Process & Model',
+    description: 'Spark SQL aggregations feed dual ML pipelines — Spark MLlib and XGBoost — trained independently.',
+  },
+  {
+    title: 'Serve & Recommend',
+    description: 'FastAPI serves predictions and evidence-based recommendations to the dashboard in real time.',
+  },
+]
+
+const INSIGHT_CARDS = [
+  {
+    icon: '🔥',
+    tag: 'Menu Intelligence',
+    statement: 'Top Profit Driver identified',
+    description: 'A high-margin, high-volume item surfaces automatically as a menu star worth protecting.',
+  },
+  {
+    icon: '💎',
+    tag: 'Hidden Opportunity',
+    statement: 'Underexposed item found',
+    description: 'Strong margins, low visibility — the model flags it for repositioning on the menu.',
+  },
+  {
+    icon: '👥',
+    tag: 'Customer Segmentation',
+    statement: 'High-value segment uncovered',
+    description: 'RFM scoring isolates the "Champions" segment driving a disproportionate share of repeat revenue.',
+  },
+]
+
+const DISCOVER_CARDS = [
+  {
+    icon: '📈',
+    tag: 'Dashboard',
+    title: 'Executive Dashboard',
+    description: 'A single view of revenue, orders, and top-line KPIs across the whole operation.',
+    gradient: 'from-indigo-600/40 to-cyan-500/20',
+  },
+  {
+    icon: '📉',
+    tag: 'Forecasting',
+    title: 'Forecast Dashboard',
+    description: 'Demand predictions with MAE/RMSE evaluation, broken down by item and time window.',
+    gradient: 'from-purple-600/40 to-indigo-500/20',
+  },
+  {
+    icon: '🧪',
+    tag: 'Simulation',
+    title: 'What-If Analysis',
+    description: 'Simulate pricing and staffing scenarios before committing to a real-world change.',
+    gradient: 'from-emerald-600/40 to-cyan-500/20',
+  },
 ]
 
 function formatCompact(value) {
@@ -190,23 +313,24 @@ function Logo({ className = '' }) {
   )
 }
 
-function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
+function TopBar() {
   return (
-    <nav
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'border-b border-indigo-500/20 bg-[#050B18]/90 py-3 backdrop-blur-md'
-          : 'border-b border-transparent bg-transparent py-5'
-      }`}
-    >
+    <div className="hidden items-center justify-between border-b border-white/5 bg-[#03060f] px-6 py-2 text-xs text-slate-500 sm:flex">
+      <span>📊 DineIQ Analytics — Restaurant Intelligence Platform</span>
+      <div className="flex items-center gap-4">
+        <a href="#" className="transition-colors hover:text-slate-300">
+          GitHub
+        </a>
+        <span className="text-slate-700">|</span>
+        <span>Aptech TechWiz 7 Competition</span>
+      </div>
+    </div>
+  )
+}
+
+function Navbar() {
+  return (
+    <nav className="sticky top-0 z-50 border-b border-indigo-500/20 bg-[#050B18]/90 py-4 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
         <Logo />
         <div className="hidden items-center gap-8 md:flex">
@@ -233,7 +357,7 @@ function Navbar() {
 
 function Hero() {
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden pt-24">
+    <section className="relative flex min-h-screen items-center overflow-hidden">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="animate-orb-float absolute -left-32 top-20 h-96 w-96 rounded-full bg-indigo-600/30 blur-3xl" />
         <div
@@ -246,13 +370,15 @@ function Hero() {
         />
       </div>
 
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-16 px-6 lg:grid-cols-5">
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-16 px-6 py-24 lg:grid-cols-5">
         <div className="lg:col-span-3">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 text-sm text-indigo-300">
             🏆 TechWiz 7 Competition
           </div>
-          <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-slate-50 sm:text-5xl lg:text-6xl">
-            Restaurant Intelligence
+          <h1 className="text-4xl font-black uppercase leading-[0.95] tracking-tight text-slate-50 sm:text-5xl lg:text-7xl">
+            Restaurant
+            <br />
+            Intelligence
             <br />
             <span className="text-gradient animate-gradient-shift">Powered by Big Data</span>
           </h1>
@@ -267,7 +393,7 @@ function Hero() {
               View Dashboard
             </a>
             <a
-              href="#features"
+              href="#pipeline"
               className="rounded-lg border border-white/20 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
             >
               Watch Demo
@@ -275,7 +401,9 @@ function Hero() {
           </div>
         </div>
 
-        <div className="lg:col-span-2">
+        <div className="relative lg:col-span-2">
+          <div className="animate-spin-slow absolute left-1/2 top-1/2 hidden h-[26rem] w-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-dashed border-indigo-500/20 lg:block" />
+
           <div className="animate-float mx-auto max-w-sm rounded-2xl border border-indigo-500/20 bg-[#0D1526] p-6 shadow-2xl shadow-indigo-950/50">
             <div className="mb-5 flex items-center justify-between">
               <span className="text-sm font-semibold text-slate-300">Live Overview</span>
@@ -309,7 +437,115 @@ function Hero() {
               ))}
             </div>
           </div>
+
+          <div className="animate-float absolute -left-6 -top-6 z-20 hidden rounded-xl border border-emerald-500/30 bg-[#0D1526]/90 px-4 py-2 text-xs font-semibold text-emerald-400 shadow-lg backdrop-blur sm:block">
+            🎯 99% Model Accuracy
+          </div>
+          <div
+            className="animate-float absolute -bottom-6 -right-4 z-20 hidden rounded-xl border border-indigo-500/30 bg-[#0D1526]/90 px-4 py-2 text-xs font-semibold text-indigo-300 shadow-lg backdrop-blur sm:block"
+            style={{ animationDelay: '1s' }}
+          >
+            📊 1.3M+ Records
+          </div>
         </div>
+      </div>
+    </section>
+  )
+}
+
+function Capabilities() {
+  return (
+    <section id="capabilities" className="relative overflow-hidden py-28">
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[36rem] w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-600/10 blur-3xl" />
+      <div className="relative mx-auto max-w-7xl px-6">
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-widest text-indigo-400">Our Capabilities</p>
+          <h2 className="mt-3 text-3xl font-bold text-slate-50 sm:text-4xl">
+            Turning Raw Data Into <span className="text-gradient">Restaurant Intelligence</span>
+          </h2>
+        </Reveal>
+
+        <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+          {CAPABILITY_HIGHLIGHTS.map((item, i) => (
+            <Reveal key={item.title} delay={i * 120} className={i === 1 ? 'md:mt-12' : ''}>
+              <div className="relative h-full rounded-2xl border border-white/10 bg-[#0D1526] p-8 shadow-xl shadow-black/20">
+                <span className="absolute right-6 top-6 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                  {item.tag}
+                </span>
+                <div
+                  className={`mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br text-2xl ${item.color}`}
+                >
+                  {item.icon}
+                </div>
+                <h3 className="text-lg font-semibold text-slate-50">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-400">{item.description}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Expertise() {
+  return (
+    <section className="py-24">
+      <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-2 lg:items-center">
+        <Reveal>
+          <p className="text-sm font-semibold uppercase tracking-widest text-indigo-400">Our Approach</p>
+          <h2 className="mt-3 text-3xl font-bold text-slate-50 sm:text-4xl">
+            Big Data meets <span className="text-gradient">Machine Learning</span> for real restaurant decisions
+          </h2>
+          <p className="mt-4 max-w-md text-slate-400">
+            Every dataset is processed twice — once through Spark&apos;s distributed engine, once through
+            Python&apos;s ML ecosystem — so recommendations are cross-validated, not guessed.
+          </p>
+        </Reveal>
+
+        <div className="space-y-6">
+          {EXPERTISE_POINTS.map((point, i) => (
+            <Reveal key={point.title} delay={i * 120}>
+              <div className="flex gap-4 rounded-xl border border-white/5 bg-[#0D1526] p-5">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-indigo-500/10 text-xl">
+                  {point.icon}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-50">{point.title}</h3>
+                  <p className="mt-1 text-sm text-slate-400">{point.description}</p>
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function DemoShowcase() {
+  return (
+    <section className="py-16">
+      <div className="mx-auto max-w-5xl px-6">
+        <Reveal>
+          <div className="relative overflow-hidden rounded-3xl border border-indigo-500/20 bg-gradient-to-br from-[#0D1526] to-[#0a0f1e] p-10 text-center sm:p-16">
+            <div className="pointer-events-none absolute -left-16 -top-16 h-64 w-64 rounded-full bg-purple-600/20 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-20 -right-10 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl" />
+            <div className="relative">
+              <p className="text-sm font-semibold uppercase tracking-widest text-cyan-400">Platform Preview</p>
+              <h3 className="mt-3 text-2xl font-bold text-slate-50 sm:text-3xl">See the Full Pipeline in Action</h3>
+              <a
+                href="#pipeline"
+                className="group mt-8 inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 shadow-[0_0_40px_rgba(99,102,241,0.5)] transition-transform hover:scale-110"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" className="ml-1 h-7 w-7 text-white">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </a>
+              <p className="mt-6 text-sm text-slate-400">Watch Demo · 3 min walkthrough</p>
+            </div>
+          </div>
+        </Reveal>
       </div>
     </section>
   )
@@ -318,13 +554,16 @@ function Hero() {
 function Stats() {
   return (
     <section className="border-y border-white/5 bg-[#050B18] py-20">
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-6 lg:grid-cols-4">
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-6 sm:grid-cols-3 lg:grid-cols-5">
         {STATS.map((stat) => (
           <div
             key={stat.label}
-            className="rounded-2xl border border-white/5 p-8 text-center transition-all duration-300 hover:border-indigo-500/40 hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]"
+            className="rounded-2xl border border-white/5 p-6 text-center transition-all duration-300 hover:border-indigo-500/40 hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]"
           >
-            <p className="text-gradient text-4xl font-extrabold sm:text-5xl">
+            <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500/10 text-lg">
+              {stat.icon}
+            </div>
+            <p className="text-gradient text-3xl font-extrabold sm:text-4xl">
               <AnimatedCounter target={stat.target} format={stat.format} />
             </p>
             <p className="mt-2 text-sm text-slate-400">{stat.label}</p>
@@ -401,6 +640,249 @@ function TechStack() {
   )
 }
 
+function Gallery() {
+  return (
+    <section id="gallery" className="py-24">
+      <div className="mx-auto max-w-7xl px-6">
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-widest text-indigo-400">Explore</p>
+          <h2 className="mt-3 text-3xl font-bold text-slate-50 sm:text-4xl">
+            From Raw Data to <span className="text-gradient">Recommendation</span>
+          </h2>
+        </Reveal>
+
+        <div className="mt-14 grid grid-cols-2 gap-5 lg:grid-cols-4">
+          {PIPELINE_STAGES.map((stage, i) => (
+            <Reveal key={stage.title} delay={i * 100}>
+              <div
+                className={`flex aspect-[3/4] flex-col justify-end rounded-2xl border border-white/10 bg-gradient-to-br p-6 ${stage.gradient}`}
+              >
+                <span className="text-4xl">{stage.icon}</span>
+                <h3 className="mt-4 text-lg font-semibold text-slate-50">{stage.title}</h3>
+                <p className="mt-1 text-sm text-slate-300/80">{stage.description}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function TaglineStrip() {
+  return (
+    <section className="border-y border-white/5 bg-[#0a0f1e] py-6">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-6 text-center text-sm font-semibold uppercase tracking-wide">
+        <span className="text-indigo-400">Data-Driven Decisions</span>
+        <span className="text-slate-700">•</span>
+        <span className="text-cyan-400">AI-Powered Insights</span>
+        <span className="text-slate-700">•</span>
+        <span className="text-amber-400">Built for Restaurants</span>
+      </div>
+    </section>
+  )
+}
+
+function Benefits() {
+  return (
+    <section id="benefits" className="py-24">
+      <div className="mx-auto grid max-w-7xl gap-16 px-6 lg:grid-cols-2 lg:items-center">
+        <Reveal className="flex justify-center">
+          <div className="relative h-72 w-72">
+            <div className="absolute inset-0 rotate-6 rounded-2xl border border-white/10 bg-[#0D1526]" />
+            <div className="absolute inset-0 -rotate-3 rounded-2xl border border-indigo-500/20 bg-[#0D1526] p-6">
+              <div className="h-2 w-20 rounded-full bg-indigo-500/40" />
+              <div className="mt-3 h-2 w-28 rounded-full bg-white/10" />
+              <div className="mt-8 flex h-28 items-end gap-2">
+                {[30, 55, 40, 75, 50, 90].map((height, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 rounded-t-sm bg-gradient-to-t from-indigo-500 to-cyan-400"
+                    style={{ height: `${height}%` }}
+                  />
+                ))}
+              </div>
+              <div className="mt-6 h-2 w-16 rounded-full bg-white/10" />
+              <div className="mt-2 h-2 w-24 rounded-full bg-white/5" />
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal>
+          <p className="text-sm font-semibold uppercase tracking-widest text-indigo-400">The Benefits</p>
+          <h2 className="mt-3 text-3xl font-bold text-slate-50 sm:text-4xl">
+            Accelerate Decisions With <span className="text-gradient">Data-Driven Intelligence</span>
+          </h2>
+          <div className="mt-8 space-y-6">
+            {BENEFITS.map((benefit) => (
+              <div key={benefit.title} className="flex gap-3">
+                <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-xs text-emerald-400">
+                  ✓
+                </span>
+                <div>
+                  <h3 className="font-semibold text-slate-50">{benefit.title}</h3>
+                  <p className="mt-1 text-sm text-slate-400">{benefit.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+function FaqAccordion() {
+  const [open, setOpen] = useState(0)
+
+  return (
+    <div className="divide-y divide-white/5 rounded-2xl border border-white/5 bg-[#0D1526]">
+      {FAQS.map((item, i) => (
+        <div key={item.q}>
+          <button
+            type="button"
+            onClick={() => setOpen(open === i ? -1 : i)}
+            className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+          >
+            <span className="font-medium text-slate-100">{item.q}</span>
+            <span
+              className={`shrink-0 text-xl font-light text-indigo-400 transition-transform duration-300 ${
+                open === i ? 'rotate-45' : ''
+              }`}
+            >
+              +
+            </span>
+          </button>
+          <div
+            className={`grid transition-all duration-300 ${
+              open === i ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+            }`}
+          >
+            <div className="overflow-hidden">
+              <p className="px-6 pb-5 text-sm leading-relaxed text-slate-400">{item.a}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function Faq() {
+  return (
+    <section id="faq" className="py-24">
+      <div className="mx-auto max-w-3xl px-6">
+        <Reveal className="mb-12 text-center">
+          <p className="text-sm font-semibold uppercase tracking-widest text-indigo-400">Questions?</p>
+          <h2 className="mt-3 text-3xl font-bold text-slate-50 sm:text-4xl">Frequently Asked Questions</h2>
+        </Reveal>
+        <Reveal>
+          <FaqAccordion />
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+function Pipeline() {
+  return (
+    <section id="pipeline" className="py-24">
+      <div className="mx-auto max-w-6xl px-6">
+        <Reveal className="mb-14 text-center">
+          <p className="text-sm font-semibold uppercase tracking-widest text-indigo-400">How It Works</p>
+          <h2 className="mt-3 text-3xl font-bold text-slate-50 sm:text-4xl">Our Data Pipeline</h2>
+        </Reveal>
+
+        <Reveal>
+          <div className="grid items-center gap-12 rounded-3xl border border-white/5 bg-[#0D1526] p-10 lg:grid-cols-[1fr_auto] lg:p-14">
+            <div className="space-y-8">
+              {PIPELINE_STEPS.map((step, i) => (
+                <div key={step.title} className="flex gap-5">
+                  <span className="text-2xl font-bold text-indigo-500/50">0{i + 1}</span>
+                  <div>
+                    <h3 className="font-semibold text-slate-50">{step.title}</h3>
+                    <p className="mt-1 text-sm text-slate-400">{step.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="text-center">
+              <p className="text-gradient text-7xl font-black">03</p>
+              <p className="mt-2 text-sm text-slate-400">
+                stages from raw data
+                <br />
+                to recommendation
+              </p>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+function Insights() {
+  return (
+    <section id="insights" className="py-24">
+      <div className="mx-auto max-w-7xl px-6">
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-widest text-indigo-400">Sample Output</p>
+          <h2 className="mt-3 text-3xl font-bold text-slate-50 sm:text-4xl">What the Data Reveals</h2>
+        </Reveal>
+
+        <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
+          {INSIGHT_CARDS.map((card, i) => (
+            <Reveal key={card.statement} delay={i * 100}>
+              <div className="h-full rounded-2xl border border-white/5 bg-[#0D1526] p-7">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10 text-2xl">
+                  {card.icon}
+                </div>
+                <p className="mt-5 text-xs font-semibold uppercase tracking-wide text-indigo-400">{card.tag}</p>
+                <h3 className="mt-2 text-lg font-semibold text-slate-50">{card.statement}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-400">{card.description}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Discover() {
+  return (
+    <section className="py-24">
+      <div className="mx-auto max-w-7xl px-6">
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-widest text-indigo-400">Inside the Platform</p>
+          <h2 className="mt-3 text-3xl font-bold text-slate-50 sm:text-4xl">What You&apos;ll Discover</h2>
+        </Reveal>
+
+        <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
+          {DISCOVER_CARDS.map((card, i) => (
+            <Reveal key={card.title} delay={i * 100}>
+              <div className="h-full overflow-hidden rounded-2xl border border-white/5 bg-[#0D1526]">
+                <div
+                  className={`flex h-32 items-center justify-center bg-gradient-to-br text-5xl ${card.gradient}`}
+                >
+                  {card.icon}
+                </div>
+                <div className="p-6">
+                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                    {card.tag}
+                  </span>
+                  <h3 className="mt-3 text-lg font-semibold text-slate-50">{card.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-400">{card.description}</p>
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function CTA() {
   return (
     <section id="cta" className="relative overflow-hidden py-28">
@@ -427,23 +909,61 @@ function Footer() {
   return (
     <footer className="relative">
       <div className="h-px w-full bg-gradient-to-r from-indigo-500 to-cyan-400" />
-      <div className="mx-auto flex max-w-7xl flex-col items-center gap-6 px-6 py-10 md:flex-row md:justify-between">
-        <div className="flex flex-col items-center gap-1 md:items-start">
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-10 px-6 py-14 md:grid-cols-4">
+        <div className="col-span-2 md:col-span-1">
           <Logo />
-          <span className="text-xs text-slate-500">TechWiz 7 Competition Project</span>
+          <p className="mt-4 text-sm text-slate-500">
+            AI-driven restaurant analytics built on Apache Spark and a dual ML pipeline.
+          </p>
         </div>
-        <div className="flex gap-6 text-sm text-slate-400">
-          <a href="#cta" className="hover:text-slate-50">
-            Dashboard
-          </a>
-          <a href="#features" className="hover:text-slate-50">
-            Features
-          </a>
-          <a href="#tech-stack" className="hover:text-slate-50">
-            Tech Stack
-          </a>
+        <div>
+          <h4 className="text-sm font-semibold text-slate-200">Links</h4>
+          <ul className="mt-4 space-y-2 text-sm text-slate-400">
+            <li>
+              <a href="#capabilities" className="hover:text-slate-50">
+                Capabilities
+              </a>
+            </li>
+            <li>
+              <a href="#features" className="hover:text-slate-50">
+                Features
+              </a>
+            </li>
+            <li>
+              <a href="#pipeline" className="hover:text-slate-50">
+                Pipeline
+              </a>
+            </li>
+          </ul>
         </div>
-        <p className="text-xs text-slate-500">© 2024 DineIQ Analytics — Aptech TechWiz 7</p>
+        <div>
+          <h4 className="text-sm font-semibold text-slate-200">Explore</h4>
+          <ul className="mt-4 space-y-2 text-sm text-slate-400">
+            <li>
+              <a href="#gallery" className="hover:text-slate-50">
+                Gallery
+              </a>
+            </li>
+            <li>
+              <a href="#faq" className="hover:text-slate-50">
+                FAQ
+              </a>
+            </li>
+            <li>
+              <a href="#insights" className="hover:text-slate-50">
+                Insights
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="text-sm font-semibold text-slate-200">Project</h4>
+          <p className="mt-4 text-sm text-slate-400">Aptech TechWiz 7 Competition</p>
+          <p className="mt-1 text-sm text-slate-500">© 2024 DineIQ Analytics</p>
+        </div>
+      </div>
+      <div className="border-t border-white/5 px-6 py-6 text-center text-xs text-slate-500">
+        Built with React, Tailwind, Apache Spark &amp; XGBoost
       </div>
     </footer>
   )
@@ -452,11 +972,22 @@ function Footer() {
 export default function Landing() {
   return (
     <div className="min-h-screen bg-[#050B18] text-slate-50">
+      <TopBar />
       <Navbar />
       <Hero />
+      <Capabilities />
+      <Expertise />
+      <DemoShowcase />
       <Stats />
       <Features />
       <TechStack />
+      <Gallery />
+      <TaglineStrip />
+      <Benefits />
+      <Faq />
+      <Pipeline />
+      <Insights />
+      <Discover />
       <CTA />
       <Footer />
     </div>
