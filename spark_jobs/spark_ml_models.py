@@ -134,7 +134,7 @@ def main():
     df_assembled = assembler.transform(df)
 
     # STEP 5 - train/test split
-    train, test = df_assembled.randomSplit([0.8, 0.2], seed=42)
+    train, test = df_assembled.randomSplit([0.7, 0.3], seed=42)
 
     metrics = {}
 
