@@ -1,0 +1,18 @@
+{
+  "random_forest": {
+    "accuracy": 0.75,
+    "f1": 0.7743
+  },
+  "logistic_regression": {
+    "accuracy": 0.875,
+    "f1": 0.8172
+  },
+  "best_model": "Logistic Regression",
+  "best_f1": 0.8172,
+  "gbt_binary": {
+    "accuracy": 1.0,
+    "f1": 1.0,
+    "task": "binary: Profit Driver vs rest"
+  },
+  "trained_at": "2026-09-27T13:15:07.995157"
+}
