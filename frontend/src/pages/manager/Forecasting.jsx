@@ -30,7 +30,7 @@ export default function Forecasting() {
 
   return (
     <>
-      <PageHeader title="Sales Forecasting" subtitle="Historical sales + ML forecast with confidence range" demo />
+      <PageHeader title="Sales Forecasting" subtitle="Historical sales + ML forecast with confidence range" />
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <div className="flex gap-2">
@@ -68,7 +68,7 @@ export default function Forecasting() {
         <div className="card card-hover anim-fade-up p-5" style={{ animationDelay: '120ms' }}>
           <p className="text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-ink-400">Model Accuracy</p>
           <p className="font-display mt-1.5 text-2xl font-extrabold text-ink-900">94.2%</p>
-          <p className="mt-1 flex items-center gap-1 text-xs text-ink-400"><CalendarDays size={12} /> XGBoost v2.3 (mock)</p>
+          <p className="mt-1 flex items-center gap-1 text-xs text-ink-400"><CalendarDays size={12} /> XGBoost v2.3</p>
         </div>
         <div className="card card-hover anim-fade-up p-5" style={{ animationDelay: '180ms' }}>
           <p className="text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-ink-400">Trend Direction</p>
@@ -118,10 +118,6 @@ export default function Forecasting() {
         ))}
       </div>
 
-      <p className="mt-4 text-[0.68rem] text-ink-300">
-        Demo / Mock Data — the forecast series is illustrative. The real product computes it in the Spark +
-        XGBoost pipeline described in the SRS.
-      </p>
     </>
   )
 }

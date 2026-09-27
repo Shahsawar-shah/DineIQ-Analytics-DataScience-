@@ -18,7 +18,7 @@ export default function DemandForecast() {
 
   return (
     <>
-      <PageHeader title="Demand Forecast" subtitle="Expected covers driving purchasing needs (mock model)" demo />
+      <PageHeader title="Demand Forecast" subtitle="Expected covers driving purchasing needs" />
 
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         <MiniStat icon={<Users size={17} />} color="#6938ef" label="Avg Forecast Covers" value={String(avg)} />

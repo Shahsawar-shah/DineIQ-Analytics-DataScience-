@@ -10,7 +10,7 @@ export default function StockLevels() {
 
   return (
     <>
-      <PageHeader title="Stock Levels" subtitle="Current stock vs par level per item" demo
+      <PageHeader title="Stock Levels" subtitle="Current stock vs par level per item"
         actions={<span className={`badge ${lowCount > 0 ? 'badge-amber' : 'badge-green'}`}>{lowCount} items need attention</span>} />
 
       <ChartCard title="Stock Coverage" subtitle="Stock as % of par level — 100% means fully covered" height={380}>

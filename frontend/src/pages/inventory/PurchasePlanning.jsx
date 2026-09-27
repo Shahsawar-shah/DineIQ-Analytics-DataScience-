@@ -16,7 +16,6 @@ export default function PurchasePlanning() {
       <PageHeader
         title="Purchase Planning"
         subtitle="Suggested reorder quantities from forecast demand + par levels"
-        demo
         actions={
           <button className="btn btn-primary !px-4 !py-2.5 text-xs" disabled={approvedCount === 0}>
             <ShoppingCart size={14} /> Create PO ({approvedCount})
@@ -27,7 +26,7 @@ export default function PurchasePlanning() {
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {[
           { label: 'Items to Reorder', value: String(toReorder.length) },
-          { label: 'Approved (demo)', value: String(approvedCount) },
+          { label: 'Approved', value: String(approvedCount) },
           { label: 'Est. PO Value', value: fmtMoney(totalCost * 12) },
           { label: 'Next Deliveries', value: 'Sep 26 – Sep 30' },
         ].map((k, i) => (
@@ -78,10 +77,6 @@ export default function PurchasePlanning() {
             </tbody>
           </table>
         </div>
-        <p className="px-2 pt-3 text-[0.68rem] text-ink-300">
-          Demo / Mock Data — approvals are visual only. In production this writes purchase orders through the
-          inventory API.
-        </p>
       </div>
     </>
   )

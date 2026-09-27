@@ -5,6 +5,7 @@ import DataTable from '../../components/ui/DataTable'
 import StatusBadge from '../../components/ui/StatusBadge'
 import FilterBar from '../../components/ui/FilterBar'
 import { AUDIT_LOGS } from '../../data/mockData'
+import { downloadCSV } from '../../utils/helpers'
 
 export default function AdminAuditLogs() {
   const [filters, setFilters] = useState({ severity: 'all', q: '' })
@@ -32,14 +33,10 @@ export default function AdminAuditLogs() {
   ]
 
   const exportCsv = () => {
-    const head = 'id,timestamp,actor,action,entity,severity'
-    const body = rows.map((r) => [r.id, r.timestamp, r.actor, `"${r.action}"`, `"${r.entity}"`, r.severity].join(',')).join('\n')
-    const url = URL.createObjectURL(new Blob([`${head}\n${body}`], { type: 'text/csv' }))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'dineiq-audit-logs.csv'
-    a.click()
-    URL.revokeObjectURL(url)
+    downloadCSV(
+      rows.map((r) => ({ id: r.id, timestamp: r.timestamp, actor: r.actor, action: r.action, entity: r.entity, severity: r.severity })),
+      'dineiq-audit-logs.csv',
+    )
   }
 
   return (
@@ -47,7 +44,6 @@ export default function AdminAuditLogs() {
       <PageHeader
         title="Audit Logs"
         subtitle="Immutable trail of platform events"
-        demo
         actions={<button className="btn btn-ghost !px-4 !py-2.5 text-xs" onClick={exportCsv}><Download size={14} /> Export CSV</button>}
       />
       <div className="mb-4 flex flex-wrap items-center gap-2">

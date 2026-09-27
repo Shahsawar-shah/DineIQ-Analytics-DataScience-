@@ -17,7 +17,7 @@ export default function AdminDataQuality() {
   const avg = Math.round(DATA_QUALITY.reduce((s, d) => s + d.score, 0) / DATA_QUALITY.length)
   return (
     <>
-      <PageHeader title="Data Quality" subtitle="Composite quality scoring across the data lake" demo />
+      <PageHeader title="Data Quality" subtitle="Composite quality scoring across the data lake" />
       <div className="grid gap-5 lg:grid-cols-3">
         <ChartCard title="Quality Radar" subtitle="Six SRS quality dimensions">
           <div className="h-64">

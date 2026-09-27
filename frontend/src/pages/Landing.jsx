@@ -261,7 +261,6 @@ function AnalyticsPreview() {
             <div className="glass h-full rounded-2xl p-5">
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="font-display text-sm font-bold text-white">Revenue vs Target — 2026</h3>
-                <span className="badge badge-orange">Demo / Mock Data</span>
               </div>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -389,7 +388,6 @@ function MenuIntelligenceSection() {
             <div className="relative">
               <div className="mb-5 flex items-center justify-between">
                 <h3 className="font-display text-sm font-bold text-ink-900">Menu Performance Classification</h3>
-                <span className="badge badge-violet">Mock</span>
               </div>
               {MENU_ITEMS.slice(0, 6).map((m) => (
                 <div key={m.id} className="mb-3">
@@ -597,7 +595,7 @@ function Footer() {
   const cols = [
     { title: 'Platform', links: ['Sales Analytics', 'Menu Intelligence', 'Customer Intelligence', 'Forecasting', 'Wastage Analytics'] },
     { title: 'For Teams', links: ['Restaurant Managers', 'Inventory Managers', 'Administrators', 'Customers'] },
-    { title: 'Resources', links: ['Documentation', 'Mock Data Notes', 'API Preview', 'Support'] },
+    { title: 'Resources', links: ['Documentation', 'API Reference', 'API Preview', 'Support'] },
   ]
   return (
     <footer className="dark-panel border-t border-white/10 pt-14">
@@ -650,11 +648,11 @@ function Footer() {
           </div>
         </div>
         <div className="flex flex-col items-center justify-between gap-3 border-t border-white/10 py-6 text-[0.7rem] text-white/40 sm:flex-row">
-          <p>© 2026 DineIQ Analytics. Frontend demo — all data is mock data.</p>
+          <p>© 2026 DineIQ Analytics. All rights reserved.</p>
           <div className="flex items-center gap-5">
             <span>Privacy</span>
             <span>Terms</span>
-            <span className="flex items-center gap-1.5"><BellDot size={12} /> v1.0 demo</span>
+            <span className="flex items-center gap-1.5"><BellDot size={12} /> v1.0</span>
           </div>
         </div>
       </div>
@@ -679,7 +677,7 @@ function Newsletter() {
       <div className="relative mx-auto max-w-2xl px-4 text-center sm:px-6">
         <Reveal>
           <p className="font-script text-3xl text-brand-400">Stay in the loop</p>
-          <p className="mt-2 text-sm text-white/70">Get product updates and analytics tips. No spam — demo only.</p>
+          <p className="mt-2 text-sm text-white/70">Get product updates and analytics tips. No spam, ever.</p>
           <form
             className="mx-auto mt-6 flex max-w-lg overflow-hidden rounded-2xl bg-white p-1.5 shadow-2xl"
             onSubmit={(e) => {

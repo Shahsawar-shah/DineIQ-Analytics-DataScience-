@@ -48,7 +48,7 @@ export default function CustomerOrders() {
 
   return (
     <>
-      <PageHeader title="My Orders" subtitle="Every order you have placed with DineIQ partner locations" demo />
+      <PageHeader title="My Orders" subtitle="Every order you have placed with DineIQ partner locations" />
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <FilterBar
           filters={[
@@ -79,12 +79,9 @@ export default function CustomerOrders() {
           Your previous basket from <strong>{reorder?.location}</strong> ({reorder?.items} items,{' '}
           {reorder && fmtMoney(reorder.total, 2)}) would be added to a new order.
         </p>
-        <p className="mt-3 rounded-xl bg-brand-50 p-3 text-xs text-brand-700">
-          Demo note — ordering is not implemented in this frontend prototype.
-        </p>
         <div className="mt-5 flex justify-end gap-2">
           <button className="btn btn-ghost !px-5 !py-2.5 text-xs" onClick={() => setReorder(null)}>Cancel</button>
-          <button className="btn btn-primary !px-5 !py-2.5 text-xs" onClick={() => setReorder(null)}>Add to basket (demo)</button>
+          <button className="btn btn-primary !px-5 !py-2.5 text-xs" onClick={() => setReorder(null)}>Add to basket</button>
         </div>
       </Modal>
     </>

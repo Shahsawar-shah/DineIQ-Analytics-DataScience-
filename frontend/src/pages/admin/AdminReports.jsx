@@ -3,7 +3,8 @@ import { FileBarChart, FileSpreadsheet, FileText } from 'lucide-react'
 import PageHeader from '../../components/layout/PageHeader'
 import ChartCard from '../../components/charts/ChartCard'
 import StatusBadge from '../../components/ui/StatusBadge'
-import { LOCATIONS } from '../../data/mockData'
+import { LOCATIONS, fmtMoney } from '../../data/mockData'
+import { downloadCSV, downloadExcel, downloadPDF } from '../../utils/helpers'
 
 const HISTORY = [
   { name: 'User Activity — September', type: 'PDF', generated: 'Sep 25, 09:44', by: 'System Administrator', status: 'Completed' },
@@ -16,23 +17,33 @@ const HISTORY = [
 export function ReportGenerator({ roleScope }) {
   const [type, setType] = useState('PDF')
   const [busy, setBusy] = useState(false)
-  const [done, setDone] = useState(false)
+  const [done, setDone] = useState(null)
+  const [error, setError] = useState(null)
 
   const generate = () => {
     setBusy(true)
-    setDone(false)
+    setDone(null)
+    setError(null)
     setTimeout(() => {
-      setBusy(false)
-      setDone(true)
-      if (type === 'CSV') {
-        const url = URL.createObjectURL(new Blob(['report,note\nDineIQ demo report,generated client-side'], { type: 'text/csv' }))
-        const a = document.createElement('a')
-        a.href = url
-        a.download = 'dineiq-report.csv'
-        a.click()
-        URL.revokeObjectURL(url)
+      try {
+        const rows = LOCATIONS.map((l) => ({
+          location: l.name,
+          city: l.city,
+          orders_30d: l.orders30d,
+          revenue_30d: fmtMoney(l.revenue30d),
+          data_quality: `${l.dataQuality}%`,
+          status: l.status,
+        }))
+        if (type === 'CSV') downloadCSV(rows, `dineiq-${roleScope.toLowerCase()}-report.csv`)
+        else if (type === 'Excel') downloadExcel(rows, `dineiq-${roleScope.toLowerCase()}-report.xlsx`)
+        else downloadPDF()
+        setBusy(false)
+        setDone(`${type} report generated${type === 'PDF' ? ' — print dialog opened' : ' — download started'}.`)
+      } catch (err) {
+        setBusy(false)
+        setError(err.message || 'Could not generate the report.')
       }
-    }, 800)
+    }, 600)
   }
 
   return (
@@ -77,7 +88,8 @@ export function ReportGenerator({ roleScope }) {
         <button className="btn btn-primary !px-6 !py-2.5 text-xs" onClick={generate} disabled={busy}>
           {busy ? 'Generating…' : 'Generate report'}
         </button>
-        {done && <span className="anim-pop text-xs font-bold text-emerald-600">Report ready — demo download triggered for CSV</span>}
+        {done && <span className="anim-pop text-xs font-bold text-emerald-600">{done}</span>}
+        {error && <span className="anim-pop text-xs font-bold text-rose-600">{error}</span>}
       </div>
     </div>
   )
@@ -86,7 +98,7 @@ export function ReportGenerator({ roleScope }) {
 export default function AdminReports() {
   return (
     <>
-      <PageHeader title="Reports" subtitle="Generate and export platform reports" demo />
+      <PageHeader title="Reports" subtitle="Generate and export platform reports" />
       <ReportGenerator roleScope="Platform" />
       <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[

@@ -23,7 +23,7 @@ export default function InventoryDashboard() {
 
   return (
     <>
-      <PageHeader title="Inventory Control Center" subtitle="All locations · live stock and consumption view" demo
+      <PageHeader title="Inventory Control Center" subtitle="All locations · live stock and consumption view"
         actions={<span className="badge badge-green"><span className="live-dot mr-1 inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" /> Sync 5 min ago</span>} />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -124,7 +124,7 @@ export default function InventoryDashboard() {
           </div>
         </ChartCard>
 
-        <ChartCard title="Demand Forecast (7 days)" subtitle="Expected covers, mock model"
+        <ChartCard title="Demand Forecast (7 days)" subtitle="Expected covers"
           actions={<Link to="/inventory/forecast" className="text-xs font-bold text-brand-600 hover:underline">Full forecast</Link>}>
           <div className="h-52">
             <ResponsiveContainer width="100%" height="100%">

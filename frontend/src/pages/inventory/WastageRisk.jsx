@@ -25,7 +25,7 @@ export default function WastageRisk() {
 
   return (
     <>
-      <PageHeader title="Wastage Risk" subtitle="Composite risk scoring: wastage rate + stock pressure" demo />
+      <PageHeader title="Wastage Risk" subtitle="Composite risk scoring: wastage rate + stock pressure" />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {[

@@ -10,7 +10,7 @@ export default function Pricing() {
   const sensitivityColors = { Low: '#0d9459', Medium: '#d97706', High: '#e11d48' }
   return (
     <>
-      <PageHeader title="Pricing Intelligence" subtitle="Price sensitivity and demand elasticity per menu item" demo />
+      <PageHeader title="Pricing Intelligence" subtitle="Price sensitivity and demand elasticity per menu item" />
 
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         <MiniStat icon={<DollarSign size={17} />} color="#f95d0b" label="Avg Price Change" value="+6.1%" />
@@ -50,9 +50,8 @@ export default function Pricing() {
       </div>
 
       <div className="card mt-5 p-2 sm:p-4">
-        <div className="flex items-center justify-between px-2 pb-3 pt-1">
+        <div className="px-2 pb-3 pt-1">
           <h3 className="font-display text-sm font-bold text-ink-900">Price Sensitivity Table</h3>
-          <span className="badge badge-violet">Demo / Mock Data</span>
         </div>
         <div className="overflow-x-auto">
           <table className="dq-table">

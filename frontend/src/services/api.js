@@ -1,4 +1,4 @@
-const BASE = 'http://localhost:8000/api'
+const BASE = 'http://187.127.98.233:8000/api'
 
 const getToken = () => localStorage.getItem('dineiq_token')
 

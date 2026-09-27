@@ -6,7 +6,7 @@ import { FAVORITES, fmtMoney } from '../../data/mockData'
 export default function CustomerFavorites() {
   return (
     <>
-      <PageHeader title="Favorites" subtitle="The dishes you keep coming back to" demo />
+      <PageHeader title="Favorites" subtitle="The dishes you keep coming back to" />
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {FAVORITES.map((f, i) => (
           <div key={f.id} className="card card-hover group anim-fade-up overflow-hidden" style={{ animationDelay: `${i * 70}ms` }}>

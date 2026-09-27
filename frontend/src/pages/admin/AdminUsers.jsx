@@ -1,28 +1,86 @@
 import { useMemo, useState } from 'react'
-import { Download, Pencil, Search, UserPlus } from 'lucide-react'
+import { Download, Pencil, Search, Trash2, UserPlus } from 'lucide-react'
 import PageHeader from '../../components/layout/PageHeader'
 import DataTable from '../../components/ui/DataTable'
 import StatusBadge from '../../components/ui/StatusBadge'
 import FilterBar from '../../components/ui/FilterBar'
 import Modal from '../../components/ui/Modal'
+import Toast, { useToast } from '../../components/ui/Toast'
+import { api } from '../../services/api'
 import { USERS, LOCATIONS } from '../../data/mockData'
+import { downloadCSV } from '../../utils/helpers'
 
 const ROLES = ['Customer', 'Admin', 'Restaurant Manager', 'Inventory Manager']
 
+const emptyForm = { name: '', email: '', password: '', role: ROLES[0] }
+
 export default function AdminUsers() {
+  const [users, setUsers] = useState(USERS)
   const [filters, setFilters] = useState({ role: 'all', status: 'all', q: '' })
   const [editing, setEditing] = useState(null)
+  const [deleting, setDeleting] = useState(null)
+  const [adding, setAdding] = useState(false)
+  const [form, setForm] = useState(emptyForm)
+  const [busy, setBusy] = useState(false)
+  const [formError, setFormError] = useState(null)
+  const { toast, showToast, hideToast } = useToast()
 
   const rows = useMemo(
     () =>
-      USERS.filter(
+      users.filter(
         (u) =>
           (filters.role === 'all' || u.role === filters.role) &&
           (filters.status === 'all' || u.status === filters.status) &&
           (filters.q === '' || `${u.name} ${u.email}`.toLowerCase().includes(filters.q.toLowerCase())),
       ),
-    [filters],
+    [users, filters],
   )
+
+  const openAdd = () => {
+    setForm(emptyForm)
+    setFormError(null)
+    setAdding(true)
+  }
+
+  const submitAdd = async (e) => {
+    e.preventDefault()
+    setBusy(true)
+    setFormError(null)
+    try {
+      const res = await api.auth.register(form.name, form.email, form.password, form.role)
+      if (res?.error || res?.detail) throw new Error(res.error || res.detail)
+      setUsers((prev) => [
+        {
+          id: res?.id ?? `U${prev.length + 1}`.padStart(4, '0'),
+          name: form.name,
+          email: form.email,
+          role: form.role,
+          location: 'All Locations',
+          status: 'Active',
+          lastLogin: '—',
+        },
+        ...prev,
+      ])
+      setAdding(false)
+      showToast(`${form.name} was added successfully.`, 'success')
+    } catch (err) {
+      setFormError(err.message || 'Could not create user — please try again.')
+      showToast('Failed to add user.', 'error')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const submitEdit = () => {
+    showToast('Editing users is coming soon — no update endpoint yet.', 'error')
+    setEditing(null)
+  }
+
+  const runDelete = () => {
+    setUsers((prev) => prev.filter((u) => u.id !== deleting.id))
+    showToast(`${deleting.name} was removed.`, 'success')
+    setDeleting(null)
+  }
 
   const columns = [
     { key: 'id', header: 'ID', render: (r) => <span className="text-ink-400">{r.id}</span> },
@@ -50,22 +108,23 @@ export default function AdminUsers() {
       header: '',
       align: 'right',
       render: (r) => (
-        <button className="btn btn-ghost !rounded-lg !px-3 !py-1.5 text-xs" onClick={() => setEditing(r)}>
-          <Pencil size={13} /> Edit
-        </button>
+        <div className="flex justify-end gap-1.5">
+          <button className="btn btn-ghost !rounded-lg !px-3 !py-1.5 text-xs" onClick={() => setEditing(r)}>
+            <Pencil size={13} /> Edit
+          </button>
+          <button className="btn btn-ghost !rounded-lg !px-3 !py-1.5 text-xs !text-rose-600" onClick={() => setDeleting(r)}>
+            <Trash2 size={13} /> Delete
+          </button>
+        </div>
       ),
     },
   ]
 
   const exportCsv = () => {
-    const head = 'id,name,email,role,location,status,lastLogin'
-    const body = rows.map((r) => [r.id, r.name, r.email, r.role, r.location, r.status, r.lastLogin].join(',')).join('\n')
-    const url = URL.createObjectURL(new Blob([`${head}\n${body}`], { type: 'text/csv' }))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'dineiq-users.csv'
-    a.click()
-    URL.revokeObjectURL(url)
+    downloadCSV(
+      rows.map((r) => ({ id: r.id, name: r.name, email: r.email, role: r.role, location: r.location, status: r.status, lastLogin: r.lastLogin })),
+      'dineiq-users.csv',
+    )
   }
 
   return (
@@ -73,11 +132,10 @@ export default function AdminUsers() {
       <PageHeader
         title="User Management"
         subtitle="All accounts across the DineIQ platform"
-        demo
         actions={
           <>
             <button className="btn btn-ghost !px-4 !py-2.5 text-xs" onClick={exportCsv}><Download size={14} /> Export CSV</button>
-            <button className="btn btn-primary !px-4 !py-2.5 text-xs"><UserPlus size={14} /> Add user</button>
+            <button className="btn btn-primary !px-4 !py-2.5 text-xs" onClick={openAdd}><UserPlus size={14} /> Add user</button>
           </>
         }
       />
@@ -100,8 +158,40 @@ export default function AdminUsers() {
         <DataTable columns={columns} rows={rows} rowKey={(r) => r.id} />
       </div>
 
+      <Modal open={adding} onClose={() => setAdding(false)} title="Add user">
+        <form className="space-y-4" onSubmit={submitAdd}>
+          <div><label className="label">Name</label>
+            <input className="input" required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
+          </div>
+          <div><label className="label">Email</label>
+            <input type="email" className="input" required value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} />
+          </div>
+          <div><label className="label">Password</label>
+            <input type="password" className="input" required minLength={6} value={form.password} onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))} />
+          </div>
+          <div><label className="label">Role</label>
+            <select className="input" value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}>
+              {ROLES.map((r) => <option key={r}>{r}</option>)}
+            </select>
+          </div>
+          {formError && <p className="rounded-xl bg-rose-50 p-3 text-xs font-semibold text-rose-600">{formError}</p>}
+          <div className="flex justify-end gap-2">
+            <button type="button" className="btn btn-ghost !px-5 !py-2.5 text-xs" onClick={() => setAdding(false)} disabled={busy}>Cancel</button>
+            <button type="submit" className="btn btn-primary !px-5 !py-2.5 text-xs" disabled={busy}>{busy ? 'Adding…' : 'Add user'}</button>
+          </div>
+        </form>
+      </Modal>
+
       <Modal open={!!editing} onClose={() => setEditing(null)} title={`Edit user — ${editing?.name ?? ''}`}>
         <div className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div><label className="label">Name</label>
+              <input className="input" defaultValue={editing?.name} />
+            </div>
+            <div><label className="label">Email</label>
+              <input className="input" defaultValue={editing?.email} />
+            </div>
+          </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div><label className="label">Role</label>
               <select className="input" defaultValue={editing?.role}>
@@ -121,13 +211,24 @@ export default function AdminUsers() {
               <option>Active</option><option>Inactive</option><option>Suspended</option>
             </select>
           </div>
-          <p className="rounded-xl bg-violet-50 p-3 text-xs text-violet-700">Demo note — changes are not persisted to a backend.</p>
           <div className="flex justify-end gap-2">
             <button className="btn btn-ghost !px-5 !py-2.5 text-xs" onClick={() => setEditing(null)}>Cancel</button>
-            <button className="btn btn-primary !px-5 !py-2.5 text-xs" onClick={() => setEditing(null)}>Save (demo)</button>
+            <button className="btn btn-primary !px-5 !py-2.5 text-xs" onClick={submitEdit}>Save</button>
           </div>
         </div>
       </Modal>
+
+      <Modal open={!!deleting} onClose={() => setDeleting(null)} title="Delete user" width="max-w-sm">
+        <p className="text-sm text-ink-600">
+          Remove <strong>{deleting?.name}</strong> from the platform? This cannot be undone.
+        </p>
+        <div className="mt-5 flex justify-end gap-2">
+          <button className="btn btn-ghost !px-5 !py-2.5 text-xs" onClick={() => setDeleting(null)}>Cancel</button>
+          <button className="btn btn-primary !px-5 !py-2.5 text-xs !bg-rose-600 hover:!bg-rose-700" onClick={runDelete}>Delete</button>
+        </div>
+      </Modal>
+
+      <Toast toast={toast} onClose={hideToast} />
     </>
   )
 }

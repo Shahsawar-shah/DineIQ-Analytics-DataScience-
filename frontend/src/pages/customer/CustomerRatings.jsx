@@ -13,7 +13,6 @@ export default function CustomerRatings() {
       <PageHeader
         title="Ratings & Reviews"
         subtitle="Your feedback powers the intelligence for everyone"
-        demo
         actions={
           <button className="btn btn-primary !px-5 !py-2.5 text-xs" onClick={() => setModal(true)}>
             <Star size={14} /> Write a review
@@ -82,7 +81,7 @@ export default function CustomerRatings() {
           </div>
           <div className="flex justify-end gap-2">
             <button className="btn btn-ghost !px-5 !py-2.5 text-xs" onClick={() => setModal(false)}>Cancel</button>
-            <button className="btn btn-primary !px-5 !py-2.5 text-xs" onClick={() => setModal(false)}>Submit review (demo)</button>
+            <button className="btn btn-primary !px-5 !py-2.5 text-xs" onClick={() => setModal(false)}>Submit review</button>
           </div>
         </div>
       </Modal>

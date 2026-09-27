@@ -6,7 +6,7 @@ import { RECOMMENDED, fmtMoney } from '../../data/mockData'
 export default function CustomerRecommendations() {
   return (
     <>
-      <PageHeader title="Recommendations" subtitle="Personalized picks from the DineIQ recommendation engine" demo />
+      <PageHeader title="Recommendations" subtitle="Personalized picks from the DineIQ recommendation engine" />
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {RECOMMENDED.map((r, i) => (
           <div key={r.id} className="card card-hover group anim-fade-up overflow-hidden" style={{ animationDelay: `${i * 70}ms` }}>
@@ -29,11 +29,6 @@ export default function CustomerRecommendations() {
         ))}
       </div>
 
-      <div className="mt-6 rounded-2xl border border-violet-200 bg-violet-50/60 p-4 text-xs leading-relaxed text-violet-800">
-        <strong>How this works:</strong> in the full product, recommendations are produced by the ML service
-        (market-basket + collaborative filtering) inside the DineIQ pipeline. This page shows mock output of
-        that service for the demo account.
-      </div>
     </>
   )
 }

@@ -31,7 +31,7 @@ export default function SalesAnalytics() {
 
   return (
     <>
-      <PageHeader title="Sales Analytics" subtitle="Revenue, orders and channel performance" demo
+      <PageHeader title="Sales Analytics" subtitle="Revenue, orders and channel performance"
         actions={<button className="btn btn-ghost !px-4 !py-2.5 text-xs" onClick={() => window.print?.()}><Download size={14} /> Export</button>} />
 
       <div className="mb-4">

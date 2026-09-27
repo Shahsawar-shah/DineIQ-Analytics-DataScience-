@@ -54,7 +54,7 @@ export default function InventoryItems() {
 
   return (
     <>
-      <PageHeader title="Inventory" subtitle="Master item list across all locations" demo
+      <PageHeader title="Inventory" subtitle="Master item list across all locations"
         actions={<button className="btn btn-primary !px-4 !py-2.5 text-xs"><Plus size={14} /> Add item</button>} />
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
@@ -87,7 +87,7 @@ export default function InventoryItems() {
         <p className="mt-4 rounded-xl bg-violet-50 p-3 text-xs text-violet-700">Demo note — changes are not persisted.</p>
         <div className="mt-4 flex justify-end gap-2">
           <button className="btn btn-ghost !px-5 !py-2.5 text-xs" onClick={() => setEditing(null)}>Cancel</button>
-          <button className="btn btn-primary !px-5 !py-2.5 text-xs" onClick={() => setEditing(null)}>Save (demo)</button>
+          <button className="btn btn-primary !px-5 !py-2.5 text-xs" onClick={() => setEditing(null)}>Save</button>
         </div>
       </Modal>
     </>

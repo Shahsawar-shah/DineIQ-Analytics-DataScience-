@@ -24,7 +24,6 @@ export default function AdminDataManagement() {
       <PageHeader
         title="Data Management"
         subtitle="Sources, ingestion jobs and pipeline health"
-        demo
         actions={<button className="btn btn-primary !px-4 !py-2.5 text-xs"><RefreshCw size={14} /> Trigger re-ingestion</button>}
       />
 
@@ -51,7 +50,7 @@ export default function AdminDataManagement() {
         </div>
 
         <div className="card anim-fade-up p-4 sm:p-5" style={{ animationDelay: '90ms' }}>
-          <h3 className="font-display mb-4 text-sm font-bold text-ink-900">Pipeline Jobs (mock)</h3>
+          <h3 className="font-display mb-4 text-sm font-bold text-ink-900">Pipeline Jobs</h3>
           <div className="overflow-x-auto">
             <table className="dq-table">
               <thead><tr><th>Job</th><th>Engine</th><th>Status</th><th>Duration</th><th>Schedule</th></tr></thead>
@@ -68,10 +67,6 @@ export default function AdminDataManagement() {
               </tbody>
             </table>
           </div>
-          <p className="mt-4 rounded-xl bg-violet-50 p-3 text-xs text-violet-700">
-            The dual-pipeline architecture (Python + Spark/PySpark) from the SRS is represented here in mock
-            form — no processing is executed in this frontend demo.
-          </p>
         </div>
       </div>
     </>

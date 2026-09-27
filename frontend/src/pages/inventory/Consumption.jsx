@@ -14,7 +14,7 @@ export default function Consumption() {
 
   return (
     <>
-      <PageHeader title="Consumption" subtitle="Usage velocity across the inventory" demo />
+      <PageHeader title="Consumption" subtitle="Usage velocity across the inventory" />
 
       <div className="grid gap-5 xl:grid-cols-2">
         <ChartCard title="Weekly Consumption vs Stock" subtitle="All locations, last 4 weeks">
@@ -51,9 +51,8 @@ export default function Consumption() {
       </div>
 
       <div className="card mt-5 p-2 sm:p-4">
-        <div className="flex items-center justify-between px-2 pb-3 pt-1">
+        <div className="px-2 pb-3 pt-1">
           <h3 className="font-display text-sm font-bold text-ink-900">Item-level Consumption (30 days)</h3>
-          <span className="badge badge-violet">Demo / Mock Data</span>
         </div>
         <div className="overflow-x-auto">
           <table className="dq-table">

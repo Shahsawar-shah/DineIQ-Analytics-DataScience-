@@ -5,6 +5,7 @@ import PageHeader from '../../components/layout/PageHeader'
 import ChartCard from '../../components/charts/ChartCard'
 import FilterBar from '../../components/ui/FilterBar'
 import { LOCATIONS, REVENUE_TREND, fmtMoney } from '../../data/mockData'
+import { downloadCSV, downloadExcel, downloadPDF } from '../../utils/helpers'
 
 const TYPES = ['Sales Summary', 'Menu Performance', 'Customer Insights', 'Inventory & Wastage', 'Forecast Accuracy']
 
@@ -13,6 +14,7 @@ export default function ReportsPage({ scope }) {
   const [filters, setFilters] = useState({ type: 'all', location: 'all' })
   const [busy, setBusy] = useState(false)
   const [done, setDone] = useState(null)
+  const [error, setError] = useState(null)
 
   const series = useMemo(() => {
     const f = filters.location === 'all' ? 1 : 0.62
@@ -22,27 +24,27 @@ export default function ReportsPage({ scope }) {
   const generate = (format) => {
     setBusy(true)
     setDone(null)
+    setError(null)
     setTimeout(() => {
-      setBusy(false)
-      if (format !== 'PDF') {
-        const rows = series.map((s) => `${s.month},${s.revenue}`).join('\n')
-        const blob = new Blob([`month,revenue\n${rows}`], { type: 'text/csv' })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `dineiq-${format === 'CSV' ? 'report' : 'report'}.csv`
-        a.click()
-        URL.revokeObjectURL(url)
+      try {
+        const rows = series.map((s) => ({ month: s.month, revenue: s.revenue }))
+        if (format === 'CSV') downloadCSV(rows, 'dineiq-report.csv')
+        else if (format === 'Excel') downloadExcel(rows, 'dineiq-report.xlsx')
+        else downloadPDF()
+        setBusy(false)
+        setDone(`${format} report generated${format === 'PDF' ? ' — print dialog opened' : ' — download started'}.`)
+      } catch (err) {
+        setBusy(false)
+        setError(err.message || 'Could not generate the report.')
       }
-      setDone(`${format} report generated (demo${format === 'PDF' ? ' — preview only' : ' — CSV downloaded'})`)
-    }, 700)
+    }, 500)
   }
 
   const total = series.reduce((s, r) => s + r.revenue, 0)
 
   return (
     <>
-      <PageHeader title="Reports" subtitle={`${scope} reporting with export`} demo />
+      <PageHeader title="Reports" subtitle={`${scope} reporting with export`} />
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <FilterBar
@@ -102,6 +104,7 @@ export default function ReportsPage({ scope }) {
         </button>
         {busy && <span className="text-xs font-semibold text-ink-400">Generating…</span>}
         {done && <span className="anim-pop text-xs font-bold text-emerald-600">{done}</span>}
+        {error && <span className="anim-pop text-xs font-bold text-rose-600">{error}</span>}
       </div>
     </>
   )

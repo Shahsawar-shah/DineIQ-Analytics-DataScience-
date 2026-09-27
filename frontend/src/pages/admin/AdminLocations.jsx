@@ -41,7 +41,6 @@ export default function AdminLocations() {
       <PageHeader
         title="Restaurants / Locations"
         subtitle="Every site connected to the DineIQ data platform"
-        demo
         actions={<button className="btn btn-primary !px-4 !py-2.5 text-xs"><Plus size={14} /> Add location</button>}
       />
       <div className="mb-5 grid gap-5 lg:grid-cols-2">

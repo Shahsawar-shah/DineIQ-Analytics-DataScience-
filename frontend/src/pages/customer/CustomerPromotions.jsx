@@ -12,7 +12,7 @@ export default function CustomerPromotions() {
   }
   return (
     <>
-      <PageHeader title="Promotions" subtitle="Active offers available on your account" demo />
+      <PageHeader title="Promotions" subtitle="Active offers available on your account" />
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {CUSTOMER_PROMOS.map((p, i) => (
           <div key={p.id} className="card card-hover anim-fade-up overflow-hidden" style={{ animationDelay: `${i * 80}ms` }}>

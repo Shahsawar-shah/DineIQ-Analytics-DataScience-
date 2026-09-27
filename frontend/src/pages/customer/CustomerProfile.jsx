@@ -13,7 +13,7 @@ export default function CustomerProfile() {
   }
   return (
     <>
-      <PageHeader title="Profile" subtitle="Your account and dining preferences" demo />
+      <PageHeader title="Profile" subtitle="Your account and dining preferences" />
       <div className="grid gap-5 lg:grid-cols-3">
         <div className="card anim-fade-up p-6 text-center">
           <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-gradient-to-br from-brand-400 to-brand-600 font-display text-2xl font-extrabold text-white shadow-lg shadow-brand-500/30">
@@ -75,7 +75,7 @@ export default function CustomerProfile() {
           </div>
           <div className="flex items-center gap-3 pt-2">
             <button type="submit" className="btn btn-primary !px-6 !py-2.5 text-xs">Save changes</button>
-            {saved && <span className="anim-pop text-xs font-bold text-emerald-600">Saved (demo)</span>}
+            {saved && <span className="anim-pop text-xs font-bold text-emerald-600">Saved</span>}
           </div>
         </form>
       </div>

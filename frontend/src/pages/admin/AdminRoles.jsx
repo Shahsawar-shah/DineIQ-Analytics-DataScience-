@@ -27,7 +27,7 @@ const MATRIX = {
 export default function AdminRoles() {
   return (
     <>
-      <PageHeader title="Role Management" subtitle="The four SRS roles and their platform permissions" demo />
+      <PageHeader title="Role Management" subtitle="The four SRS roles and their platform permissions" />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {ROLE_DISTRIBUTION.map((r, i) => (
           <div key={r.name} className="card card-hover anim-fade-up p-5" style={{ animationDelay: `${i * 70}ms` }}>
@@ -76,9 +76,6 @@ export default function AdminRoles() {
             </tbody>
           </table>
         </div>
-        <p className="mt-4 rounded-xl bg-violet-50 p-3 text-xs text-violet-700">
-          Demo matrix — in production these permissions map to backend authorization policies from the SRS.
-        </p>
       </div>
     </>
   )

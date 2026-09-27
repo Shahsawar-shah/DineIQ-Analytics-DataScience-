@@ -1,4 +1,4 @@
-import { Activity, Cpu, HardDrive, MemoryStick, Wifi } from 'lucide-react'
+import { Cpu, HardDrive, MemoryStick, Wifi } from 'lucide-react'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip as RTooltip, XAxis, YAxis } from 'recharts'
 import PageHeader from '../../components/layout/PageHeader'
 import ChartCard from '../../components/charts/ChartCard'
@@ -14,7 +14,7 @@ const LATENCY_SERIES = Array.from({ length: 24 }, (_, h) => ({
 export default function AdminSystemMonitoring() {
   return (
     <>
-      <PageHeader title="System Monitoring" subtitle="Service health, latency and resource utilization" demo />
+      <PageHeader title="System Monitoring" subtitle="Service health, latency and resource utilization" />
 
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {[
@@ -100,9 +100,6 @@ export default function AdminSystemMonitoring() {
             </tbody>
           </table>
         </div>
-        <p className="mt-4 flex items-center gap-2 text-xs text-ink-400">
-          <Activity size={13} className="text-emerald-500" /> Mock telemetry — in production these panels read from the platform observability stack.
-        </p>
       </div>
     </>
   )

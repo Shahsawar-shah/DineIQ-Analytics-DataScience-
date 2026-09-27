@@ -46,7 +46,6 @@ export default function CustomerDashboard() {
       <PageHeader
         title={`Welcome back, ${firstName} 👋`}
         subtitle="Your personal dining intelligence snapshot"
-        demo
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

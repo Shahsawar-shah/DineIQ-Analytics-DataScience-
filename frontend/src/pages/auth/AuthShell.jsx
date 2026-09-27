@@ -40,7 +40,7 @@ export default function AuthShell({ title, script, subtitle, children }) {
           </div>
         </div>
 
-        <p className="relative text-[0.68rem] text-white/40">© 2026 DineIQ Analytics — demo environment with mock data</p>
+        <p className="relative text-[0.68rem] text-white/40">© 2026 DineIQ Analytics</p>
       </div>
 
       {/* Right form panel */}

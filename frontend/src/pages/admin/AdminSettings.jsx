@@ -12,7 +12,7 @@ const SECTIONS = [
     ],
   },
   {
-    title: 'Analytics engine (mock)',
+    title: 'Analytics engine',
     fields: [
       { label: 'Primary pipeline', type: 'select', options: ['Python', 'Spark / PySpark', 'Dual (compare)'] },
       { label: 'Forecast horizon (days)', type: 'number', value: 14 },
@@ -26,7 +26,7 @@ export default function AdminSettings() {
   const [saved, setSaved] = useState(false)
   return (
     <>
-      <PageHeader title="Settings" subtitle="Platform-wide configuration" demo />
+      <PageHeader title="Settings" subtitle="Platform-wide configuration" />
       <div className="grid gap-5 lg:grid-cols-2">
         {SECTIONS.map((s, si) => (
           <div key={s.title} className="card anim-fade-up p-5" style={{ animationDelay: `${si * 90}ms` }}>
@@ -53,7 +53,7 @@ export default function AdminSettings() {
           Save settings
         </button>
         <button className="btn btn-ghost !px-6 !py-2.5 text-xs">Discard</button>
-        {saved && <span className="anim-pop text-xs font-bold text-emerald-600">Settings saved (demo)</span>}
+        {saved && <span className="anim-pop text-xs font-bold text-emerald-600">Settings saved</span>}
       </div>
     </>
   )

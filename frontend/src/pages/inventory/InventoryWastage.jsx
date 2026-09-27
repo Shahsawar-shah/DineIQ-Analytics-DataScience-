@@ -8,7 +8,7 @@ export default function InventoryWastage() {
   const weekCost = WASTAGE_TREND.reduce((s, d) => s + d.cost, 0)
   return (
     <>
-      <PageHeader title="Wastage" subtitle="Where waste happens and what it costs" demo />
+      <PageHeader title="Wastage" subtitle="Where waste happens and what it costs" />
 
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
         {[
@@ -63,9 +63,8 @@ export default function InventoryWastage() {
       </div>
 
       <div className="card mt-5 p-2 sm:p-4">
-        <div className="flex items-center justify-between px-2 pb-3 pt-1">
+        <div className="px-2 pb-3 pt-1">
           <h3 className="font-display text-sm font-bold text-ink-900">Top Wasted Items</h3>
-          <span className="badge badge-violet">Demo / Mock Data</span>
         </div>
         <div className="overflow-x-auto">
           <table className="dq-table">

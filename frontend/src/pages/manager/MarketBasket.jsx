@@ -49,7 +49,7 @@ export default function MarketBasket() {
 
   return (
     <>
-      <PageHeader title="Market Basket Analysis" subtitle="Association rules mined from order baskets (Apriori-style, mock)" demo />
+      <PageHeader title="Market Basket Analysis" subtitle="Association rules mined from order baskets (Apriori-style)" />
 
       <div className="mb-4">
         <FilterBar
@@ -89,7 +89,7 @@ export default function MarketBasket() {
             <div className="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-500"><ShoppingBasket size={18} /></div>
             <div>
               <p className="font-display text-lg font-extrabold text-ink-900">{ASSOCIATIONS.length}</p>
-              <p className="text-xs text-ink-400">Significant rules found (mock)</p>
+              <p className="text-xs text-ink-400">Significant rules found</p>
             </div>
           </div>
           {ASSOCIATIONS.slice(0, 3).map((a, i) => (
@@ -121,9 +121,8 @@ export default function MarketBasket() {
       </div>
 
       <div className="card mt-5 p-2 sm:p-4">
-        <div className="flex items-center justify-between px-2 pb-3 pt-1">
+        <div className="px-2 pb-3 pt-1">
           <h3 className="font-display text-sm font-bold text-ink-900">Association Rules Table</h3>
-          <span className="badge badge-violet">Demo / Mock Data</span>
         </div>
         <DataTable columns={columns} rows={rows} rowKey={(r) => `${r.a}-${r.b}`} />
       </div>
