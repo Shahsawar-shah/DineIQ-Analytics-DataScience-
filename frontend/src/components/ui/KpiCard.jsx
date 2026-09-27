@@ -6,9 +6,9 @@ export default function KpiCard({ label, value, delta, icon: Icon, accent = '#f9
   return (
     <div className="card card-hover anim-fade-up p-4 sm:p-5" style={{ animationDelay: `${delay}ms` }}>
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="truncate text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-ink-400">{label}</p>
-          <p className="font-display mt-1.5 text-xl font-extrabold text-ink-900 sm:text-2xl">{value}</p>
+          <p className="font-display mt-1.5 break-words text-lg font-extrabold text-ink-900 sm:text-xl xl:text-lg 2xl:text-2xl">{value}</p>
           {delta !== undefined && (
             <p className={`mt-1 flex items-center gap-1 text-xs font-semibold ${positive ? 'text-emerald-600' : 'text-rose-600'}`}>
               {positive ? <TrendingUp size={13} /> : <TrendingDown size={13} />}

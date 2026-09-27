@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from './routes/ProtectedRoute'
 import DashboardLayout from './components/layout/DashboardLayout'
 import Landing from './pages/Landing'
+import KpiDebug from './pages/_debug/KpiDebug'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 
@@ -69,6 +70,7 @@ export default function App() {
     <Routes>
       {/* Public */}
       <Route path="/" element={<Landing />} />
+      <Route path="/_debug/kpi" element={<KpiDebug />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
