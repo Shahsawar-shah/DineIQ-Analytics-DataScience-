@@ -1,36 +1,65 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Download, Pencil, Search, Trash2, UserPlus } from 'lucide-react'
 import PageHeader from '../../components/layout/PageHeader'
 import DataTable from '../../components/ui/DataTable'
-import StatusBadge from '../../components/ui/StatusBadge'
 import FilterBar from '../../components/ui/FilterBar'
 import Modal from '../../components/ui/Modal'
 import Toast, { useToast } from '../../components/ui/Toast'
+import LoadingState, { ErrorState } from '../../components/ui/LoadingState'
 import { api } from '../../services/api'
-import { USERS, LOCATIONS } from '../../data/mockData'
 import { downloadCSV } from '../../utils/helpers'
 
 const ROLES = ['Customer', 'Admin', 'Restaurant Manager', 'Inventory Manager']
 
+const ROLE_BADGE = {
+  Admin: 'badge-red',
+  'Restaurant Manager': 'badge-blue',
+  'Inventory Manager': 'badge-green',
+  Customer: 'badge-gray',
+}
+
 const emptyForm = { name: '', email: '', password: '', role: ROLES[0] }
 
 export default function AdminUsers() {
-  const [users, setUsers] = useState(USERS)
+  const [users, setUsers] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [filters, setFilters] = useState({ role: 'all', status: 'all', q: '' })
-  const [editing, setEditing] = useState(null)
-  const [deleting, setDeleting] = useState(null)
+
   const [adding, setAdding] = useState(false)
   const [form, setForm] = useState(emptyForm)
-  const [busy, setBusy] = useState(false)
-  const [formError, setFormError] = useState(null)
+  const [addBusy, setAddBusy] = useState(false)
+  const [addError, setAddError] = useState(null)
+
+  const [editing, setEditing] = useState(null)
+  const [editForm, setEditForm] = useState({ name: '', role: '', is_active: true })
+  const [editBusy, setEditBusy] = useState(false)
+  const [editError, setEditError] = useState(null)
+
+  const [deleting, setDeleting] = useState(null)
+  const [deleteBusy, setDeleteBusy] = useState(false)
+
   const { toast, showToast, hideToast } = useToast()
+
+  const loadUsers = () => {
+    setLoading(true)
+    setError(null)
+    return api.auth.users()
+      .then((data) => setUsers(data))
+      .catch((err) => setError(err.message || 'Could not load users.'))
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadUsers()
+  }, [])
 
   const rows = useMemo(
     () =>
       users.filter(
         (u) =>
           (filters.role === 'all' || u.role === filters.role) &&
-          (filters.status === 'all' || u.status === filters.status) &&
+          (filters.status === 'all' || (filters.status === 'Active' ? u.is_active : !u.is_active)) &&
           (filters.q === '' || `${u.name} ${u.email}`.toLowerCase().includes(filters.q.toLowerCase())),
       ),
     [users, filters],
@@ -38,78 +67,93 @@ export default function AdminUsers() {
 
   const openAdd = () => {
     setForm(emptyForm)
-    setFormError(null)
+    setAddError(null)
     setAdding(true)
   }
 
   const submitAdd = async (e) => {
     e.preventDefault()
-    setBusy(true)
-    setFormError(null)
+    setAddBusy(true)
+    setAddError(null)
     try {
       const res = await api.auth.register(form.name, form.email, form.password, form.role)
-      if (res?.error || res?.detail) throw new Error(res.error || res.detail)
-      setUsers((prev) => [
-        {
-          id: res?.id ?? `U${prev.length + 1}`.padStart(4, '0'),
-          name: form.name,
-          email: form.email,
-          role: form.role,
-          location: 'All Locations',
-          status: 'Active',
-          lastLogin: '—',
-        },
-        ...prev,
-      ])
+      if (res?.detail) throw new Error(res.detail)
       setAdding(false)
       showToast(`${form.name} was added successfully.`, 'success')
+      await loadUsers()
     } catch (err) {
-      setFormError(err.message || 'Could not create user — please try again.')
+      setAddError(err.message || 'Could not create user — please try again.')
       showToast('Failed to add user.', 'error')
     } finally {
-      setBusy(false)
+      setAddBusy(false)
     }
   }
 
-  const submitEdit = () => {
-    showToast('Editing users is coming soon — no update endpoint yet.', 'error')
-    setEditing(null)
+  const openEdit = (user) => {
+    setEditing(user)
+    setEditForm({ name: user.name, role: user.role, is_active: user.is_active })
+    setEditError(null)
   }
 
-  const runDelete = () => {
-    setUsers((prev) => prev.filter((u) => u.id !== deleting.id))
-    showToast(`${deleting.name} was removed.`, 'success')
-    setDeleting(null)
+  const submitEdit = async (e) => {
+    e.preventDefault()
+    setEditBusy(true)
+    setEditError(null)
+    try {
+      await api.auth.updateUser(editing.id, editForm)
+      setEditing(null)
+      showToast(`${editForm.name} was updated.`, 'success')
+      await loadUsers()
+    } catch (err) {
+      setEditError(err.message || 'Could not update user — please try again.')
+      showToast('Failed to update user.', 'error')
+    } finally {
+      setEditBusy(false)
+    }
+  }
+
+  const runDelete = async () => {
+    setDeleteBusy(true)
+    try {
+      await api.auth.deleteUser(deleting.id)
+      setDeleting(null)
+      showToast(`${deleting.name} was deactivated.`, 'success')
+      await loadUsers()
+    } catch (err) {
+      showToast(err.message || 'Failed to deactivate user.', 'error')
+    } finally {
+      setDeleteBusy(false)
+    }
   }
 
   const columns = [
     { key: 'id', header: 'ID', render: (r) => <span className="text-ink-400">{r.id}</span> },
     {
       key: 'name',
-      header: 'User',
+      header: 'Name',
       render: (r) => (
         <div className="flex items-center gap-2.5">
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-ink-600 to-ink-800 text-[0.65rem] font-bold text-white">
             {r.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
           </span>
-          <div>
-            <p className="font-semibold text-ink-900">{r.name}</p>
-            <p className="text-[0.68rem] text-ink-400">{r.email}</p>
-          </div>
+          <p className="font-semibold text-ink-900">{r.name}</p>
         </div>
       ),
     },
-    { key: 'role', header: 'Role', render: (r) => <span className="badge badge-orange">{r.role}</span> },
-    { key: 'location', header: 'Location', render: (r) => r.location },
-    { key: 'status', header: 'Status', render: (r) => <StatusBadge status={r.status} /> },
-    { key: 'lastLogin', header: 'Last Login', render: (r) => <span className="text-ink-400">{r.lastLogin}</span> },
+    { key: 'email', header: 'Email', render: (r) => <span className="text-ink-500">{r.email}</span> },
+    { key: 'role', header: 'Role', render: (r) => <span className={`badge ${ROLE_BADGE[r.role] ?? 'badge-gray'}`}>{r.role}</span> },
+    {
+      key: 'status',
+      header: 'Status',
+      render: (r) => <span className={`badge ${r.is_active ? 'badge-green' : 'badge-red'}`}>{r.is_active ? 'Active' : 'Inactive'}</span>,
+    },
     {
       key: 'actions',
       header: '',
       align: 'right',
       render: (r) => (
         <div className="flex justify-end gap-1.5">
-          <button className="btn btn-ghost !rounded-lg !px-3 !py-1.5 text-xs" onClick={() => setEditing(r)}>
+          <button className="btn btn-ghost !rounded-lg !px-3 !py-1.5 text-xs" onClick={() => openEdit(r)}>
             <Pencil size={13} /> Edit
           </button>
           <button className="btn btn-ghost !rounded-lg !px-3 !py-1.5 text-xs !text-rose-600" onClick={() => setDeleting(r)}>
@@ -122,7 +166,7 @@ export default function AdminUsers() {
 
   const exportCsv = () => {
     downloadCSV(
-      rows.map((r) => ({ id: r.id, name: r.name, email: r.email, role: r.role, location: r.location, status: r.status, lastLogin: r.lastLogin })),
+      rows.map((r) => ({ id: r.id, name: r.name, email: r.email, role: r.role, status: r.is_active ? 'Active' : 'Inactive' })),
       'dineiq-users.csv',
     )
   }
@@ -143,7 +187,7 @@ export default function AdminUsers() {
         <FilterBar
           filters={[
             { key: 'role', label: 'Role', options: ROLES.map((r) => ({ label: r, value: r })) },
-            { key: 'status', label: 'Status', options: ['Active', 'Inactive', 'Suspended'].map((s) => ({ label: s, value: s })) },
+            { key: 'status', label: 'Status', options: ['Active', 'Inactive'].map((s) => ({ label: s, value: s })) },
           ]}
           values={filters}
           onChange={(k, v) => setFilters((f) => ({ ...f, [k]: v }))}
@@ -154,9 +198,16 @@ export default function AdminUsers() {
           <input className="input !w-56 !rounded-xl !py-2 !pl-9 text-xs" placeholder="Search users…" value={filters.q} onChange={(e) => setFilters((f) => ({ ...f, q: e.target.value }))} />
         </div>
       </div>
-      <div className="card p-2 sm:p-4">
-        <DataTable columns={columns} rows={rows} rowKey={(r) => r.id} />
-      </div>
+
+      {loading ? (
+        <LoadingState />
+      ) : error ? (
+        <ErrorState message={error} />
+      ) : (
+        <div className="card p-2 sm:p-4">
+          <DataTable columns={columns} rows={rows} rowKey={(r) => r.id} />
+        </div>
+      )}
 
       <Modal open={adding} onClose={() => setAdding(false)} title="Add user">
         <form className="space-y-4" onSubmit={submitAdd}>
@@ -174,57 +225,45 @@ export default function AdminUsers() {
               {ROLES.map((r) => <option key={r}>{r}</option>)}
             </select>
           </div>
-          {formError && <p className="rounded-xl bg-rose-50 p-3 text-xs font-semibold text-rose-600">{formError}</p>}
+          {addError && <p className="rounded-xl bg-rose-50 p-3 text-xs font-semibold text-rose-600">{addError}</p>}
           <div className="flex justify-end gap-2">
-            <button type="button" className="btn btn-ghost !px-5 !py-2.5 text-xs" onClick={() => setAdding(false)} disabled={busy}>Cancel</button>
-            <button type="submit" className="btn btn-primary !px-5 !py-2.5 text-xs" disabled={busy}>{busy ? 'Adding…' : 'Add user'}</button>
+            <button type="button" className="btn btn-ghost !px-5 !py-2.5 text-xs" onClick={() => setAdding(false)} disabled={addBusy}>Cancel</button>
+            <button type="submit" className="btn btn-primary !px-5 !py-2.5 text-xs" disabled={addBusy}>{addBusy ? 'Adding…' : 'Add user'}</button>
           </div>
         </form>
       </Modal>
 
       <Modal open={!!editing} onClose={() => setEditing(null)} title={`Edit user — ${editing?.name ?? ''}`}>
-        <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div><label className="label">Name</label>
-              <input className="input" defaultValue={editing?.name} />
-            </div>
-            <div><label className="label">Email</label>
-              <input className="input" defaultValue={editing?.email} />
-            </div>
+        <form className="space-y-4" onSubmit={submitEdit}>
+          <div><label className="label">Name</label>
+            <input className="input" required value={editForm.name} onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))} />
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div><label className="label">Role</label>
-              <select className="input" defaultValue={editing?.role}>
-                {ROLES.map((r) => <option key={r}>{r}</option>)}
-              </select>
-            </div>
-            <div><label className="label">Location</label>
-              <select className="input" defaultValue={editing?.location}>
-                <option>All Locations</option>
-                {LOCATIONS.map((l) => <option key={l.id}>{l.name}</option>)}
-                <option>—</option>
-              </select>
-            </div>
-          </div>
-          <div><label className="label">Status</label>
-            <select className="input" defaultValue={editing?.status}>
-              <option>Active</option><option>Inactive</option><option>Suspended</option>
+          <div><label className="label">Role</label>
+            <select className="input" value={editForm.role} onChange={(e) => setEditForm((f) => ({ ...f, role: e.target.value }))}>
+              {ROLES.map((r) => <option key={r}>{r}</option>)}
             </select>
           </div>
+          <label className="flex items-center gap-2 text-sm text-ink-700">
+            <input type="checkbox" checked={editForm.is_active} onChange={(e) => setEditForm((f) => ({ ...f, is_active: e.target.checked }))} />
+            Active
+          </label>
+          {editError && <p className="rounded-xl bg-rose-50 p-3 text-xs font-semibold text-rose-600">{editError}</p>}
           <div className="flex justify-end gap-2">
-            <button className="btn btn-ghost !px-5 !py-2.5 text-xs" onClick={() => setEditing(null)}>Cancel</button>
-            <button className="btn btn-primary !px-5 !py-2.5 text-xs" onClick={submitEdit}>Save</button>
+            <button type="button" className="btn btn-ghost !px-5 !py-2.5 text-xs" onClick={() => setEditing(null)} disabled={editBusy}>Cancel</button>
+            <button type="submit" className="btn btn-primary !px-5 !py-2.5 text-xs" disabled={editBusy}>{editBusy ? 'Saving…' : 'Save'}</button>
           </div>
-        </div>
+        </form>
       </Modal>
 
-      <Modal open={!!deleting} onClose={() => setDeleting(null)} title="Delete user" width="max-w-sm">
+      <Modal open={!!deleting} onClose={() => setDeleting(null)} title="Deactivate this user?" width="max-w-sm">
         <p className="text-sm text-ink-600">
-          Remove <strong>{deleting?.name}</strong> from the platform? This cannot be undone.
+          <strong>{deleting?.name}</strong> will be marked inactive and lose access. This can be reversed later by an admin.
         </p>
         <div className="mt-5 flex justify-end gap-2">
-          <button className="btn btn-ghost !px-5 !py-2.5 text-xs" onClick={() => setDeleting(null)}>Cancel</button>
-          <button className="btn btn-primary !px-5 !py-2.5 text-xs !bg-rose-600 hover:!bg-rose-700" onClick={runDelete}>Delete</button>
+          <button className="btn btn-ghost !px-5 !py-2.5 text-xs" onClick={() => setDeleting(null)} disabled={deleteBusy}>Cancel</button>
+          <button className="btn btn-primary !px-5 !py-2.5 text-xs !bg-rose-600 hover:!bg-rose-700" onClick={runDelete} disabled={deleteBusy}>
+            {deleteBusy ? 'Deactivating…' : 'Deactivate'}
+          </button>
         </div>
       </Modal>
 

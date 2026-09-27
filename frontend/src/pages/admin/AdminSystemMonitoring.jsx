@@ -1,8 +1,10 @@
-import { Cpu, HardDrive, MemoryStick, Wifi } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { CheckCircle2 } from 'lucide-react'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip as RTooltip, XAxis, YAxis } from 'recharts'
 import PageHeader from '../../components/layout/PageHeader'
 import ChartCard from '../../components/charts/ChartCard'
 import StatusBadge from '../../components/ui/StatusBadge'
+import { api } from '../../services/api'
 import { SYSTEM_SERVICES } from '../../data/mockData'
 
 const LATENCY_SERIES = Array.from({ length: 24 }, (_, h) => ({
@@ -11,27 +13,85 @@ const LATENCY_SERIES = Array.from({ length: 24 }, (_, h) => ({
   spark: 1500 + Math.round(420 * Math.sin(h / 4) + 180 * Math.cos(h / 2.6)) + (h === 14 ? 900 : 0),
 }))
 
+function StatusCard({ title, status, rows, delay }) {
+  return (
+    <div className="card card-hover anim-fade-up p-4" style={{ animationDelay: `${delay}ms` }}>
+      <div className="flex items-center justify-between">
+        <p className="text-[0.68rem] font-bold uppercase tracking-[0.12em] text-ink-400">{title}</p>
+        <span className="badge badge-green flex items-center gap-1"><CheckCircle2 size={12} /> {status}</span>
+      </div>
+      <div className="mt-3 space-y-1">
+        {rows.map(([label, value]) => (
+          <div key={label} className="flex items-center justify-between text-xs">
+            <span className="text-ink-400">{label}</span>
+            <span className="font-semibold text-ink-900">{value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function AdminSystemMonitoring() {
+  const [userCount, setUserCount] = useState(null)
+
+  useEffect(() => {
+    api.auth.users().then((data) => setUserCount(data.length)).catch(() => setUserCount(null))
+  }, [])
+
+  const cards = [
+    {
+      title: 'Server Status', status: 'Online', rows: [
+        ['VPS IP', '187.127.98.233'],
+        ['OS', 'Ubuntu 24.04 LTS'],
+        ['Uptime', '95 days 22 hours'],
+      ],
+    },
+    {
+      title: 'API Status', status: 'Running', rows: [
+        ['Port', '8000'],
+        ['Framework', 'FastAPI'],
+        ['Response time', '45ms'],
+      ],
+    },
+    {
+      title: 'Database Status', status: 'Connected', rows: [
+        ['Type', 'PostgreSQL 16'],
+        ['Host', 'localhost:5432'],
+        ['Database', 'dineiq_analytics'],
+        ['Total Users', userCount ?? '—'],
+      ],
+    },
+    {
+      title: 'Spark Status', status: 'Installed', rows: [
+        ['Version', '4.2.0'],
+        ['Java', 'OpenJDK 17'],
+        ['Last Run', 'Today'],
+      ],
+    },
+    {
+      title: 'Nginx Status', status: 'Running', rows: [
+        ['Port', '80'],
+        ['Serving', 'React Build'],
+      ],
+    },
+    {
+      title: 'ML Models Status', status: 'Ready', rows: [
+        ['Python Models', '3 trained'],
+        ['Spark Models', '3 trained'],
+        ['Best Python', 'XGBoost F1:1.00'],
+        ['Best Spark', 'LogReg F1:0.82'],
+      ],
+    },
+  ]
+
   return (
     <>
       <PageHeader title="System Monitoring" subtitle="Service health, latency and resource utilization" />
 
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-        {[
-          { icon: Cpu, label: 'Cluster CPU', value: '64%', tone: 'amber' },
-          { icon: MemoryStick, label: 'Memory', value: '71%', tone: 'amber' },
-          { icon: HardDrive, label: 'Storage', value: '52%', tone: 'green' },
-          { icon: Wifi, label: 'Network I/O', value: '38%', tone: 'green' },
-        ].map((r, i) => (
-          <div key={r.label} className="card card-hover anim-fade-up p-4" style={{ animationDelay: `${i * 60}ms` }}>
-            <div className="flex items-center justify-between">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-500"><r.icon size={17} /></div>
-              <span className={`badge badge-${r.tone}`}>{r.tone === 'green' ? 'Normal' : 'Elevated'}</span>
-            </div>
-            <p className="font-display mt-3 text-2xl font-extrabold text-ink-900">{r.value}</p>
-            <p className="text-[0.68rem] font-bold uppercase tracking-[0.12em] text-ink-400">{r.label}</p>
-            <div className="meter mt-2"><span style={{ width: r.value, background: r.tone === 'green' ? 'linear-gradient(90deg,#34d399,#0d9459)' : 'linear-gradient(90deg,#fbbf24,#d97706)' }} /></div>
-          </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {cards.map((c, i) => (
+          <StatusCard key={c.title} title={c.title} status={c.status} rows={c.rows} delay={i * 60} />
         ))}
       </div>
 

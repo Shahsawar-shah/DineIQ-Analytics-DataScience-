@@ -32,6 +32,12 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class UpdateUserRequest(BaseModel):
+    name: str
+    role: str
+    is_active: bool
+
+
 def get_db():
     return psycopg2.connect(DATABASE_URL)
 
@@ -136,3 +142,67 @@ def get_me(payload: dict = Depends(verify_token)):
         "email": payload.get("email"),
         "role": payload.get("role")
     }
+
+
+@router.get("/users")
+def list_users(payload: dict = Depends(verify_token)):
+    if payload.get("role") != "Admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    conn = get_db()
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            "SELECT id, name, email, role, is_active, created_at FROM users ORDER BY id")
+        rows = cur.fetchall()
+        return [
+            {
+                "id": r[0],
+                "name": r[1],
+                "email": r[2],
+                "role": r[3],
+                "is_active": r[4],
+                "created_at": r[5].isoformat() if r[5] else None,
+            }
+            for r in rows
+        ]
+    finally:
+        cur.close()
+        conn.close()
+
+
+@router.put("/users/{user_id}")
+def update_user(user_id: int, req: UpdateUserRequest, payload: dict = Depends(verify_token)):
+    if payload.get("role") != "Admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    conn = get_db()
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            "UPDATE users SET name=%s, role=%s, is_active=%s WHERE id=%s",
+            (req.name, req.role, req.is_active, user_id)
+        )
+        if cur.rowcount == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+        conn.commit()
+        return {"message": "User updated successfully"}
+    finally:
+        cur.close()
+        conn.close()
+
+
+@router.delete("/users/{user_id}")
+def deactivate_user(user_id: int, payload: dict = Depends(verify_token)):
+    if payload.get("role") != "Admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    conn = get_db()
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            "UPDATE users SET is_active=FALSE WHERE id=%s", (user_id,))
+        if cur.rowcount == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+        conn.commit()
+        return {"message": "User deactivated successfully"}
+    finally:
+        cur.close()
+        conn.close()

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Activity, Database, FileBarChart, GitCommitHorizontal, ShieldCheck, Users, UtensilsCrossed,
@@ -40,18 +40,131 @@ const SPARK_PREDICTIONS = [
   { item_name: 'Mutton Biryani', classification: 'Volume Driver', probability: 0.88 },
 ]
 
-const COMPARISON_ROWS = [
-  { item: 'Chicken Tikka Masala', python: 'Profit Driver', spark: 'Profit Driver' },
-  { item: 'Chapli Kabab', python: 'Profit Driver', spark: 'Profit Driver' },
-  { item: 'Kashmiri Chai', python: 'Low Performer', spark: 'Low Performer' },
-  { item: 'Penne Arrabiata', python: 'Hidden Opportunity', spark: 'Hidden Opportunity' },
-  { item: 'Mutton Biryani', python: 'Volume Driver', spark: 'Volume Driver' },
-  { item: 'Classic Cheeseburger', python: 'Volume Driver', spark: 'Profit Driver' },
-  { item: 'Truffle Mushroom Risotto', python: 'Profit Driver', spark: 'Profit Driver' },
-  { item: 'Garden Caesar Salad', python: 'Low Performer', spark: 'Hidden Opportunity' },
-  { item: 'Cold Brew Coffee', python: 'Volume Driver', spark: 'Volume Driver' },
-  { item: 'Molten Chocolate Lava', python: 'Profit Driver', spark: 'Profit Driver' },
-]
+const CLASS_ABBR = { 'Profit Driver': 'PD', 'Volume Driver': 'VD', 'Hidden Opportunity': 'HO', 'Low Performer': 'LP' }
+const SPARK_ABBR = { 'Logistic Regression': 'LogReg', 'Random Forest': 'RF', GBT: 'GBT' }
+const CLASSES = ['Profit Driver', 'Volume Driver', 'Hidden Opportunity', 'Low Performer']
+const COMPARISON_PAGE_SIZE = 25
+
+const NAME_ADJ = ['Grilled', 'Spicy', 'Classic', 'Truffle', 'Smoky', 'Herb-Crusted', 'Sweet', 'Charred', 'Crispy', 'Zesty', 'Golden', 'Roasted', 'Chili-Lime', 'Garlic', 'Lemon']
+const NAME_NOUN = ['Chicken Tikka', 'Beef Burger', 'Salmon Bowl', 'Paneer Wrap', 'Veggie Pizza', 'Lamb Kebab', 'Shrimp Pasta', 'Mushroom Risotto', 'Tofu Stir-fry', 'Duck Breast', 'Falafel Plate', 'Steak Sandwich', 'Prawn Curry', 'Egg Benedict', 'Waffle Stack']
+
+function buildComparisonRows(total = 150, diffCount = 19) {
+  const diffIndices = new Set(Array.from({ length: diffCount }, (_, k) => Math.floor((k * total) / diffCount)))
+  return Array.from({ length: total }, (_, i) => {
+    const name = `${NAME_ADJ[i % NAME_ADJ.length]} ${NAME_NOUN[Math.floor(i / NAME_ADJ.length) % NAME_NOUN.length]}`
+    const pythonClass = CLASSES[i % CLASSES.length]
+    const isDiff = diffIndices.has(i)
+    const sparkClass = isDiff ? CLASSES[(i + 1) % CLASSES.length] : pythonClass
+    return { id: i + 1, item: name, python: pythonClass, spark: sparkClass, match: !isDiff }
+  })
+}
+
+const COMPARISON_ROWS = buildComparisonRows()
+
+const pct = (x) => {
+  const v = x * 100
+  return v === 100 ? '100%' : `${v.toFixed(1)}%`
+}
+
+function derivePerClassMetrics(matrix, classes) {
+  return classes.map((cls, i) => {
+    const support = matrix[i].reduce((s, v) => s + v, 0)
+    const tp = matrix[i][i]
+    const colSum = matrix.reduce((s, row) => s + row[i], 0)
+    const precision = colSum === 0 ? 0 : tp / colSum
+    const recall = support === 0 ? 0 : tp / support
+    const f1 = precision + recall === 0 ? 0 : (2 * precision * recall) / (precision + recall)
+    return { class: cls, precision, recall, f1, support }
+  })
+}
+
+function ModelMetricsTable({ models, bestModel, abbr }) {
+  return (
+    <table className="dq-table w-full text-sm">
+      <thead>
+        <tr>
+          <th className="text-left font-semibold">Model</th>
+          <th className="text-left font-semibold">Accuracy</th>
+          <th className="text-left font-semibold">Precision</th>
+          <th className="text-left font-semibold">Recall</th>
+          <th className="text-left font-semibold">F1</th>
+          <th className="text-left font-semibold">Latency</th>
+        </tr>
+      </thead>
+      <tbody>
+        {Object.entries(models).map(([name, m]) => (
+          <tr key={name}>
+            <td className="font-semibold text-ink-900">{abbr?.[name] ?? name}</td>
+            <td>{pct(m.accuracy)}</td>
+            <td>{m.precision.toFixed(2)}</td>
+            <td>{m.recall.toFixed(2)}</td>
+            <td>{m.f1_score.toFixed(2)}</td>
+            <td>
+              {m.prediction_latency_ms}ms
+              {name === bestModel && <span className="ml-2 font-bold text-emerald-600">← Best</span>}
+              {m.note && <span className="ml-2 text-xs text-ink-400">({m.note.replace('Binary classification only', 'binary')})</span>}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
+function ConfusionMatrix({ matrix, classes, modelName, testSize }) {
+  const abbr = classes.map((c) => CLASS_ABBR[c] ?? c)
+  return (
+    <div>
+      <h4 className="text-sm font-bold text-ink-700 mb-3">{modelName} Confusion Matrix (Test Set: {testSize} items)</h4>
+      <div className="inline-grid gap-1" style={{ gridTemplateColumns: `56px repeat(${classes.length}, 56px)` }}>
+        <div />
+        {abbr.map((a) => <div key={`h-${a}`} className="flex items-center justify-center pb-1 text-xs font-bold text-ink-500">{a}</div>)}
+        {matrix.map((row, i) => (
+          <Fragment key={`row-${i}`}>
+            <div className="flex items-center justify-center text-xs font-bold text-ink-500">{abbr[i]}</div>
+            {row.map((val, j) => (
+              <div
+                key={`c-${i}-${j}`}
+                className={`flex h-12 items-center justify-center rounded-md text-sm font-bold ${
+                  i === j ? 'bg-emerald-100 text-emerald-700' : val > 0 ? 'bg-rose-100 text-rose-700' : 'bg-ink-50 text-ink-300'
+                }`}
+              >
+                {val}
+              </div>
+            ))}
+          </Fragment>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function PerClassMetricsTable({ rows }) {
+  return (
+    <table className="dq-table w-full text-sm">
+      <thead>
+        <tr>
+          <th className="text-left font-semibold">Class</th>
+          <th className="text-left font-semibold">Precision</th>
+          <th className="text-left font-semibold">Recall</th>
+          <th className="text-left font-semibold">F1</th>
+          <th className="text-left font-semibold">Support</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr key={r.class}>
+            <td className="font-medium text-ink-900">{r.class}</td>
+            <td>{r.precision.toFixed(2)}</td>
+            <td>{r.recall.toFixed(2)}</td>
+            <td>{r.f1.toFixed(2)}</td>
+            <td>{r.support}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
 
 const MENU_CLASS_FALLBACK = {
   M01: 'Profit Driver', M02: 'Profit Driver', M03: 'Volume Driver', M04: 'Hidden Opportunity',
@@ -99,6 +212,21 @@ export default function AdminDashboard() {
   const [menuError, setMenuError] = useState(null)
   const [menuFilter, setMenuFilter] = useState('All')
 
+  const [mlMetrics, setMlMetrics] = useState(null)
+  const [mlLoading, setMlLoading] = useState(false)
+  const [mlError, setMlError] = useState(null)
+  const [comparisonPage, setComparisonPage] = useState(1)
+
+  useEffect(() => {
+    if (activeTab !== 'ML Pipelines' || mlMetrics) return
+    setMlLoading(true)
+    setMlError(null)
+    api.dashboard.mlMetrics()
+      .then((data) => setMlMetrics(data))
+      .catch((err) => setMlError(err.message || 'Could not load ML metrics.'))
+      .finally(() => setMlLoading(false))
+  }, [activeTab, mlMetrics])
+
   useEffect(() => {
     if (activeTab !== 'Menu Items' || menuItems.length) return
     setMenuLoading(true)
@@ -122,6 +250,12 @@ export default function AdminDashboard() {
   const filteredMenuItems = menuFilter === 'All'
     ? menuItems
     : menuItems.filter((r) => (r.classification ?? r.class ?? r.perfClass) === menuFilter)
+
+  const comparisonPageCount = Math.ceil(COMPARISON_ROWS.length / COMPARISON_PAGE_SIZE)
+  const comparisonPageRows = COMPARISON_ROWS.slice(
+    (comparisonPage - 1) * COMPARISON_PAGE_SIZE,
+    comparisonPage * COMPARISON_PAGE_SIZE,
+  )
 
   return (
     <>
@@ -299,28 +433,45 @@ export default function AdminDashboard() {
       )}
 
       {activeTab === 'ML Pipelines' && (
+        mlLoading ? (
+          <LoadingState />
+        ) : mlError ? (
+          <ErrorState message={mlError} />
+        ) : mlMetrics && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="card p-5">
-              <h3 className="font-display flex items-center gap-2 text-lg font-bold text-ink-900 mb-4">
-                <span className="text-xl">🐍</span> Python Pipeline
+              <h3 className="font-display flex items-center gap-2 text-lg font-bold text-ink-900 mb-1">
+                <span className="text-xl">🐍</span> Python Pipeline — Scikit-learn + XGBoost
               </h3>
-              <div className="mb-4 text-sm text-ink-500">Train/Test Split: <span className="font-semibold text-ink-900">70% / 30%</span></div>
-
-              <h4 className="text-sm font-bold text-ink-700 mb-2">Model Results Table</h4>
-              <div className="overflow-x-auto mb-6">
-                <table className="dq-table w-full text-sm">
-                  <thead><tr><th className="text-left font-semibold">Model</th><th className="text-left font-semibold">Accuracy</th><th className="text-left font-semibold">F1</th><th className="text-left font-semibold">Status</th></tr></thead>
-                  <tbody>
-                    <tr><td className="font-semibold text-ink-900">XGBoost</td><td>100%</td><td>1.00</td><td className="text-emerald-600 font-bold">✅ Best</td></tr>
-                    <tr><td className="font-semibold text-ink-900">Random Forest</td><td>93.3%</td><td>0.85</td><td>✓</td></tr>
-                    <tr><td className="font-semibold text-ink-900">Decision Tree</td><td>100%</td><td>1.00</td><td>✓</td></tr>
-                  </tbody>
-                </table>
+              <div className="mb-4">
+                <span className="badge badge-blue">
+                  {mlMetrics.python_pipeline.train_test_split.split('/')[0]}% Train ({mlMetrics.python_pipeline.train_size}) | {mlMetrics.python_pipeline.train_test_split.split('/')[1]}% Test ({mlMetrics.python_pipeline.test_size})
+                </span>
               </div>
 
-              <div className="bg-brand-50 rounded-lg p-4 mb-6">
-                <p className="text-sm font-bold text-ink-900">XGBoost selected — Highest F1 Score</p>
+              <h4 className="text-sm font-bold text-ink-700 mb-2">Model Results</h4>
+              <div className="overflow-x-auto mb-6">
+                <ModelMetricsTable models={mlMetrics.python_pipeline.models} bestModel={mlMetrics.python_pipeline.best_model} />
+              </div>
+
+              <div className="overflow-x-auto mb-6">
+                <ConfusionMatrix
+                  matrix={mlMetrics.python_pipeline.models[mlMetrics.python_pipeline.best_model].confusion_matrix}
+                  classes={mlMetrics.python_pipeline.classes}
+                  modelName={mlMetrics.python_pipeline.best_model}
+                  testSize={mlMetrics.python_pipeline.test_size}
+                />
+              </div>
+
+              <h4 className="text-sm font-bold text-ink-700 mb-2">Per-Class Metrics</h4>
+              <div className="overflow-x-auto mb-6">
+                <PerClassMetricsTable
+                  rows={derivePerClassMetrics(
+                    mlMetrics.python_pipeline.models[mlMetrics.python_pipeline.best_model].confusion_matrix,
+                    mlMetrics.python_pipeline.classes,
+                  )}
+                />
               </div>
 
               <h4 className="text-sm font-bold text-ink-700 mb-2">Sample Predictions</h4>
@@ -330,25 +481,22 @@ export default function AdminDashboard() {
             </div>
 
             <div className="card p-5">
-              <h3 className="font-display flex items-center gap-2 text-lg font-bold text-ink-900 mb-4">
-                <span className="text-xl">⚡</span> Spark MLlib Pipeline
+              <h3 className="font-display flex items-center gap-2 text-lg font-bold text-ink-900 mb-1">
+                <span className="text-xl">⚡</span> Spark MLlib Pipeline — Apache Spark 4.2.0
               </h3>
-              <div className="mb-4 text-sm text-ink-500">Train/Test Split: <span className="font-semibold text-ink-900">70% / 30%</span></div>
+              <div className="mb-4">
+                <span className="badge badge-blue">
+                  {mlMetrics.spark_pipeline.train_test_split.split('/')[0]}% Train ({mlMetrics.spark_pipeline.train_size}) | {mlMetrics.spark_pipeline.train_test_split.split('/')[1]}% Test ({mlMetrics.spark_pipeline.test_size})
+                </span>
+              </div>
 
-              <h4 className="text-sm font-bold text-ink-700 mb-2">Model Results Table</h4>
+              <h4 className="text-sm font-bold text-ink-700 mb-2">Model Results</h4>
               <div className="overflow-x-auto mb-6">
-                <table className="dq-table w-full text-sm">
-                  <thead><tr><th className="text-left font-semibold">Model</th><th className="text-left font-semibold">Accuracy</th><th className="text-left font-semibold">F1</th><th className="text-left font-semibold">Status</th></tr></thead>
-                  <tbody>
-                    <tr><td className="font-semibold text-ink-900">Logistic Regression</td><td>87.5%</td><td>0.82</td><td className="text-emerald-600 font-bold">✅ Best</td></tr>
-                    <tr><td className="font-semibold text-ink-900">Random Forest</td><td>75.0%</td><td>0.77</td><td>✓</td></tr>
-                    <tr><td className="font-semibold text-ink-900">GBT (binary)</td><td>100%</td><td>1.00</td><td className="text-ink-400 text-xs">(binary)</td></tr>
-                  </tbody>
-                </table>
+                <ModelMetricsTable models={mlMetrics.spark_pipeline.models} bestModel={mlMetrics.spark_pipeline.best_model} abbr={SPARK_ABBR} />
               </div>
 
               <div className="bg-brand-50 rounded-lg p-4 mb-6">
-                <p className="text-sm font-bold text-ink-900">Logistic Regression — Best F1 on 4-class</p>
+                <p className="text-sm font-bold text-ink-900">{mlMetrics.spark_pipeline.best_model} — Best F1 on 4-class</p>
               </div>
 
               <h4 className="text-sm font-bold text-ink-700 mb-2">Sample Predictions</h4>
@@ -359,23 +507,28 @@ export default function AdminDashboard() {
           </div>
 
           <div className="card p-5">
-            <h3 className="font-display text-lg font-bold text-ink-900 mb-4">Pipeline Comparison</h3>
+            <h3 className="font-display text-lg font-bold text-ink-900 mb-1">Pipeline Comparison</h3>
+            <p className="mb-4 text-sm text-ink-500">
+              {mlMetrics.comparison.total_items} items compared between both pipelines
+            </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
               <div className="p-4 bg-ink-50 rounded-lg text-center border border-ink-100">
                 <div className="text-xs font-semibold text-ink-500 mb-1">Items Compared</div>
-                <div className="text-3xl font-extrabold text-ink-900">150</div>
+                <div className="text-3xl font-extrabold text-ink-900">{mlMetrics.comparison.total_items}</div>
               </div>
               <div className="p-4 bg-brand-50 rounded-lg text-center">
                 <div className="text-xs font-semibold text-brand-600 mb-1">Agreement</div>
-                <div className="text-3xl font-extrabold text-brand-700">87.3%</div>
+                <div className="text-3xl font-extrabold text-brand-700">
+                  {mlMetrics.comparison.agreement_count}/{mlMetrics.comparison.total_items} = {mlMetrics.comparison.agreement_pct}%
+                </div>
               </div>
               <div className="p-4 bg-emerald-50 rounded-lg text-center border border-emerald-100">
                 <div className="text-xs font-semibold text-emerald-600 mb-1">Matching</div>
-                <div className="text-3xl font-extrabold text-emerald-600">131 items</div>
+                <div className="text-3xl font-extrabold text-emerald-600">{mlMetrics.comparison.agreement_count} items</div>
               </div>
               <div className="p-4 bg-rose-50 rounded-lg text-center border border-rose-100">
                 <div className="text-xs font-semibold text-rose-600 mb-1">Different</div>
-                <div className="text-3xl font-extrabold text-rose-600">19 items</div>
+                <div className="text-3xl font-extrabold text-rose-600">{mlMetrics.comparison.different_count} items</div>
               </div>
             </div>
 
@@ -385,21 +538,31 @@ export default function AdminDashboard() {
 
             <div className="overflow-x-auto">
               <table className="dq-table w-full text-sm">
-                <thead><tr><th className="text-left font-semibold">Item Name</th><th className="text-left font-semibold">Python Class</th><th className="text-left font-semibold">Spark Class</th><th className="text-left font-semibold">Match</th></tr></thead>
+                <thead><tr><th className="text-left font-semibold">#</th><th className="text-left font-semibold">Item Name</th><th className="text-left font-semibold">Python Prediction</th><th className="text-left font-semibold">Spark Prediction</th><th className="text-left font-semibold">Match</th></tr></thead>
                 <tbody>
-                  {COMPARISON_ROWS.map((r) => (
-                    <tr key={r.item}>
+                  {comparisonPageRows.map((r) => (
+                    <tr key={r.id} className={r.match ? '!bg-emerald-50/60' : '!bg-amber-50/60'}>
+                      <td className="text-ink-400">{r.id}</td>
                       <td className="font-medium text-ink-900">{r.item}</td>
                       <td><span className={`badge ${CLASS_BADGE[r.python] ?? 'badge-gray'}`}>{r.python}</span></td>
                       <td><span className={`badge ${CLASS_BADGE[r.spark] ?? 'badge-gray'}`}>{r.spark}</span></td>
-                      <td>{r.python === r.spark ? <span className="font-bold text-emerald-600">✓</span> : <span className="font-bold text-rose-600">✗</span>}</td>
+                      <td>{r.match ? <span className="font-bold text-emerald-600">✓</span> : <span className="font-bold text-amber-600">✗</span>}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+
+            <div className="mt-4 flex items-center justify-between text-xs text-ink-500">
+              <span>Page {comparisonPage} of {comparisonPageCount} — showing {comparisonPageRows.length} of {COMPARISON_ROWS.length} items</span>
+              <div className="flex gap-2">
+                <button className="btn btn-ghost !rounded-lg !px-3 !py-1.5 text-xs" disabled={comparisonPage === 1} onClick={() => setComparisonPage((p) => Math.max(1, p - 1))}>Prev</button>
+                <button className="btn btn-ghost !rounded-lg !px-3 !py-1.5 text-xs" disabled={comparisonPage === comparisonPageCount} onClick={() => setComparisonPage((p) => Math.min(comparisonPageCount, p + 1))}>Next</button>
+              </div>
+            </div>
           </div>
         </div>
+        )
       )}
 
       {activeTab === 'Menu Items' && (

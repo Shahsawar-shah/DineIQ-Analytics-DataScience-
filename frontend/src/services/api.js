@@ -7,6 +7,12 @@ const authHeaders = () => ({
   ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {})
 })
 
+const asJson = async (res) => {
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.detail || data.error || `Request failed (${res.status})`)
+  return data
+}
+
 export const api = {
   menu: {
     items: () => fetch(`${BASE}/menu/items`,
@@ -41,7 +47,18 @@ export const api = {
     }).then(r => r.json()),
     me: () => fetch(`${BASE}/auth/me`, {
       headers: authHeaders()
-    }).then(r => r.json())
+    }).then(r => r.json()),
+    users: () => fetch(`${BASE}/auth/users`,
+      { headers: authHeaders() }).then(asJson),
+    updateUser: (id, data) => fetch(`${BASE}/auth/users/${id}`, {
+      method: 'PUT',
+      headers: authHeaders(),
+      body: JSON.stringify(data)
+    }).then(asJson),
+    deleteUser: (id) => fetch(`${BASE}/auth/users/${id}`, {
+      method: 'DELETE',
+      headers: authHeaders()
+    }).then(asJson)
   },
 
   dashboard: {
@@ -49,6 +66,8 @@ export const api = {
       { headers: authHeaders() }).then(r => r.json()),
     kpis: () => fetch(`${BASE}/dashboard/kpis`,
       { headers: authHeaders() }).then(r => r.json()),
+    mlMetrics: () => fetch(`${BASE}/dashboard/ml-metrics`,
+      { headers: authHeaders() }).then(asJson),
   },
 
   customers: {
