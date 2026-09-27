@@ -1,6 +1,6 @@
 import {
   BarChart3, Bell, BookOpen, Boxes, CalendarClock, ClipboardList, Cog, Database, FileBarChart,
-  FileText, FlaskConical, Gauge, GitCompareArrows, Heart, LayoutDashboard, LineChart,
+  FileText, FlaskConical, Gauge, GitCompareArrows, Heart, LayoutDashboard, LineChart, MapPin,
   Megaphone, PackageSearch, PieChart, Receipt, ScrollText, Settings,
   ShieldCheck, ShoppingCart, Sparkles, Star, Tags, TrendingUp, User, UserCog, Users, UtensilsCrossed,
 } from 'lucide-react'
@@ -37,6 +37,8 @@ export const ROLE_NAV = {
   'Restaurant Manager': [
     { label: 'Overview', path: '/manager/dashboard', icon: 'LayoutDashboard', end: true },
     { label: 'Sales Analytics', path: '/manager/sales', icon: 'TrendingUp' },
+    { label: 'Orders', path: '/manager/orders', icon: 'Receipt' },
+    { label: 'Locations', path: '/manager/locations', icon: 'MapPin' },
     { label: 'Menu Intelligence', path: '/manager/menu-intelligence', icon: 'UtensilsCrossed' },
     { label: 'Customer Intelligence', path: '/manager/customer-intelligence', icon: 'Users' },
     { label: 'Forecasting', path: '/manager/forecasting', icon: 'LineChart' },
@@ -69,5 +71,5 @@ export const ICONS = {
   Users, UserCog, UtensilsCrossed, Database, ShieldCheck, Gauge, ScrollText, FileBarChart, Settings,
   TrendingUp, LineChart, Megaphone, BookOpen, FlaskConical, GitCompareArrows,
   Boxes, PackageSearch, BarChart3, ClipboardList,
-  Receipt, PieChart, CalendarClock, FileText, Bell, Cog,
+  Receipt, PieChart, CalendarClock, FileText, Bell, Cog, MapPin,
 }

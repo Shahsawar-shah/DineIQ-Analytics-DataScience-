@@ -26,6 +26,8 @@ import AdminSettings from './pages/admin/AdminSettings'
 
 import ManagerDashboard from './pages/manager/ManagerDashboard'
 import SalesAnalytics from './pages/manager/SalesAnalytics'
+import Orders from './pages/manager/Orders'
+import Locations from './pages/manager/Locations'
 import MenuIntelligence from './pages/manager/MenuIntelligence'
 import CustomerIntelligence from './pages/manager/CustomerIntelligence'
 import Forecasting from './pages/manager/Forecasting'
@@ -123,6 +125,8 @@ export default function App() {
         <Route index element={<Navigate to="/manager/dashboard" replace />} />
         <Route path="dashboard" element={<ManagerDashboard />} />
         <Route path="sales" element={<SalesAnalytics />} />
+        <Route path="orders" element={<Orders />} />
+        <Route path="locations" element={<Locations />} />
         <Route path="menu-intelligence" element={<MenuIntelligence />} />
         <Route path="customer-intelligence" element={<CustomerIntelligence />} />
         <Route path="forecasting" element={<Forecasting />} />
