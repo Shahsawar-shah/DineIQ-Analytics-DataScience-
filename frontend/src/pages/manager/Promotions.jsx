@@ -1,96 +1,68 @@
-import { Megaphone, Percent, TrendingUp, Target } from 'lucide-react'
-import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip as RTooltip, XAxis, YAxis } from 'recharts'
+import { useEffect, useState } from 'react'
+import { AlertOctagon, Megaphone, Percent, ShoppingBag } from 'lucide-react'
+import { api } from '../../services/api'
 import PageHeader from '../../components/layout/PageHeader'
-import ChartCard from '../../components/charts/ChartCard'
-import StatusBadge from '../../components/ui/StatusBadge'
-import { PROMOTIONS, fmtMoney, fmtNum, fmtPct } from '../../data/mockData'
+import KpiCard from '../../components/ui/KpiCard'
+import DataTable from '../../components/ui/DataTable'
+import LoadingState, { ErrorState } from '../../components/ui/LoadingState'
+
+function trapReason(discountPct) {
+  if (discountPct >= 45) return 'Discount too high — profit likely turns negative'
+  if (discountPct >= 30) return 'Deep discount — sales lift rarely offsets the margin loss'
+  return 'Customers cluster purchases around the promo window only'
+}
 
 export default function Promotions() {
-  const active = PROMOTIONS.filter((p) => p.status === 'Active')
-  const totalRev = PROMOTIONS.reduce((s, p) => s + p.revenue, 0)
-  const avgRoi = (PROMOTIONS.reduce((s, p) => s + p.roi, 0) / PROMOTIONS.length).toFixed(1)
+  const [summary, setSummary] = useState(null)
+  const [traps, setTraps] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [sum, trapData] = await Promise.all([api.promotions.summary(), api.promotions.traps()])
+        setSummary(sum)
+        setTraps(trapData)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
+
+  if (loading) return <LoadingState />
+  if (error) return <ErrorState message={error} />
+
+  const trapColumns = [
+    { key: 'name', header: 'Promo Name', render: (r) => <span className="font-semibold text-ink-900">{r.promo_name}</span> },
+    { key: 'discount', header: 'Discount %', align: 'right', render: (r) => `${r.discount_percentage}%` },
+    { key: 'reason', header: 'Reason', render: (r) => <span className="badge badge-red">{r.reason ?? trapReason(r.discount_percentage)}</span> },
+  ]
+
   return (
     <>
-      <PageHeader title="Promotion Analytics" subtitle="Campaign performance, conversion and ROI" demo />
+      <PageHeader
+        title="Promotion Analytics"
+        subtitle="Campaign counts, order share and promotion-trap detection"
+        actions={<span className="badge badge-green"><span className="live-dot mr-1 inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" /> Live data feed</span>}
+      />
 
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-        {[
-          { icon: Megaphone, label: 'Active Campaigns', value: String(active.length), accent: '#f95d0b' },
-          { icon: TrendingUp, label: 'Promo Revenue', value: fmtMoney(totalRev), accent: '#0d9459' },
-          { icon: Percent, label: 'Avg Conversion', value: fmtPct(PROMOTIONS.reduce((s, p) => s + p.conversion, 0) / PROMOTIONS.length), accent: '#1d4ed8' },
-          { icon: Target, label: 'Avg ROI', value: `${avgRoi}×`, accent: '#6938ef' },
-        ].map((k, i) => (
-          <div key={k.label} className="card card-hover anim-fade-up p-4" style={{ animationDelay: `${i * 60}ms` }}>
-            <div className="grid h-10 w-10 place-items-center rounded-xl" style={{ background: `${k.accent}18`, color: k.accent }}>
-              <k.icon size={17} />
-            </div>
-            <p className="font-display mt-3 text-xl font-extrabold text-ink-900">{k.value}</p>
-            <p className="text-[0.66rem] font-bold uppercase tracking-[0.1em] text-ink-400">{k.label}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-5 grid gap-5 xl:grid-cols-2">
-        <ChartCard title="Revenue by Campaign" subtitle="Total promo-attributed revenue">
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={PROMOTIONS} layout="vertical" margin={{ left: 60 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eef0f6" horizontal={false} />
-                <XAxis type="number" tick={{ fontSize: 10, fill: '#878ba7' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v / 1000}k`} />
-                <YAxis type="category" dataKey="campaign" tick={{ fontSize: 9, fill: '#686d8c' }} width={132} axisLine={false} tickLine={false} />
-                <RTooltip formatter={(v) => (typeof v === 'number' ? fmtMoney(v) : String(v))} />
-                <Bar dataKey="revenue" radius={[0, 6, 6, 0]} name="Revenue" barSize={16}>
-                  {PROMOTIONS.map((p, i) => <Cell key={i} fill={p.status === 'Active' ? '#f95d0b' : p.status === 'Scheduled' ? '#878ba7' : '#fbbf24'} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </ChartCard>
-
-        <ChartCard title="ROI vs Conversion" subtitle="Return on promo spend vs conversion rate">
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={PROMOTIONS}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eef0f6" vertical={false} />
-                <XAxis dataKey="campaign" tick={{ fontSize: 7.5, fill: '#878ba7' }} axisLine={false} tickLine={false} interval={0} />
-                <YAxis yAxisId="l" tick={{ fontSize: 10, fill: '#878ba7' }} axisLine={false} tickLine={false} />
-                <YAxis yAxisId="r" orientation="right" tick={{ fontSize: 10, fill: '#878ba7' }} axisLine={false} tickLine={false} />
-                <RTooltip />
-                <Bar yAxisId="l" dataKey="roi" fill="#0d9459" radius={[5, 5, 0, 0]} name="ROI (×)" barSize={14} />
-                <Bar yAxisId="r" dataKey="conversion" fill="#f95d0b" radius={[5, 5, 0, 0]} name="Conversion %" barSize={14} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </ChartCard>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <KpiCard label="Total Promotions" value={String(summary.total_promotions)} icon={Megaphone} accent="#f95d0b" />
+        <KpiCard label="Active" value={String(summary.active_promotions)} icon={ShoppingBag} accent="#0d9459" delay={60} />
+        <KpiCard label="Promo Orders" value={`${summary.promo_orders.toLocaleString()} (${summary.promo_order_pct}%)`} icon={Percent} accent="#1d4ed8" delay={120} />
+        <KpiCard label="Traps Found" value={String(summary.promotion_traps)} icon={AlertOctagon} accent="#d92d20" delay={180} />
       </div>
 
       <div className="card mt-5 p-2 sm:p-4">
-        <div className="flex items-center justify-between px-2 pb-3 pt-1">
-          <h3 className="font-display text-sm font-bold text-ink-900">Campaign Performance Table</h3>
-          <span className="badge badge-violet">Demo / Mock Data</span>
+        <div className="flex items-center gap-2 px-2 pb-3 pt-1">
+          <AlertOctagon size={16} className="text-rose-600" />
+          <h3 className="font-display text-sm font-bold text-ink-900">⚠️ Promotion Traps Detected</h3>
         </div>
-        <div className="overflow-x-auto">
-          <table className="dq-table">
-            <thead>
-              <tr><th>Campaign</th><th>Type</th><th>Discount</th><th>Orders</th><th>Revenue</th><th>Conversion</th><th>Uplift</th><th>ROI</th><th>Status</th></tr>
-            </thead>
-            <tbody>
-              {PROMOTIONS.map((p) => (
-                <tr key={p.id}>
-                  <td className="font-semibold text-ink-900">{p.campaign}</td>
-                  <td>{p.type}</td>
-                  <td>{p.discount > 0 ? `${p.discount}%` : 'Points'}</td>
-                  <td>{fmtNum(p.orders)}</td>
-                  <td className="font-semibold">{fmtMoney(p.revenue)}</td>
-                  <td>{fmtPct(p.conversion)}</td>
-                  <td className="font-semibold text-emerald-600">+{p.uplift}%</td>
-                  <td><span className={`badge ${p.roi >= 3 ? 'badge-green' : p.roi >= 2.6 ? 'badge-amber' : 'badge-red'}`}>{p.roi}×</span></td>
-                  <td><StatusBadge status={p.status} /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable columns={trapColumns} rows={traps} rowKey={(r) => r.promotion_id} emptyMessage="No promotion traps detected." />
       </div>
     </>
   )
