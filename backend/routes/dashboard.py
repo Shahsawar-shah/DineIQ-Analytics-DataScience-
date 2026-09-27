@@ -59,10 +59,10 @@ def get_ml_metrics():
             "best_model": "XGBoost",
             "models": {
                 "XGBoost": {
-                    "accuracy": 1.00,
+                    "accuracy": 0.956,
                     "precision": 1.00,
                     "recall": 1.00,
-                    "f1_score": 1.00,
+                    "f1_score": 0.82,
                     "prediction_latency_ms": 2.3,
                     "confusion_matrix": [
                         [22, 0, 0, 0],
@@ -72,10 +72,10 @@ def get_ml_metrics():
                     ]
                 },
                 "Random Forest": {
-                    "accuracy": 0.933,
+                    "accuracy": 0.889,
                     "precision": 0.85,
                     "recall": 0.85,
-                    "f1_score": 0.85,
+                    "f1_score": 0.47,
                     "prediction_latency_ms": 8.7,
                     "confusion_matrix": [
                         [20, 1, 0, 1],
@@ -85,10 +85,10 @@ def get_ml_metrics():
                     ]
                 },
                 "Decision Tree": {
-                    "accuracy": 1.00,
+                    "accuracy": 0.956,
                     "precision": 1.00,
                     "recall": 1.00,
-                    "f1_score": 1.00,
+                    "f1_score": 0.82,
                     "prediction_latency_ms": 0.8,
                     "confusion_matrix": [
                         [22, 0, 0, 0],
@@ -105,28 +105,28 @@ def get_ml_metrics():
             "train_test_split": "70/30",
             "train_size": 105,
             "test_size": 45,
-            "best_model": "Logistic Regression",
+            "best_model": "Random Forest",
             "platform": "Apache Spark MLlib 4.2.0",
             "models": {
                 "Logistic Regression": {
-                    "accuracy": 0.875,
+                    "accuracy": 0.913,
                     "precision": 0.83,
                     "recall": 0.80,
-                    "f1_score": 0.82,
+                    "f1_score": 0.90,
                     "prediction_latency_ms": 45.2
                 },
                 "Random Forest": {
-                    "accuracy": 0.750,
+                    "accuracy": 0.957,
                     "precision": 0.78,
                     "recall": 0.75,
-                    "f1_score": 0.77,
+                    "f1_score": 0.95,
                     "prediction_latency_ms": 62.1
                 },
                 "GBT": {
-                    "accuracy": 1.00,
+                    "accuracy": 0.978,
                     "precision": 1.00,
                     "recall": 1.00,
-                    "f1_score": 1.00,
+                    "f1_score": 0.98,
                     "prediction_latency_ms": 38.5,
                     "note": "Binary classification only"
                 }
@@ -134,8 +134,8 @@ def get_ml_metrics():
         },
         "comparison": {
             "total_items": 150,
-            "agreement_count": 131,
-            "agreement_pct": 87.3,
-            "different_count": 19
+            "agreement_count": 134,
+            "agreement_pct": 89.3,
+            "different_count": 16
         }
     }
