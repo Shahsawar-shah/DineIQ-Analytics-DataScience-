@@ -15,8 +15,8 @@ const PRESETS = [
 const PRESET_NAMES = {
   core: 'Core pipeline',
   full: 'Full pipeline',
-  spark: 'Spark pipeline (Execute Spark)',
-  python: 'Python pipeline (Execute Python)',
+  spark: 'Spark MLlib pipeline',
+  python: 'Python + scikit-learn pipeline',
 }
 const STATUS = {
   pending: { icon: CircleDashed, className: 'text-ink-300', badge: 'badge-gray', label: 'Pending' },
@@ -222,13 +222,13 @@ export default function AdminPipeline() {
       {metrics && (
         <>
           <h2 className="font-display mt-6 text-base font-bold text-ink-900">Latest model results</h2>
-          <p className="mb-3 text-xs text-ink-500">Execute Spark / Execute Python retrain that pipeline's models on the prepared features, then refresh the Spark vs Python comparison. Use Run Pipeline (Core/Full) first after new data.</p>
+          <p className="mb-3 text-xs text-ink-500">Execute Spark / Execute Python + scikit-learn retrain that pipeline's models on the prepared features, then refresh the Spark vs Python comparison. Use Run Pipeline (Core/Full) first after new data.</p>
           <div className="grid gap-5 xl:grid-cols-2">
             <ModelCard title="Spark MLlib model" icon={Zap} accent="#d97706" pipeline={metrics.spark_pipeline}
               buttonLabel="Execute Spark" onExecute={() => start('spark')}
               running={active && run.preset === 'spark'} disabled={busy || active} />
-            <ModelCard title="Python model" icon={Cpu} accent="#1d4ed8" pipeline={metrics.python_pipeline}
-              buttonLabel="Execute Python" onExecute={() => start('python')}
+            <ModelCard title="Python + scikit-learn model" icon={Cpu} accent="#1d4ed8" pipeline={metrics.python_pipeline}
+              buttonLabel="Execute Python + scikit-learn" onExecute={() => start('python')}
               running={active && run.preset === 'python'} disabled={busy || active} />
           </div>
           <div className="mt-4 rounded-xl border border-ink-100 bg-white p-4 text-sm text-ink-600">
