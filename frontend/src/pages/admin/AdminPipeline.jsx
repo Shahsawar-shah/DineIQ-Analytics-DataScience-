@@ -12,6 +12,12 @@ const PRESETS = [
   { key: 'core', label: 'Core', note: 'Ingestion, data quality, cleaning, features, Spark + Python models, comparison' },
   { key: 'full', label: 'Full', note: 'Core plus Spark SQL, both K-Means pipelines, forecasting, basket, pricing, promotions' },
 ]
+const PRESET_NAMES = {
+  core: 'Core pipeline',
+  full: 'Full pipeline',
+  spark: 'Spark pipeline (Execute Spark)',
+  python: 'Python pipeline (Execute Python)',
+}
 const STATUS = {
   pending: { icon: CircleDashed, className: 'text-ink-300', badge: 'badge-gray', label: 'Pending' },
   running: { icon: Loader2, className: 'animate-spin text-sky-600', badge: 'badge-blue', label: 'Running' },
@@ -28,16 +34,24 @@ const fmtSeconds = (s) => {
   return `${Math.floor(s / 60)}m ${Math.round(s % 60)}s`
 }
 
-function ModelCard({ title, icon: Icon, accent, pipeline }) {
+function ModelCard({ title, icon: Icon, accent, pipeline, buttonLabel, onExecute, running, disabled }) {
   const m = pipeline.models[pipeline.best_model]
   return (
     <div className="card p-5">
       <div className="flex items-start gap-3">
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl" style={{ background: `${accent}1a`, color: accent }}><Icon size={18} /></span>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h3 className="font-display text-base font-bold text-ink-900">{title}</h3>
           <p className="font-mono text-[0.68rem] text-ink-400">{pipeline.best_model} · {pipeline.model_version}</p>
         </div>
+        <button
+          className="btn !px-4 !py-2 text-xs font-bold text-white disabled:opacity-60"
+          style={{ background: accent }}
+          disabled={disabled}
+          onClick={onExecute}
+        >
+          {running ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />} {running ? 'Running…' : buttonLabel}
+        </button>
       </div>
       <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
         <p className="text-ink-500">Accuracy <span className="float-right font-bold text-ink-900">{(m.accuracy * 100).toFixed(2)}%</span></p>
@@ -98,11 +112,11 @@ export default function AdminPipeline() {
     if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight
   }, [shownStep?.log.length, shownStep?.script])
 
-  const start = async () => {
+  const start = async (presetToRun = preset) => {
     setBusy(true)
     setSelected(null)
     try {
-      const data = await api.admin.runPipeline(preset)
+      const data = await api.admin.runPipeline(presetToRun)
       setRun(data)
       lastStatus.current = data.status
       setError(null)
@@ -134,7 +148,7 @@ export default function AdminPipeline() {
             {active ? (
               <button className="btn btn-ghost !px-4 !py-2.5 text-xs" onClick={cancel}><Square size={14} /> Cancel</button>
             ) : (
-              <button className="btn btn-primary !px-5 !py-2.5 text-xs" disabled={busy} onClick={start}><Play size={14} /> Run Pipeline</button>
+              <button className="btn btn-primary !px-5 !py-2.5 text-xs" disabled={busy} onClick={() => start()}><Play size={14} /> Run Pipeline</button>
             )}
           </div>
         }
@@ -154,7 +168,7 @@ export default function AdminPipeline() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-bold text-ink-900">
-                  Run <span className="font-mono">{run.run_id}</span> · {run.preset} preset
+                  Run <span className="font-mono">{run.run_id}</span> · {PRESET_NAMES[run.preset] ?? run.preset}
                   <span className={`badge ml-2 ${RUN_BADGE[run.status] ?? 'badge-gray'}`}>{run.status}</span>
                 </p>
                 <p className="mt-0.5 text-xs text-ink-400">Started {run.started_at.replace('T', ' ')} by {run.started_by} · elapsed {fmtSeconds(run.duration_seconds)}</p>
@@ -207,10 +221,15 @@ export default function AdminPipeline() {
 
       {metrics && (
         <>
-          <h2 className="font-display mb-3 mt-6 text-base font-bold text-ink-900">Latest model results</h2>
+          <h2 className="font-display mt-6 text-base font-bold text-ink-900">Latest model results</h2>
+          <p className="mb-3 text-xs text-ink-500">Execute Spark / Execute Python retrain that pipeline's models on the prepared features, then refresh the Spark vs Python comparison. Use Run Pipeline (Core/Full) first after new data.</p>
           <div className="grid gap-5 xl:grid-cols-2">
-            <ModelCard title="Spark MLlib model" icon={Zap} accent="#f9a825" pipeline={metrics.spark_pipeline} />
-            <ModelCard title="Python model" icon={Cpu} accent="#1d4ed8" pipeline={metrics.python_pipeline} />
+            <ModelCard title="Spark MLlib model" icon={Zap} accent="#d97706" pipeline={metrics.spark_pipeline}
+              buttonLabel="Execute Spark" onExecute={() => start('spark')}
+              running={active && run.preset === 'spark'} disabled={busy || active} />
+            <ModelCard title="Python model" icon={Cpu} accent="#1d4ed8" pipeline={metrics.python_pipeline}
+              buttonLabel="Execute Python" onExecute={() => start('python')}
+              running={active && run.preset === 'python'} disabled={busy || active} />
           </div>
           <div className="mt-4 rounded-xl border border-ink-100 bg-white p-4 text-sm text-ink-600">
             Spark and Python agree on <span className="font-bold text-ink-900">{metrics.comparison.agreement_pct}%</span> of {metrics.comparison.total_items} menu items

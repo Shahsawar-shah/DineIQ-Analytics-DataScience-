@@ -40,6 +40,19 @@ PRESETS = {
         "python_pipeline/models.py",
         "python_pipeline/comparison.py",
     ],
+    # One pipeline on its own ("Execute Spark" / "Execute Python" buttons). They
+    # train on the features already prepared by the Core/Full run, then refresh
+    # the Spark vs Python comparison.
+    "spark": [
+        "spark_jobs/spark_ml_models.py",
+        "spark_jobs/spark_customer_segmentation.py",
+        "python_pipeline/comparison.py",
+    ],
+    "python": [
+        "python_pipeline/models.py",
+        "python_pipeline/customer_segmentation.py",
+        "python_pipeline/comparison.py",
+    ],
     # Everything the dashboards read
     "full": [
         "spark_jobs/ingestion.py",
