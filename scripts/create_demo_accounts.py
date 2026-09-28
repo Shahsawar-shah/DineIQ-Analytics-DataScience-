@@ -16,8 +16,8 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 DEMO_PASSWORD = os.getenv("DEMO_ACCOUNT_PASSWORD", "Demo@12345")
 
 DEMO_USERS = [
-    {"name": "Super Admin", "email": "superadmin@dineiq.demo", "role": "Super Admin"},
-    {"name": "Admin User", "email": "admin@dineiq.demo", "role": "Admin"},
+    # The single administrator (formerly "Super Admin"; the plain admin@ login was removed)
+    {"name": "Admin", "email": "superadmin@dineiq.demo", "role": "Admin"},
     {"name": "Restaurant Manager", "email": "manager@dineiq.demo", "role": "Restaurant Manager"},
     {"name": "Inventory Manager", "email": "inventory@dineiq.demo", "role": "Inventory Manager"},
     {"name": "Cashier", "email": "cashier@dineiq.demo", "role": "Cashier"},

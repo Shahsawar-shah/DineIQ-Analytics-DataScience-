@@ -13,17 +13,16 @@ const MATRIX = {
     'Run what-if simulation',
     'Export reports',
     'Manage users (non-admin roles)',
-    'Assign Admin / Super Admin roles',
+    'Assign the Admin role',
     'View audit logs & Spark job monitor',
   ],
-  roles: ['Customer', 'Cashier', 'Restaurant Manager', 'Inventory Manager', 'Admin', 'Super Admin'],
+  roles: ['Customer', 'Cashier', 'Restaurant Manager', 'Inventory Manager', 'Admin'],
   grants: {
     Customer:             [false, false, false, false, false, false, false, false],
     Cashier:              [true, false, false, false, false, false, false, false],
     'Restaurant Manager': [true, true, true, true, true, false, false, false],
     'Inventory Manager':  [true, true, true, true, true, false, false, false],
-    Admin:                [true, true, true, true, true, true, false, true],
-    'Super Admin':        [true, true, true, true, true, true, true, true],
+    Admin:                [true, true, true, true, true, true, true, true],
   },
 }
 
@@ -32,8 +31,7 @@ const ROLE_INFO = {
   Cashier: 'Orders and menu only',
   'Restaurant Manager': 'Full business intelligence suite',
   'Inventory Manager': 'Stock, wastage, forecast and purchase planning',
-  Admin: 'Platform administration and monitoring',
-  'Super Admin': 'Everything, including granting admin roles',
+  Admin: 'Full platform administration, user and role management, pipelines and analytics',
   analyst: 'Legacy analytics account',
 }
 const ROLE_COLORS = ['#878ba7', '#f9a825', '#1d4ed8', '#0d9459', '#d92d20', '#6938ef', '#f95d0b']

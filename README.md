@@ -126,14 +126,13 @@ All demo accounts use the password **`Demo@12345`** (set `DEMO_ACCOUNT_PASSWORD`
 
 | Role | Email | Can access |
 |---|---|---|
-| Super Admin | superadmin@dineiq.demo | Everything, including granting Admin / Super Admin |
-| Admin | admin@dineiq.demo | Admin console, users, audit logs, Spark jobs, analytics APIs |
+| Admin | superadmin@dineiq.demo | Everything: users and roles (incl. granting Admin), audit logs, Spark jobs, Pipeline Runner, all analytics |
 | Restaurant Manager | manager@dineiq.demo | Full business-intelligence suite |
 | Inventory Manager | inventory@dineiq.demo | Inventory, wastage, demand forecast |
 | Cashier | cashier@dineiq.demo | Orders and menu only |
 | Customer | customer@dineiq.demo | Customer portal |
 
-Roles are enforced by the API (`backend/middleware/auth_middleware.py`), not only by the UI: a Cashier calling `/api/dashboard/summary` gets HTTP 403.
+Roles are enforced by the API (`backend/middleware/auth_middleware.py`), not only by the UI: a Cashier calling `/api/dashboard/summary` gets HTTP 403. There is one administrator role, Admin, with full rights; the last active Admin can never be demoted or deactivated, so the platform cannot be locked out.
 
 ---
 

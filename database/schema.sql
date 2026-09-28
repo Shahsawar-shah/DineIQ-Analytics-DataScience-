@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
     name          VARCHAR(255) NOT NULL,
     email         VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,          -- bcrypt hash, never plain text
-    -- Super Admin | Admin | Restaurant Manager | Inventory Manager | Cashier | Customer | analyst
+    -- Admin | Restaurant Manager | Inventory Manager | Cashier | Customer | analyst
     role          VARCHAR(50) DEFAULT 'analyst',
     is_active     BOOLEAN DEFAULT TRUE,
     created_at    TIMESTAMP DEFAULT NOW()

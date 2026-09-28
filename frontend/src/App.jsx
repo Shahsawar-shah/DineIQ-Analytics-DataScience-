@@ -115,6 +115,15 @@ export default function App() {
         <Route path="audit-logs" element={<AdminAuditLogs />} />
         <Route path="reports" element={<AdminReports />} />
         <Route path="settings" element={<AdminSettings />} />
+        <Route path="menu-intelligence" element={<MenuIntelligence />} />
+        <Route path="customer-intelligence" element={<CustomerIntelligence />} />
+        <Route path="forecasting" element={<Forecasting />} />
+        <Route path="dual-pipeline" element={<DualPipeline />} />
+        <Route path="market-basket" element={<MarketBasket />} />
+        <Route path="pricing" element={<Pricing />} />
+        <Route path="promotions" element={<Promotions />} />
+        <Route path="anomalies" element={<AnomalyDetection />} />
+        <Route path="recommendations" element={<Recommendations />} />
       </Route>
 
       {/* Restaurant Manager */}
@@ -143,38 +152,6 @@ export default function App() {
         <Route path="dual-pipeline" element={<DualPipeline />} />
         <Route path="market-basket" element={<MarketBasket />} />
         <Route path="reports" element={<ReportsPage scope="Business Intelligence" />} />
-      </Route>
-
-      {/* Super Admin: all admin pages (incl. user management) + analytics suite */}
-      <Route
-        path="/superadmin"
-        element={
-          <ProtectedRoute role="Super Admin">
-            <DashboardLayout role="Super Admin" />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Navigate to="/superadmin/dashboard" replace />} />
-        <Route path="dashboard" element={<AdminDashboard />} />
-        <Route path="users" element={<AdminUsers />} />
-        <Route path="roles" element={<AdminRoles />} />
-        <Route path="locations" element={<AdminLocations />} />
-        <Route path="data-management" element={<AdminDataManagement />} />
-        <Route path="data-quality" element={<AdminDataQuality />} />
-        <Route path="system-monitoring" element={<AdminSystemMonitoring />} />
-        <Route path="pipeline" element={<AdminPipeline />} />
-        <Route path="audit-logs" element={<AdminAuditLogs />} />
-        <Route path="reports" element={<AdminReports />} />
-        <Route path="settings" element={<AdminSettings />} />
-        <Route path="menu-intelligence" element={<MenuIntelligence />} />
-        <Route path="customer-intelligence" element={<CustomerIntelligence />} />
-        <Route path="forecasting" element={<Forecasting />} />
-        <Route path="dual-pipeline" element={<DualPipeline />} />
-        <Route path="market-basket" element={<MarketBasket />} />
-        <Route path="pricing" element={<Pricing />} />
-        <Route path="promotions" element={<Promotions />} />
-        <Route path="anomalies" element={<AnomalyDetection />} />
-        <Route path="recommendations" element={<Recommendations />} />
       </Route>
 
       {/* Cashier: orders and menu only */}

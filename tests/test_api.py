@@ -25,7 +25,7 @@ def test_requests_without_token_are_rejected(client):
     ("Restaurant Manager", "/api/customers/segments", 200),
     ("Restaurant Manager", "/api/admin/spark-jobs", 403),
     ("Admin", "/api/admin/spark-jobs", 200),
-    ("Super Admin", "/api/admin/spark-jobs", 200),
+    ("Super Admin", "/api/admin/spark-jobs", 403),   # role no longer exists
     ("Customer", "/api/forecast/comparison", 403),
 ])
 def test_role_based_access(client, token_for, role, path, expected):
@@ -75,7 +75,7 @@ def test_public_registration_cannot_create_admins(client, monkeypatch):
 
     executed = []
     monkeypatch.setattr(auth_routes, "get_connection", lambda: _FakeConnection(executed))
-    for role in ("Admin", "Super Admin", "Cashier"):
+    for role in ("Admin", "Cashier"):
         res = client.post("/api/auth/register", json={
             "name": "x", "email": f"blocked-{role}@test.local", "password": "Passw0rd!", "role": role})
         assert res.status_code == 403
@@ -151,7 +151,7 @@ def test_pipeline_runner_access_and_validation(client, token_for):
     assert client.post("/api/admin/run-pipeline", json=body, headers=token_for("Restaurant Manager")).status_code == 403
     assert client.post("/api/admin/run-pipeline", json={"preset": "nope"}, headers=token_for("Admin")).status_code == 400
 
-    presets = client.get("/api/admin/run-pipeline/presets", headers=token_for("Super Admin")).json()
+    presets = client.get("/api/admin/run-pipeline/presets", headers=token_for("Admin")).json()
     assert presets["core"] == [
         "spark_jobs/ingestion.py", "spark_jobs/data_quality.py", "spark_jobs/cleaning.py",
         "spark_jobs/feature_engineering.py", "spark_jobs/spark_ml_models.py",
@@ -160,3 +160,57 @@ def test_pipeline_runner_access_and_validation(client, token_for):
     assert set(presets["core"]) <= set(presets["full"])
     status = client.get("/api/admin/run-pipeline/status", headers=token_for("Admin"))
     assert status.status_code == 200 and "steps" in status.json()
+
+
+
+# --- Single Admin role: the last active Admin is protected --------------------
+class _ScriptedCursor:
+    """Fake cursor that answers each SELECT from a queue and records UPDATEs."""
+
+    def __init__(self, answers, log):
+        self.answers, self.log = list(answers), log
+
+    def execute(self, sql, params=None):
+        self.log.append(sql)
+
+    def fetchone(self):
+        return self.answers.pop(0)
+
+    def close(self):
+        pass
+
+
+class _ScriptedConnection(_FakeConnection):
+    def __init__(self, answers, log):
+        super().__init__(log)
+        self.answers = answers
+
+    def cursor(self):
+        return _ScriptedCursor(self.answers, self.log)
+
+
+@pytest.mark.parametrize("change, answers, expected", [
+    # demote the only Admin -> blocked
+    ({"name": "A", "role": "Cashier", "is_active": True}, [("Admin",), (0,)], 409),
+    # deactivate the only Admin via update -> blocked
+    ({"name": "A", "role": "Admin", "is_active": False}, [("Admin",), (0,)], 409),
+    # demote an Admin while another active Admin exists -> allowed
+    ({"name": "A", "role": "Cashier", "is_active": True}, [("Admin",), (1,)], 200),
+    # promote a Cashier to Admin -> allowed (Admin has full rights)
+    ({"name": "C", "role": "Admin", "is_active": True}, [("Cashier",)], 200),
+])
+def test_last_admin_cannot_be_removed(client, token_for, monkeypatch, change, answers, expected):
+    import routes.auth as auth_routes
+
+    executed = []
+    monkeypatch.setattr(auth_routes, "get_connection", lambda: _ScriptedConnection(list(answers), executed))
+    res = client.put("/api/auth/users/7", json=change, headers=token_for("Admin"))
+    assert res.status_code == expected
+    assert any(sql.startswith("UPDATE") for sql in executed) == (expected == 200)
+
+
+def test_last_admin_cannot_be_deactivated(client, token_for, monkeypatch):
+    import routes.auth as auth_routes
+
+    monkeypatch.setattr(auth_routes, "get_connection", lambda: _ScriptedConnection([("Admin",), (0,)], []))
+    assert client.delete("/api/auth/users/7", headers=token_for("Admin")).status_code == 409

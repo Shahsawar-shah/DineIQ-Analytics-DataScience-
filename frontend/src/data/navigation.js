@@ -10,7 +10,6 @@ export const ROLE_HOME = {
   Admin: '/admin/dashboard',
   'Restaurant Manager': '/manager/dashboard',
   'Inventory Manager': '/inventory/dashboard',
-  'Super Admin': '/superadmin/dashboard',
   Cashier: '/cashier/orders',
 }
 
@@ -24,6 +23,7 @@ export const ROLE_NAV = {
     { label: 'Ratings & Reviews', path: '/customer/ratings', icon: 'Star' },
     { label: 'Profile', path: '/customer/profile', icon: 'User' },
   ],
+  // Admin: full platform administration plus the analytics suite
   Admin: [
     { label: 'Overview', path: '/admin/dashboard', icon: 'LayoutDashboard', end: true },
     { label: 'Users', path: '/admin/users', icon: 'Users' },
@@ -34,6 +34,15 @@ export const ROLE_NAV = {
     { label: 'System Monitoring', path: '/admin/system-monitoring', icon: 'Gauge' },
     { label: 'Pipeline Runner', path: '/admin/pipeline', icon: 'Workflow' },
     { label: 'Audit Logs', path: '/admin/audit-logs', icon: 'ScrollText' },
+    { label: 'Menu Intelligence', path: '/admin/menu-intelligence', icon: 'UtensilsCrossed' },
+    { label: 'Customer Intelligence', path: '/admin/customer-intelligence', icon: 'Users' },
+    { label: 'Forecasting', path: '/admin/forecasting', icon: 'LineChart' },
+    { label: 'Dual Pipeline', path: '/admin/dual-pipeline', icon: 'GitCompareArrows' },
+    { label: 'Market Basket', path: '/admin/market-basket', icon: 'ShoppingCart' },
+    { label: 'Pricing', path: '/admin/pricing', icon: 'Tags' },
+    { label: 'Promotions', path: '/admin/promotions', icon: 'Megaphone' },
+    { label: 'Anomaly Detection', path: '/admin/anomalies', icon: 'Activity' },
+    { label: 'Recommendations', path: '/admin/recommendations', icon: 'ListChecks' },
     { label: 'Reports', path: '/admin/reports', icon: 'FileBarChart' },
     { label: 'Settings', path: '/admin/settings', icon: 'Settings' },
   ],
@@ -54,29 +63,6 @@ export const ROLE_NAV = {
     { label: 'Dual Pipeline', path: '/manager/dual-pipeline', icon: 'GitCompareArrows' },
     { label: 'Market Basket', path: '/manager/market-basket', icon: 'ShoppingCart' },
     { label: 'Reports', path: '/manager/reports', icon: 'FileBarChart' },
-  ],
-  // Super Admin: every admin page (incl. user management) plus the analytics suite
-  'Super Admin': [
-    { label: 'Overview', path: '/superadmin/dashboard', icon: 'LayoutDashboard', end: true },
-    { label: 'Users', path: '/superadmin/users', icon: 'Users' },
-    { label: 'Roles', path: '/superadmin/roles', icon: 'UserCog' },
-    { label: 'Restaurants / Locations', path: '/superadmin/locations', icon: 'UtensilsCrossed' },
-    { label: 'Data Management', path: '/superadmin/data-management', icon: 'Database' },
-    { label: 'Data Quality', path: '/superadmin/data-quality', icon: 'ShieldCheck' },
-    { label: 'System Monitoring', path: '/superadmin/system-monitoring', icon: 'Gauge' },
-    { label: 'Pipeline Runner', path: '/superadmin/pipeline', icon: 'Workflow' },
-    { label: 'Audit Logs', path: '/superadmin/audit-logs', icon: 'ScrollText' },
-    { label: 'Menu Intelligence', path: '/superadmin/menu-intelligence', icon: 'UtensilsCrossed' },
-    { label: 'Customer Intelligence', path: '/superadmin/customer-intelligence', icon: 'Users' },
-    { label: 'Forecasting', path: '/superadmin/forecasting', icon: 'LineChart' },
-    { label: 'Dual Pipeline', path: '/superadmin/dual-pipeline', icon: 'GitCompareArrows' },
-    { label: 'Market Basket', path: '/superadmin/market-basket', icon: 'ShoppingCart' },
-    { label: 'Pricing', path: '/superadmin/pricing', icon: 'Tags' },
-    { label: 'Promotions', path: '/superadmin/promotions', icon: 'Megaphone' },
-    { label: 'Anomaly Detection', path: '/superadmin/anomalies', icon: 'Activity' },
-    { label: 'Recommendations', path: '/superadmin/recommendations', icon: 'ListChecks' },
-    { label: 'Reports', path: '/superadmin/reports', icon: 'FileBarChart' },
-    { label: 'Settings', path: '/superadmin/settings', icon: 'Settings' },
   ],
   // Cashier: orders and menu only (matches backend OPERATIONS_ROLES)
   Cashier: [

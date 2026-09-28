@@ -13,7 +13,6 @@ from jose import JWTError, jwt
 
 from settings import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY
 
-SUPER_ADMIN = "Super Admin"
 ADMIN = "Admin"
 RESTAURANT_MANAGER = "Restaurant Manager"
 INVENTORY_MANAGER = "Inventory Manager"
@@ -21,15 +20,12 @@ CASHIER = "Cashier"
 CUSTOMER = "Customer"
 ANALYST = "analyst"  # legacy default role from early registrations
 
-ALL_ROLES = [SUPER_ADMIN, ADMIN, RESTAURANT_MANAGER, INVENTORY_MANAGER, CASHIER, CUSTOMER, ANALYST]
+ALL_ROLES = [ADMIN, RESTAURANT_MANAGER, INVENTORY_MANAGER, CASHIER, CUSTOMER, ANALYST]
 
 # Who may call what
-ADMIN_ROLES = {SUPER_ADMIN, ADMIN}
+ADMIN_ROLES = {ADMIN}
 ANALYTICS_ROLES = ADMIN_ROLES | {RESTAURANT_MANAGER, INVENTORY_MANAGER, ANALYST}
 OPERATIONS_ROLES = ANALYTICS_ROLES | {CASHIER}  # orders + menu only for Cashier
-
-# Only a Super Admin may hand out the two admin roles
-PRIVILEGED_ROLES = {SUPER_ADMIN, ADMIN}
 
 security = HTTPBearer()
 

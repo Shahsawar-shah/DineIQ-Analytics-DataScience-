@@ -6,14 +6,14 @@ import psycopg2
 from database import get_connection
 from middleware.audit_middleware import submit_audit_log
 from middleware.auth_middleware import (
-    ALL_ROLES, PRIVILEGED_ROLES, SUPER_ADMIN, ADMIN, CUSTOMER,
+    ALL_ROLES, ADMIN, CUSTOMER,
     create_token, require_admin, verify_token,
 )
 
 router = APIRouter()
 
-# Roles anyone can pick on the public Register page. Admin, Super Admin and
-# Cashier accounts are created by an administrator from the Users page.
+# Roles anyone can pick on the public Register page. Admin and Cashier
+# accounts are created by an administrator from the Users page.
 SELF_REGISTER_ROLES = {CUSTOMER, "Restaurant Manager", "Inventory Manager", "analyst"}
 
 
@@ -50,13 +50,19 @@ def _audit_auth(request: Request, action: str, email: str, status_code: int, use
     })
 
 
-def _check_role_assignment(requested_role: str, caller_role: str):
+def _check_role(requested_role: str):
     if requested_role not in ALL_ROLES:
         raise HTTPException(status_code=400, detail=f"Unknown role '{requested_role}'")
-    if requested_role in PRIVILEGED_ROLES and caller_role != SUPER_ADMIN:
-        raise HTTPException(
-            status_code=403,
-            detail="Only a Super Admin can assign the Admin or Super Admin role")
+
+
+def _guard_last_admin(cur, user_id: int, current_role: str, keeps_admin: bool):
+    """There is no higher role to recover the platform, so the last active
+    Admin can never be demoted or deactivated."""
+    if current_role != ADMIN or keeps_admin:
+        return
+    cur.execute("SELECT COUNT(*) FROM users WHERE role=%s AND is_active=TRUE AND id<>%s", (ADMIN, user_id))
+    if cur.fetchone()[0] == 0:
+        raise HTTPException(status_code=409, detail="This is the last active Admin and cannot be demoted or deactivated")
 
 
 def _insert_user(name, email, password, role):
@@ -90,9 +96,9 @@ def register(req: RegisterRequest, request: Request):
         cur.close()
         conn.close()
 
-    # The very first account on an empty system becomes Super Admin.
+    # The very first account on an empty system becomes Admin.
     if count == 0:
-        actual_role = SUPER_ADMIN
+        actual_role = ADMIN
     elif req.role not in SELF_REGISTER_ROLES:
         _audit_auth(request, "auth.register", req.email, 403)
         raise HTTPException(
@@ -177,14 +183,16 @@ def list_users(payload: dict = Depends(require_admin)):
 
 @router.post("/users")
 def create_user(req: RegisterRequest, payload: dict = Depends(require_admin)):
-    _check_role_assignment(req.role, payload.get("role"))
+    _check_role(req.role)
     user_id = _insert_user(req.name, req.email, req.password, req.role)
     return {"user": {"id": user_id, "name": req.name, "email": req.email, "role": req.role}}
 
 
 @router.put("/users/{user_id}")
 def update_user(user_id: int, req: UpdateUserRequest, payload: dict = Depends(require_admin)):
-    _check_role_assignment(req.role, payload.get("role"))
+    _check_role(req.role)
+    if user_id == payload.get("user_id") and not req.is_active:
+        raise HTTPException(status_code=400, detail="You cannot deactivate your own account")
     conn = get_connection()
     cur = conn.cursor()
     try:
@@ -192,8 +200,7 @@ def update_user(user_id: int, req: UpdateUserRequest, payload: dict = Depends(re
         existing = cur.fetchone()
         if not existing:
             raise HTTPException(status_code=404, detail="User not found")
-        if existing[0] in PRIVILEGED_ROLES and payload.get("role") != SUPER_ADMIN:
-            raise HTTPException(status_code=403, detail="Only a Super Admin can modify admin accounts")
+        _guard_last_admin(cur, user_id, existing[0], keeps_admin=req.role == ADMIN and req.is_active)
         cur.execute(
             "UPDATE users SET name=%s, role=%s, is_active=%s WHERE id=%s",
             (req.name, req.role, req.is_active, user_id)
@@ -216,8 +223,7 @@ def deactivate_user(user_id: int, payload: dict = Depends(require_admin)):
         existing = cur.fetchone()
         if not existing:
             raise HTTPException(status_code=404, detail="User not found")
-        if existing[0] in PRIVILEGED_ROLES and payload.get("role") != SUPER_ADMIN:
-            raise HTTPException(status_code=403, detail="Only a Super Admin can deactivate admin accounts")
+        _guard_last_admin(cur, user_id, existing[0], keeps_admin=False)
         cur.execute("UPDATE users SET is_active=FALSE WHERE id=%s", (user_id,))
         conn.commit()
         return {"message": "User deactivated successfully"}

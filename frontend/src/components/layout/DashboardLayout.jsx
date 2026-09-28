@@ -15,12 +15,11 @@ const ROLE_LABEL = {
   Admin: 'Administration',
   'Restaurant Manager': 'Restaurant manager',
   'Inventory Manager': 'Inventory',
-  'Super Admin': 'Super administration',
   Cashier: 'Point of sale',
 }
 
 // Roles allowed to read /api/anomalies (backend ANALYTICS_ROLES)
-const ANALYTICS_ROLES = new Set(['Super Admin', 'Admin', 'Restaurant Manager', 'Inventory Manager'])
+const ANALYTICS_ROLES = new Set(['Admin', 'Restaurant Manager', 'Inventory Manager'])
 const MAX_NOTIFICATIONS = 5
 const SEVERITY_ICON = { Critical: [TriangleAlert, '#d92d20'], High: [ShieldCheck, '#b54708'], Medium: [TrendingUp, '#1d4ed8'] }
 

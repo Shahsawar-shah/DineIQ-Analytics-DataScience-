@@ -91,8 +91,6 @@ export function roleHome(role) {
       return '/manager/dashboard'
     case 'Inventory Manager':
       return '/inventory/dashboard'
-    case 'Super Admin':
-      return '/superadmin/dashboard'
     case 'Cashier':
       return '/cashier/orders'
     default:

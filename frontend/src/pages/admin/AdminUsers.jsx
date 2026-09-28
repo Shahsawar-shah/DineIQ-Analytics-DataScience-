@@ -9,12 +9,10 @@ import LoadingState, { ErrorState } from '../../components/ui/LoadingState'
 import { api } from '../../services/api'
 import { downloadCSV } from '../../utils/helpers'
 
-// Must match ALL_ROLES in backend/middleware/auth_middleware.py. Only a Super Admin
-// may assign Admin / Super Admin; the backend enforces that and returns a 403 message.
-const ROLES = ['Customer', 'Cashier', 'Restaurant Manager', 'Inventory Manager', 'Admin', 'Super Admin']
+// Must match ALL_ROLES in backend/middleware/auth_middleware.py.
+const ROLES = ['Customer', 'Cashier', 'Restaurant Manager', 'Inventory Manager', 'Admin']
 
 const ROLE_BADGE = {
-  'Super Admin': 'badge-violet',
   Admin: 'badge-red',
   Cashier: 'badge-orange',
   'Restaurant Manager': 'badge-blue',
