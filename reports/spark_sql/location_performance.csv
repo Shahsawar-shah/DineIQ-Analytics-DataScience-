@@ -1,0 +1,21 @@
+restaurant_id,restaurant_name,location_city,total_revenue,total_profit,profit_margin_pct,total_orders,total_customers,avg_order_value
+4,DineIQ Saddar Karachi,Karachi,4027063.72,2383841.34,59.2,15181,12003,265.27
+1,DineIQ DHA Karachi,Karachi,4013244.66,2377431.63,59.24,15108,11884,265.64
+3,DineIQ Gulshan Karachi,Karachi,4006327.75,2383487.02,59.49,15071,11890,265.83
+2,DineIQ Clifton Karachi,Karachi,4004009.09,2376106.25,59.34,15094,11878,265.27
+5,DineIQ North Nazimabad Karachi,Karachi,3947991.64,2341785.76,59.32,15094,11908,261.56
+15,DineIQ F-7 Islamabad,Islamabad,3042510.11,1796817.02,59.06,11346,6803,268.16
+13,DineIQ Bahria Town Lahore,Lahore,2552507.05,1504926.81,58.96,9553,7511,267.19
+11,DineIQ Johar Town Lahore,Lahore,2532171.36,1494099.99,59.0,9523,7437,265.9
+12,DineIQ Model Town Lahore,Lahore,2519346.86,1490024.84,59.14,9375,7382,268.73
+14,DineIQ Garden Town Lahore,Lahore,2518615.94,1486896.56,59.04,9354,7335,269.26
+10,DineIQ DHA Lahore,Lahore,2509862.18,1483553.71,59.11,9330,7278,269.01
+9,DineIQ Gulberg Lahore,Lahore,2500519.23,1474958.49,58.99,9398,7380,266.07
+7,DineIQ Bahria Town Karachi,Karachi,2005501.68,1181635.68,58.92,7491,6641,267.72
+8,DineIQ Malir Karachi,Karachi,2002341.25,1182668.8,59.06,7448,6571,268.84
+6,DineIQ Korangi Karachi,Karachi,1990720.15,1173522.51,58.95,7475,6597,266.32
+16,DineIQ F-10 Islamabad,Islamabad,1515593.21,892356.12,58.88,5639,4210,268.77
+18,DineIQ Blue Area Islamabad,Islamabad,1487040.02,876526.41,58.94,5587,4250,266.16
+17,DineIQ G-9 Islamabad,Islamabad,1484529.62,874189.29,58.89,5558,4190,267.1
+20,DineIQ Bahria Town Rawalpindi,Rawalpindi,1271502.46,752117.45,59.15,4796,2684,265.12
+19,DineIQ Saddar Rawalpindi,Rawalpindi,1232222.95,724605.5,58.8,4637,2696,265.74

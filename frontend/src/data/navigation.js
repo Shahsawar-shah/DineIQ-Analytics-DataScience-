@@ -1,8 +1,8 @@
 import {
-  BarChart3, Bell, BookOpen, Boxes, CalendarClock, ClipboardList, Cog, Database, FileBarChart,
+  Activity, BarChart3, Bell, BookOpen, Boxes, CalendarClock, ChefHat, ClipboardList, Cog, Database, FileBarChart,
   FileText, FlaskConical, Gauge, GitCompareArrows, Heart, LayoutDashboard, LineChart, MapPin,
   Megaphone, PackageSearch, PieChart, Receipt, ScrollText, Settings,
-  ShieldCheck, ShoppingCart, Sparkles, Star, Tags, TrendingUp, User, UserCog, Users, UtensilsCrossed,
+  ListChecks, ShieldCheck, ShoppingCart, Star, Tags, Trash2, TrendingUp, User, UserCog, Users, UtensilsCrossed,
 } from 'lucide-react'
 
 export const ROLE_HOME = {
@@ -10,6 +10,8 @@ export const ROLE_HOME = {
   Admin: '/admin/dashboard',
   'Restaurant Manager': '/manager/dashboard',
   'Inventory Manager': '/inventory/dashboard',
+  'Super Admin': '/superadmin/dashboard',
+  Cashier: '/cashier/orders',
 }
 
 export const ROLE_NAV = {
@@ -17,7 +19,7 @@ export const ROLE_NAV = {
     { label: 'Overview', path: '/customer/dashboard', icon: 'LayoutDashboard', end: true },
     { label: 'My Orders', path: '/customer/orders', icon: 'ShoppingCart' },
     { label: 'Favorites', path: '/customer/favorites', icon: 'Heart' },
-    { label: 'Recommendations', path: '/customer/recommendations', icon: 'Sparkles' },
+    { label: 'Recommendations', path: '/customer/recommendations', icon: 'ChefHat' },
     { label: 'Promotions', path: '/customer/promotions', icon: 'Tags' },
     { label: 'Ratings & Reviews', path: '/customer/ratings', icon: 'Star' },
     { label: 'Profile', path: '/customer/profile', icon: 'User' },
@@ -44,20 +46,47 @@ export const ROLE_NAV = {
     { label: 'Forecasting', path: '/manager/forecasting', icon: 'LineChart' },
     { label: 'Pricing', path: '/manager/pricing', icon: 'Tags' },
     { label: 'Promotions', path: '/manager/promotions', icon: 'Megaphone' },
-    { label: 'Wastage Analytics', path: '/manager/wastage', icon: 'BookOpen' },
-    { label: 'Anomaly Detection', path: '/manager/anomalies', icon: 'Gauge' },
-    { label: 'Recommendations', path: '/manager/recommendations', icon: 'Sparkles' },
+    { label: 'Wastage Analytics', path: '/manager/wastage', icon: 'Trash2' },
+    { label: 'Anomaly Detection', path: '/manager/anomalies', icon: 'Activity' },
+    { label: 'Recommendations', path: '/manager/recommendations', icon: 'ListChecks' },
     { label: 'What-If Simulation', path: '/manager/what-if', icon: 'FlaskConical' },
     { label: 'Dual Pipeline', path: '/manager/dual-pipeline', icon: 'GitCompareArrows' },
     { label: 'Market Basket', path: '/manager/market-basket', icon: 'ShoppingCart' },
     { label: 'Reports', path: '/manager/reports', icon: 'FileBarChart' },
+  ],
+  // Super Admin: every admin page (incl. user management) plus the analytics suite
+  'Super Admin': [
+    { label: 'Overview', path: '/superadmin/dashboard', icon: 'LayoutDashboard', end: true },
+    { label: 'Users', path: '/superadmin/users', icon: 'Users' },
+    { label: 'Roles', path: '/superadmin/roles', icon: 'UserCog' },
+    { label: 'Restaurants / Locations', path: '/superadmin/locations', icon: 'UtensilsCrossed' },
+    { label: 'Data Management', path: '/superadmin/data-management', icon: 'Database' },
+    { label: 'Data Quality', path: '/superadmin/data-quality', icon: 'ShieldCheck' },
+    { label: 'System Monitoring', path: '/superadmin/system-monitoring', icon: 'Gauge' },
+    { label: 'Audit Logs', path: '/superadmin/audit-logs', icon: 'ScrollText' },
+    { label: 'Menu Intelligence', path: '/superadmin/menu-intelligence', icon: 'UtensilsCrossed' },
+    { label: 'Customer Intelligence', path: '/superadmin/customer-intelligence', icon: 'Users' },
+    { label: 'Forecasting', path: '/superadmin/forecasting', icon: 'LineChart' },
+    { label: 'Dual Pipeline', path: '/superadmin/dual-pipeline', icon: 'GitCompareArrows' },
+    { label: 'Market Basket', path: '/superadmin/market-basket', icon: 'ShoppingCart' },
+    { label: 'Pricing', path: '/superadmin/pricing', icon: 'Tags' },
+    { label: 'Promotions', path: '/superadmin/promotions', icon: 'Megaphone' },
+    { label: 'Anomaly Detection', path: '/superadmin/anomalies', icon: 'Activity' },
+    { label: 'Recommendations', path: '/superadmin/recommendations', icon: 'ListChecks' },
+    { label: 'Reports', path: '/superadmin/reports', icon: 'FileBarChart' },
+    { label: 'Settings', path: '/superadmin/settings', icon: 'Settings' },
+  ],
+  // Cashier: orders and menu only (matches backend OPERATIONS_ROLES)
+  Cashier: [
+    { label: 'Orders', path: '/cashier/orders', icon: 'Receipt', end: true },
+    { label: 'Menu', path: '/cashier/menu', icon: 'UtensilsCrossed' },
   ],
   'Inventory Manager': [
     { label: 'Overview', path: '/inventory/dashboard', icon: 'LayoutDashboard', end: true },
     { label: 'Inventory', path: '/inventory/items', icon: 'Boxes' },
     { label: 'Stock Levels', path: '/inventory/stock', icon: 'PackageSearch' },
     { label: 'Consumption', path: '/inventory/consumption', icon: 'BarChart3' },
-    { label: 'Wastage', path: '/inventory/wastage', icon: 'BookOpen' },
+    { label: 'Wastage', path: '/inventory/wastage', icon: 'Trash2' },
     { label: 'Demand Forecast', path: '/inventory/forecast', icon: 'LineChart' },
     { label: 'Wastage Risk', path: '/inventory/wastage-risk', icon: 'ShieldCheck' },
     { label: 'Purchase Planning', path: '/inventory/purchase-planning', icon: 'ClipboardList' },
@@ -67,7 +96,7 @@ export const ROLE_NAV = {
 
 /** Map of icon name -> component, used by the Sidebar renderer. */
 export const ICONS = {
-  LayoutDashboard, ShoppingCart, Heart, Sparkles, Tags, Star, User,
+  LayoutDashboard, ShoppingCart, Heart, ChefHat, ListChecks, Trash2, Activity, Tags, Star, User,
   Users, UserCog, UtensilsCrossed, Database, ShieldCheck, Gauge, ScrollText, FileBarChart, Settings,
   TrendingUp, LineChart, Megaphone, BookOpen, FlaskConical, GitCompareArrows,
   Boxes, PackageSearch, BarChart3, ClipboardList,

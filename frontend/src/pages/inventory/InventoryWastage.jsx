@@ -14,7 +14,7 @@ export default function InventoryWastage() {
         {[
           { label: 'Units Wasted (week)', value: WASTAGE_TREND.reduce((s, d) => s + d.wastage, 0).toLocaleString() },
           { label: 'Cost of Waste (week)', value: fmtMoney(weekCost) },
-          { label: 'Top Waste Category', value: 'Produce — 34%' },
+          { label: 'Top Waste Category', value: 'Produce (34%)' },
           { label: 'Items Above 5% Waste', value: String(INVENTORY.filter((i) => i.wastagePct >= 5).length) },
         ].map((k, i) => (
           <div key={k.label} className="card card-hover anim-fade-up p-4" style={{ animationDelay: `${i * 60}ms` }}>
@@ -76,7 +76,7 @@ export default function InventoryWastage() {
                   <td>{i.category}</td>
                   <td>
                     <div className="flex items-center gap-2">
-                      <div className="meter w-20"><span style={{ width: `${Math.min(100, i.wastagePct * 11)}%`, background: i.wastagePct >= 5 ? 'linear-gradient(90deg,#fb7185,#e11d48)' : 'linear-gradient(90deg,#fbbf24,#d97706)' }} /></div>
+                      <div className="meter w-20"><span style={{ width: `${Math.min(100, i.wastagePct * 11)}%`, background: i.wastagePct >= 5 ? '#e11d48' : '#d97706' }} /></div>
                       {i.wastagePct}%
                     </div>
                   </td>

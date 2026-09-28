@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { AlertTriangle, DollarSign, PackageX, Sparkles } from 'lucide-react'
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
+import { AlertTriangle, DollarSign, Eraser, PackageX } from 'lucide-react'
+import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { api } from '../../services/api'
 import PageHeader from '../../components/layout/PageHeader'
 import KpiCard from '../../components/ui/KpiCard'
@@ -20,20 +20,26 @@ export default function WastageAnalytics() {
   const [summary, setSummary] = useState(null)
   const [highRisk, setHighRisk] = useState([])
   const [byReason, setByReason] = useState([])
+  const [trends, setTrends] = useState([])
+  const [byLocation, setByLocation] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [sum, risk, reasons] = await Promise.all([
+        const [sum, risk, reasons, monthly, locations] = await Promise.all([
           api.wastage.summary(),
           api.wastage.highRisk(10),
           api.wastage.byReason(),
+          api.wastage.trends(),
+          api.wastage.byLocation(),
         ])
         setSummary(sum)
         setHighRisk(risk)
         setByReason(reasons)
+        setTrends(monthly)
+        setByLocation(locations)
       } catch (err) {
         setError(err.message)
       } finally {
@@ -53,7 +59,7 @@ export default function WastageAnalytics() {
       header: 'Wastage %',
       render: (r) => (
         <span className="badge badge-red">
-          {r.wastage_percentage > 50 && '⚠️ '}
+          {r.wastage_percentage > 50 && <AlertTriangle size={11} />}
           {r.wastage_percentage.toFixed(1)}%
         </span>
       ),
@@ -64,13 +70,13 @@ export default function WastageAnalytics() {
 
   return (
     <>
-      <PageHeader title="Wastage Analytics" subtitle="Item-level wastage risk and revenue impact — live from wastage records" />
+      <PageHeader title="Wastage Analytics" subtitle="Item-level wastage risk and revenue impact from wastage records" />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard label="Total Wastage Records" value={summary.total_records.toLocaleString()} icon={AlertTriangle} accent="#b54708" />
         <KpiCard label="Total Wastage Cost" value={`$${summary.total_wastage_cost.toLocaleString()}`} icon={DollarSign} accent="#d92d20" delay={60} />
         <KpiCard label="High Wastage Items" value={String(summary.high_wastage_items)} icon={PackageX} accent="#1d4ed8" delay={120} />
-        <KpiCard label="Records Cleaned" value={summary.impossible_removed.toLocaleString()} icon={Sparkles} accent="#0d9459" delay={180} />
+        <KpiCard label="Impossible Records Removed" value={summary.impossible_removed?.toLocaleString() ?? '—'} icon={Eraser} accent="#0d9459" delay={180} />
       </div>
 
       <div className="mt-5 grid gap-5 xl:grid-cols-2">
@@ -102,6 +108,34 @@ export default function WastageAnalytics() {
 
         <ChartCard title="High Risk Items" subtitle="Highest wastage percentage on the menu">
           <DataTable columns={riskColumns} rows={highRisk} rowKey={(r) => r.item_id} maxHeight="360px" />
+        </ChartCard>
+      </div>
+
+      <div className="mt-5 grid gap-5 xl:grid-cols-2">
+        <ChartCard title="Wastage Trend" subtitle="Monthly wastage cost and quantity" height={300}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={trends}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#eef0f6" vertical={false} />
+              <XAxis dataKey="month" tick={{ fontSize: 10, fill: '#878ba7' }} axisLine={false} tickLine={false} />
+              <YAxis yAxisId="cost" tick={{ fontSize: 10, fill: '#878ba7' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${Math.round(v / 1000)}k`} />
+              <YAxis yAxisId="qty" orientation="right" tick={{ fontSize: 10, fill: '#878ba7' }} axisLine={false} tickLine={false} />
+              <Tooltip formatter={(v) => Number(v).toLocaleString()} />
+              <Line yAxisId="cost" type="monotone" dataKey="cost" stroke="#d92d20" strokeWidth={2.2} dot={false} name="Cost ($)" />
+              <Line yAxisId="qty" type="monotone" dataKey="quantity" stroke="#1d4ed8" strokeWidth={2} dot={false} name="Quantity" />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartCard>
+
+        <ChartCard title="High-Wastage Locations" subtitle="Total wastage cost by restaurant" height={300}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={byLocation.slice(0, 10)} layout="vertical" margin={{ left: 20 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#eef0f6" horizontal={false} />
+              <XAxis type="number" tick={{ fontSize: 10, fill: '#878ba7' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${Math.round(v / 1000)}k`} />
+              <YAxis type="category" dataKey="restaurant_name" width={150} tick={{ fontSize: 9, fill: '#686d8c' }} axisLine={false} tickLine={false} />
+              <Tooltip formatter={(v) => `$${Number(v).toLocaleString()}`} />
+              <Bar dataKey="cost" fill="#b54708" radius={[0, 5, 5, 0]} barSize={13} name="Wastage cost" />
+            </BarChart>
+          </ResponsiveContainer>
         </ChartCard>
       </div>
     </>

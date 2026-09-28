@@ -72,7 +72,7 @@ export default function AdminLocations() {
       header: 'Data Quality',
       render: (r) => (
         <div className="flex items-center gap-2">
-          <div className="meter w-20"><span style={{ width: `${r.dataQuality}%`, background: 'linear-gradient(90deg,#34d399,#0d9459)' }} /></div>
+          <div className="meter w-20"><span style={{ width: `${r.dataQuality}%`, background: '#0d9459' }} /></div>
           <span className="text-xs font-semibold">{r.dataQuality}%</span>
         </div>
       ),

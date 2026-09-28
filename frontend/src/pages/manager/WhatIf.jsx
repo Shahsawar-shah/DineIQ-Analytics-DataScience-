@@ -78,7 +78,7 @@ export default function WhatIf() {
             <select className="input" value={itemId ?? ''} onChange={(e) => { setItemId(Number(e.target.value)); setResult(null) }}>
               {items.map((i) => (
                 <option key={i.item_id} value={i.item_id}>
-                  {i.item_name} — ${i.avg_unit_price.toFixed(2)}
+                  {i.item_name} (${i.avg_unit_price.toFixed(2)})
                 </option>
               ))}
             </select>
@@ -122,7 +122,7 @@ export default function WhatIf() {
 
           <p className="flex items-start gap-2 rounded-xl bg-violet-50 p-3 text-[0.68rem] leading-relaxed text-violet-700">
             <Info size={14} className="mt-0.5 shrink-0" />
-            These are simulated estimates only — not actual results.
+            These are estimates from a simulation, not actual results.
           </p>
         </div>
 

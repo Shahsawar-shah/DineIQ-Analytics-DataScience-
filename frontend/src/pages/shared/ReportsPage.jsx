@@ -32,7 +32,7 @@ export default function ReportsPage({ scope }) {
         else if (format === 'Excel') downloadExcel(rows, 'dineiq-report.xlsx')
         else downloadPDF()
         setBusy(false)
-        setDone(`${format} report generated${format === 'PDF' ? ' — print dialog opened' : ' — download started'}.`)
+        setDone(`${format} report generated${format === 'PDF' ? ', print dialog opened' : ', download started'}.`)
       } catch (err) {
         setBusy(false)
         setError(err.message || 'Could not generate the report.')

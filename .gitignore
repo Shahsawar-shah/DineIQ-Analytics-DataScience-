@@ -9,3 +9,16 @@ dist/
 build/
 .DS_Store
 .ipynb_checkpoints/
+
+# Pipeline reports are small and are submission evidence: keep them in git
+!reports/*.csv
+!reports/spark_sql/*.csv
+# Spark model directories (metadata + small parquet files)
+!models/**/*.parquet
+
+# Spark output markers / checksums and generated Parquet (75 MB+, regenerate with spark_jobs/)
+_SUCCESS
+*.crc
+parquet_data/*
+!parquet_data/.gitkeep
+nohup.out

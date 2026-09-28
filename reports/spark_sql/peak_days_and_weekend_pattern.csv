@@ -1,0 +1,8 @@
+day_of_week,day_name,day_type,orders,avg_orders_per_day
+1,Sunday,weekend,35184,663.8
+2,Monday,weekday,23789,457.5
+3,Tuesday,weekday,24061,462.7
+4,Wednesday,weekday,24514,471.4
+5,Thursday,weekday,24828,477.5
+6,Friday,weekday,24841,477.7
+7,Saturday,weekend,34841,657.4

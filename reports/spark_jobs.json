@@ -1,0 +1,128 @@
+[
+  {
+    "job_id": "9c510b53cd1a",
+    "job_name": "data_quality",
+    "status": "success",
+    "started_at": "2026-09-28T10:55:03",
+    "finished_at": "2026-09-28T10:55:22",
+    "duration_seconds": 18.95,
+    "records_processed": 2464150,
+    "records_output": null,
+    "spark_version": "4.2.0",
+    "error": null,
+    "metrics": {
+      "errors": 3,
+      "warnings": 5
+    }
+  },
+  {
+    "job_id": "c8ee33dfa7c4",
+    "job_name": "cleaning",
+    "status": "success",
+    "started_at": "2026-09-28T10:56:15",
+    "finished_at": "2026-09-28T10:57:14",
+    "duration_seconds": 59.14,
+    "records_processed": 2547655,
+    "records_output": 2515055,
+    "spark_version": "4.2.0",
+    "error": null
+  },
+  {
+    "job_id": "2cb5b5ae73b5",
+    "job_name": "feature_engineering",
+    "status": "success",
+    "started_at": "2026-09-28T11:11:33",
+    "finished_at": "2026-09-28T11:12:45",
+    "duration_seconds": 72.35,
+    "records_processed": 2172058,
+    "records_output": 272228,
+    "spark_version": "4.2.0",
+    "error": null
+  },
+  {
+    "job_id": "ae35b83a56a2",
+    "job_name": "spark_ml_models",
+    "status": "success",
+    "started_at": "2026-09-28T11:23:33",
+    "finished_at": "2026-09-28T11:24:01",
+    "duration_seconds": 27.54,
+    "records_processed": 150,
+    "records_output": 150,
+    "spark_version": "4.2.0",
+    "error": null,
+    "metrics": {
+      "best_model": "Logistic Regression",
+      "best_macro_f1": 0.8506
+    }
+  },
+  {
+    "job_id": "989b48edf49b",
+    "job_name": "spark_ml_models",
+    "status": "success",
+    "started_at": "2026-09-28T11:25:02",
+    "finished_at": "2026-09-28T11:25:31",
+    "duration_seconds": 28.59,
+    "records_processed": 150,
+    "records_output": 150,
+    "spark_version": "4.2.0",
+    "error": null,
+    "metrics": {
+      "best_model": "Logistic Regression",
+      "best_macro_f1": 0.7708
+    }
+  },
+  {
+    "job_id": "6b925e460b04",
+    "job_name": "spark_customer_segmentation",
+    "status": "success",
+    "started_at": "2026-09-28T11:27:28",
+    "finished_at": "2026-09-28T11:27:57",
+    "duration_seconds": 29.69,
+    "records_processed": 65727,
+    "records_output": 65727,
+    "spark_version": "4.2.0",
+    "error": null,
+    "metrics": {
+      "test_silhouette": 0.454
+    }
+  },
+  {
+    "job_id": "7cdff0a36f83",
+    "job_name": "ingestion",
+    "status": "success",
+    "started_at": "2026-09-28T12:34:58",
+    "finished_at": "2026-09-28T12:35:28",
+    "duration_seconds": 29.66,
+    "records_processed": 2547655,
+    "records_output": 2547655,
+    "spark_version": "4.2.0",
+    "error": null
+  },
+  {
+    "job_id": "b1810cded2ba",
+    "job_name": "cleaning",
+    "status": "success",
+    "started_at": "2026-09-28T12:35:42",
+    "finished_at": "2026-09-28T12:36:39",
+    "duration_seconds": 57.19,
+    "records_processed": 2547655,
+    "records_output": 2515055,
+    "spark_version": "4.2.0",
+    "error": null
+  },
+  {
+    "job_id": "2fad160a7b14",
+    "job_name": "spark_sql_analytics",
+    "status": "success",
+    "started_at": "2026-09-28T12:36:53",
+    "finished_at": "2026-09-28T12:37:32",
+    "duration_seconds": 38.47,
+    "records_processed": null,
+    "records_output": 1685,
+    "spark_version": "4.2.0",
+    "error": null,
+    "metrics": {
+      "queries": 17
+    }
+  }
+]

@@ -7,9 +7,9 @@ import { LOCATIONS, fmtMoney } from '../../data/mockData'
 import { downloadCSV, downloadExcel, downloadPDF } from '../../utils/helpers'
 
 const HISTORY = [
-  { name: 'User Activity — September', type: 'PDF', generated: 'Sep 25, 09:44', by: 'System Administrator', status: 'Completed' },
+  { name: 'User Activity, September', type: 'PDF', generated: 'Sep 25, 09:44', by: 'System Administrator', status: 'Completed' },
   { name: 'Data Quality Summary Q3', type: 'Excel', generated: 'Sep 24, 16:20', by: 'System Administrator', status: 'Completed' },
-  { name: 'Audit Trail — Sept week 3', type: 'CSV', generated: 'Sep 23, 11:02', by: 'Compliance Bot', status: 'Completed' },
+  { name: 'Audit Trail, Sept week 3', type: 'CSV', generated: 'Sep 23, 11:02', by: 'Scheduled job', status: 'Completed' },
   { name: 'Location Performance Pack', type: 'Excel', generated: 'Sep 22, 08:15', by: 'Dana Cole', status: 'Completed' },
 ]
 
@@ -38,7 +38,7 @@ export function ReportGenerator({ roleScope }) {
         else if (type === 'Excel') downloadExcel(rows, `dineiq-${roleScope.toLowerCase()}-report.xlsx`)
         else downloadPDF()
         setBusy(false)
-        setDone(`${type} report generated${type === 'PDF' ? ' — print dialog opened' : ' — download started'}.`)
+        setDone(`${type} report generated${type === 'PDF' ? ', print dialog opened' : ', download started'}.`)
       } catch (err) {
         setBusy(false)
         setError(err.message || 'Could not generate the report.')

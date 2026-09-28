@@ -1,4 +1,3 @@
-import { Sparkles } from 'lucide-react'
 import PageHeader from '../../components/layout/PageHeader'
 import Stars from '../../components/ui/Stars'
 import { RECOMMENDED, fmtMoney } from '../../data/mockData'
@@ -6,14 +5,14 @@ import { RECOMMENDED, fmtMoney } from '../../data/mockData'
 export default function CustomerRecommendations() {
   return (
     <>
-      <PageHeader title="Recommendations" subtitle="Personalized picks from the DineIQ recommendation engine" />
+      <PageHeader title="Recommendations" subtitle="Dishes picked for you based on your past orders and ratings" />
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {RECOMMENDED.map((r, i) => (
           <div key={r.id} className="card card-hover group anim-fade-up overflow-hidden" style={{ animationDelay: `${i * 70}ms` }}>
             <div className="relative h-40 overflow-hidden">
               <img src={r.image} alt={r.name} loading="lazy" className="food-card-img h-full w-full object-cover" />
-              <span className="absolute left-3 top-3 badge badge-violet">
-                <Sparkles size={11} /> {r.match}% match
+              <span className="absolute left-3 top-3 badge bg-white text-ink-800">
+                {r.match}% match
               </span>
             </div>
             <div className="p-4">

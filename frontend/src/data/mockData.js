@@ -130,11 +130,11 @@ export const ANOMALIES = [
 export const RECOMMENDATIONS = [
   { id: 'R-01', area: 'Menu', title: 'Promote Truffle Mushroom Risotto', detail: 'High margin (61%) with rising trend (+8.4%). Feature it on the hero banner and weekend specials board.', impact: 'High', confidence: 92 },
   { id: 'R-02', area: 'Menu', title: 'Rework Garden Caesar Salad', detail: 'Low performance, −6.9% trend and 6.8% wastage. Test a new dressing and smaller portion size.', impact: 'Medium', confidence: 84 },
-  { id: 'R-03', area: 'Customers', title: 'Win-back campaign for 118 At-Risk customers', detail: 'Target the At Risk segment with a 15% personal coupon — estimated $4.2k recovered revenue.', impact: 'High', confidence: 88 },
-  { id: 'R-04', area: 'Customers', title: 'Upsell dessert pairings to Champions', detail: 'Champions add desserts only 22% of the time despite 4.9★ lava cake ratings.', impact: 'Medium', confidence: 79 },
+  { id: 'R-03', area: 'Customers', title: 'Win-back campaign for 118 At-Risk customers', detail: 'Target the At Risk segment with a 15% personal coupon, estimated $4.2k recovered revenue.', impact: 'High', confidence: 88 },
+  { id: 'R-04', area: 'Customers', title: 'Upsell dessert pairings to Champions', detail: 'Champions add desserts only 22% of the time despite 4.9-star lava cake ratings.', impact: 'Medium', confidence: 79 },
   { id: 'R-05', area: 'Pricing', title: 'Raise Cold Brew price by $0.30', detail: 'Demand elasticity −0.4 at current price point; expected +$1.1k monthly profit with <2% volume loss.', impact: 'Medium', confidence: 86 },
   { id: 'R-06', area: 'Pricing', title: 'Bundle Margherita Flatbread at $12.90', detail: 'Basket analysis shows strong lift with Garlic Herb Bread; a bundle lifts combo attach by 18%.', impact: 'Low', confidence: 74 },
-  { id: 'R-07', area: 'Promotions', title: 'Extend Dessert Happy Hour to Thursdays', detail: 'Current ROI 3.8x with 31% uplift — Thursday traffic profile matches Tuesday pattern.', impact: 'High', confidence: 90 },
+  { id: 'R-07', area: 'Promotions', title: 'Extend Dessert Happy Hour to Thursdays', detail: 'Current ROI 3.8x with 31% uplift. Thursday traffic profile matches Tuesday pattern.', impact: 'High', confidence: 90 },
   { id: 'R-08', area: 'Promotions', title: 'Pause Free Delivery Week', detail: 'ROI 2.4x is below the 2.6x portfolio floor; reallocate budget to Bundle Fest.', impact: 'Medium', confidence: 81 },
   { id: 'R-09', area: 'Inventory', title: 'Reduce calamari par level by 20%', detail: '5.6% wastage with −4.8% sales trend. Adjust purchase orders for the next 2 weeks.', impact: 'Medium', confidence: 85 },
   { id: 'R-10', area: 'Inventory', title: 'Pre-order extra cold brew beans', detail: 'Forecast shows +12.3% demand next month; current stock covers only 18 days.', impact: 'High', confidence: 93 },
@@ -271,10 +271,10 @@ export const SYSTEM_SERVICES = [
 
 export const AUDIT_LOGS = [
   { id: 'L-8841', timestamp: '2026-09-25 10:02', actor: 'System Administrator', action: 'Updated user role', entity: 'Luis Ortega → Inactive', severity: 'Warning' },
-  { id: 'L-8840', timestamp: '2026-09-25 09:44', actor: 'Victor Laurent', action: 'Exported report (CSV)', entity: 'Sales Analytics — September', severity: 'Info' },
-  { id: 'L-8839', timestamp: '2026-09-25 08:47', actor: 'Priya Nair', action: 'Approved purchase order', entity: 'PO-1187 — GreenLeaf Farms', severity: 'Info' },
+  { id: 'L-8840', timestamp: '2026-09-25 09:44', actor: 'Victor Laurent', action: 'Exported report (CSV)', entity: 'Sales Analytics, September', severity: 'Info' },
+  { id: 'L-8839', timestamp: '2026-09-25 08:47', actor: 'Priya Nair', action: 'Approved purchase order', entity: 'PO-1187, GreenLeaf Farms', severity: 'Info' },
   { id: 'L-8838', timestamp: '2026-09-24 22:10', actor: 'System', action: 'Anomaly detected', entity: 'Revenue @ Harbor Point', severity: 'Critical' },
-  { id: 'L-8837', timestamp: '2026-09-24 18:31', actor: 'Dana Cole', action: 'Modified menu prices', entity: '4 items — Riverside Bistro', severity: 'Warning' },
+  { id: 'L-8837', timestamp: '2026-09-24 18:31', actor: 'Dana Cole', action: 'Modified menu prices', entity: '4 items, Riverside Bistro', severity: 'Warning' },
   { id: 'L-8836', timestamp: '2026-09-24 16:05', actor: 'System Administrator', action: 'Data re-ingestion triggered', entity: 'Orders partition 2026-09-24', severity: 'Info' },
   { id: 'L-8835', timestamp: '2026-09-24 11:26', actor: 'System', action: 'Failed login attempts (5)', entity: 'unknown@suspicious.mail', severity: 'Critical' },
   { id: 'L-8834', timestamp: '2026-09-23 19:58', actor: 'Aisha Bello', action: 'Created promotion', entity: 'Weekend Family Feast', severity: 'Info' },
@@ -330,14 +330,14 @@ export const CUSTOMER_PROMOS = [
 ]
 
 export const MY_REVIEWS = [
-  { id: 'RV-1', item: 'Truffle Mushroom Risotto', rating: 5, date: '2026-09-21', comment: 'Absolutely fantastic — the best risotto I have had in the city.' },
+  { id: 'RV-1', item: 'Truffle Mushroom Risotto', rating: 5, date: '2026-09-21', comment: 'Really good. Best risotto I have had in the city.' },
   { id: 'RV-2', item: 'Cold Brew Coffee', rating: 4, date: '2026-09-12', comment: 'Smooth and strong. Wish the cup were bigger!' },
   { id: 'RV-3', item: 'Molten Chocolate Lava', rating: 5, date: '2026-09-04', comment: 'Perfect dessert. Warm, gooey center every single time.' },
 ]
 
 export const CUSTOMER_ACTIVITY = [
   { time: 'Sep 25 · 19:42', text: 'Placed order ORD-8841 at Downtown Flagship', kind: 'order' },
-  { time: 'Sep 25 · 19:45', text: 'Rated Truffle Mushroom Risotto 5★', kind: 'rating' },
+  { time: 'Sep 25 · 19:45', text: 'Rated Truffle Mushroom Risotto 5 stars', kind: 'rating' },
   { time: 'Sep 21 · 13:18', text: 'Redeemed promo code BUNDLE20', kind: 'promo' },
   { time: 'Sep 17 · 20:05', text: 'Added Truffle Mushroom Risotto to favorites', kind: 'fav' },
   { time: 'Sep 12 · 12:44', text: 'Placed order ORD-8633 via mobile app', kind: 'order' },

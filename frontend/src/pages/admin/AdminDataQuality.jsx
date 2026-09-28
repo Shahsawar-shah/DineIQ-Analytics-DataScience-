@@ -44,7 +44,7 @@ export default function AdminDataQuality() {
                   <span
                     style={{
                       width: `${d.score}%`,
-                      background: d.score >= 95 ? 'linear-gradient(90deg,#34d399,#0d9459)' : d.score >= 90 ? 'linear-gradient(90deg,#fbbf24,#d97706)' : 'linear-gradient(90deg,#fb7185,#e11d48)',
+                      background: d.score >= 95 ? '#0d9459' : d.score >= 90 ? '#d97706' : '#e11d48',
                       transitionDelay: `${i * 90}ms`,
                     }}
                   />
@@ -69,7 +69,7 @@ export default function AdminDataQuality() {
                 <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-ink-400">Overall</p>
               </div>
             </div>
-            <span className="badge badge-green mt-4">Grade A — publication ready</span>
+            <span className="badge badge-green mt-4">Grade A</span>
           </div>
         </ChartCard>
       </div>

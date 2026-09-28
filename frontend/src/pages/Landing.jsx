@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  ArrowRight, BarChart3, BellDot, BrainCircuit, CheckCircle2,
-  Database, Gauge, LineChart, Mail, MapPin, Megaphone, Menu as MenuIcon,
-  Package, Phone, Quote, Sparkles, Star, Tags, TrendingUp, TriangleAlert,
-  UtensilsCrossed, X,
+  ArrowRight, CheckCircle2, Database, Gauge, LayoutDashboard, LineChart,
+  ListChecks, Mail, MapPin, Megaphone, Menu as MenuIcon, Package, Phone, Quote, Tags,
+  TrendingUp, TriangleAlert, Users, UtensilsCrossed, X,
 } from 'lucide-react'
 import {
   Area, AreaChart, Bar, BarChart as RBarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer,
@@ -56,18 +55,18 @@ function LandingNav() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-ink-950/92 py-2 shadow-2xl backdrop-blur-xl' : 'bg-transparent py-4'
+        scrolled ? 'bg-ink-950 py-2 shadow-sm' : 'bg-transparent py-4'
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link to="/" className="flex items-center gap-2.5">
-          <Logo size={40} className="shrink-0 drop-shadow-lg" />
+          <Logo size={40} className="shrink-0" />
           <span>
             <span className="font-display block text-lg font-extrabold leading-none text-white">
               DineIQ <span className="text-brand-500">Analytics</span>
             </span>
-            <span className="block text-[0.55rem] font-semibold uppercase tracking-[0.35em] text-white/50">
-              Dining Intelligence
+            <span className="block text-[0.6rem] font-medium uppercase tracking-[0.12em] text-white/50">
+              Restaurant analytics
             </span>
           </span>
         </Link>
@@ -80,9 +79,9 @@ function LandingNav() {
           ))}
           <Link
             to="/login"
-            className="btn btn-primary !rounded-xl !px-6 !py-2.5 text-sm uppercase tracking-wider"
+            className="btn btn-primary !rounded-lg !px-5 !py-2 text-sm"
           >
-            Login
+            Log in
           </Link>
         </nav>
 
@@ -92,55 +91,40 @@ function LandingNav() {
       </div>
 
       {open && (
-        <div className="anim-fade-in mx-4 mt-3 rounded-2xl border border-white/10 bg-ink-950/95 p-3 backdrop-blur-xl lg:hidden">
+        <div className="anim-fade-in mx-4 mt-3 rounded-xl border border-white/10 bg-ink-950 p-3 lg:hidden">
           {links.map((l) => (
             <button key={l.id} onClick={() => go(l.id)} className="block w-full rounded-xl px-4 py-2.5 text-left text-sm font-semibold text-white/80 hover:bg-white/5">
               {l.label}
             </button>
           ))}
-          <Link to="/login" className="btn btn-primary mt-2 w-full !py-3">Login</Link>
+          <Link to="/login" className="btn btn-primary mt-2 w-full !py-3">Log in</Link>
         </div>
       )}
     </header>
   )
 }
 
-/* ---------------- Hero (Food Funday style) ---------------- */
+/* ---------------- Hero ---------------- */
 
 function Hero() {
   return (
     <section id="home" className="hero-vignette relative flex min-h-screen items-center overflow-hidden">
-      <div className="grid-lines absolute inset-0 opacity-60" />
-      <div className="anim-float absolute right-[8%] top-[22%] hidden rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-xl lg:block">
-        <p className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/60">Forecast Accuracy</p>
-        <p className="font-display text-3xl font-extrabold text-white">94.2%</p>
-      </div>
-      <div className="anim-float absolute bottom-[26%] left-[6%] hidden rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-xl lg:block" style={{ animationDelay: '1.2s' }}>
-        <p className="text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/60">Wastage Reduced</p>
-        <p className="font-display text-3xl font-extrabold text-emerald-400">−23%</p>
-      </div>
-
-      <div className="relative mx-auto max-w-4xl px-4 pt-28 pb-36 text-center sm:px-6">
-        <p className="anim-fade-up font-script text-3xl text-brand-400 sm:text-4xl">DineIQ Analytics</p>
-        <h1 className="anim-fade-up font-display mt-3 text-4xl font-extrabold leading-[1.08] text-white sm:text-5xl lg:text-[3.6rem]" style={{ animationDelay: '0.1s' }}>
-          TURN RESTAURANT DATA INTO <span className="text-brand-500">ACTIONABLE INTELLIGENCE</span>
+      <div className="relative mx-auto max-w-3xl px-4 pt-28 pb-32 text-center sm:px-6">
+        <p className="font-script text-3xl text-brand-400 sm:text-4xl">DineIQ Analytics</p>
+        <h1 className="font-display mt-4 text-4xl font-extrabold leading-[1.12] text-white sm:text-5xl">
+          See what's selling, what's wasted and <span className="text-brand-400">where the profit is.</span>
         </h1>
-        <p className="anim-fade-up mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base" style={{ animationDelay: '0.2s' }}>
-          Analyze restaurant sales, menus, customers, inventory, wastage, pricing, promotions and business
-          performance through one intelligent analytics platform.
+        <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-white/70 sm:text-base">
+          Sales, menu, guest and stock data from all your locations in one place, with reports your
+          managers and kitchen staff can actually use.
         </p>
-        <div className="anim-fade-up mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row" style={{ animationDelay: '0.3s' }}>
-          <a href="#features" className="btn btn-primary !rounded-xl !px-9 !py-4 text-sm uppercase tracking-[0.15em]">
-            Explore Intelligence
+        <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <a href="#features" className="btn btn-primary !rounded-lg !px-7 !py-3.5 text-sm">
+            See the features
           </a>
-          <Link to="/login" className="btn btn-outline !rounded-xl !px-9 !py-4 text-sm uppercase tracking-[0.15em]">
-            Login
+          <Link to="/login" className="btn btn-outline !rounded-lg !px-7 !py-3.5 text-sm">
+            Log in
           </Link>
-        </div>
-        <div className="anim-wheel absolute bottom-24 left-1/2 hidden -translate-x-1/2 sm:block">
-          <div className="flex h-12 w-7 items-start justify-center rounded-full border-2 border-white/40 pt-2">
-            <div className="h-2.5 w-1 rounded-full bg-white/70" />
-          </div>
         </div>
       </div>
     </section>
@@ -152,12 +136,12 @@ function Hero() {
 const TICKER_ITEMS = [
   { icon: TrendingUp, text: 'Sales Analytics' },
   { icon: UtensilsCrossed, text: 'Menu Intelligence' },
-  { icon: BarChart3, text: 'Customer Intelligence' },
-  { icon: Package, text: 'Inventory Intelligence' },
+  { icon: Users, text: 'Customer Insights' },
+  { icon: Package, text: 'Inventory' },
   { icon: TriangleAlert, text: 'Wastage Analytics' },
   { icon: Tags, text: 'Pricing & Promotions' },
   { icon: LineChart, text: 'Forecasting' },
-  { icon: BrainCircuit, text: 'ML Recommendations' },
+  { icon: ListChecks, text: 'Recommendations' },
 ]
 
 function Overview() {
@@ -175,7 +159,7 @@ function Overview() {
             <span key={i} className="flex items-center gap-2 whitespace-nowrap text-sm font-semibold text-ink-500">
               <t.icon size={16} className="text-brand-500" />
               {t.text}
-              <span className="ml-6 h-1 w-1 rounded-full bg-brand-300" />
+              <span className="ml-6 h-1 w-1 rounded-full bg-ink-200" />
             </span>
           ))}
         </div>
@@ -184,7 +168,7 @@ function Overview() {
         {stats.map((s) => (
           <div key={s.label} className="text-center">
             <p className="font-display text-3xl font-extrabold text-ink-900 sm:text-4xl">{s.value}</p>
-            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-ink-400">{s.label}</p>
+            <p className="mt-1 text-xs font-medium text-ink-400">{s.label}</p>
           </div>
         ))}
       </Reveal>
@@ -192,14 +176,14 @@ function Overview() {
   )
 }
 
-/* ---------------- Intelligence features grid ---------------- */
+/* ---------------- Features grid ---------------- */
 
 const FEATURES = [
   { icon: TrendingUp, title: 'Sales Analytics', desc: 'Revenue, orders and channel performance across every location, hour and daypart.' },
   { icon: UtensilsCrossed, title: 'Menu Intelligence', desc: 'Classify every item into High / Medium / Low performance using sales, margin and wastage.' },
-  { icon: BrainCircuit, title: 'Customer Intelligence', desc: 'RFM segmentation, churn risk and lifetime value for every guest profile.' },
+  { icon: Users, title: 'Customer Intelligence', desc: 'RFM segmentation, churn risk and lifetime value for every guest profile.' },
   { icon: LineChart, title: 'Sales Forecasting', desc: 'Daily, weekly and monthly revenue and order forecasts with confidence ranges.' },
-  { icon: Package, title: 'Inventory Intelligence', desc: 'Stock levels, consumption velocity and purchase planning in real time.' },
+  { icon: Package, title: 'Inventory Tracking', desc: 'Stock levels, consumption and purchase planning, updated as orders come in.' },
   { icon: TriangleAlert, title: 'Wastage Analytics', desc: 'Category and location wastage trends with item-level risk scoring.' },
   { icon: Tags, title: 'Pricing Intelligence', desc: 'Price sensitivity and demand elasticity per item to find the optimal price point.' },
   { icon: Megaphone, title: 'Promotion Analytics', desc: 'Measure campaign ROI, conversion lift and incremental revenue per promotion.' },
@@ -211,21 +195,20 @@ function Features() {
     <section id="features" className="relative bg-white py-20 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <p className="section-eyebrow justify-center">Platform Capabilities</p>
+          <p className="section-eyebrow justify-center">Features</p>
           <h2 className="font-display mt-3 text-3xl font-extrabold text-ink-900 sm:text-4xl">
-            Intelligence Features
+            What's in DineIQ
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-ink-500">
-            Every module of DineIQ turns raw restaurant data into a decision — from the menu matrix to the
-            stock room.
+            Nine modules covering the front of house, the kitchen and the stock room.
           </p>
         </Reveal>
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f, i) => (
             <Reveal key={f.title} delay={(i % 3) * 90}>
               <div className="card card-hover group h-full p-6">
-                <div className="mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-500 transition group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-brand-400 group-hover:to-brand-600 group-hover:text-white">
-                  <f.icon size={22} strokeWidth={2.1} />
+                <div className="mb-4 grid h-10 w-10 place-items-center rounded-lg bg-brand-50 text-brand-600">
+                  <f.icon size={20} />
                 </div>
                 <h3 className="font-display text-base font-bold text-ink-900">{f.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-ink-500">{f.desc}</p>
@@ -238,7 +221,7 @@ function Features() {
   )
 }
 
-/* ---------------- Analytics preview (dark panel with live charts) ---------------- */
+/* ---------------- Analytics preview ---------------- */
 
 function AnalyticsPreview() {
   const revenue = REVENUE_TREND
@@ -246,13 +229,12 @@ function AnalyticsPreview() {
   const colors = ['#f95d0b', '#fb7f38', '#f9a825', '#1d4ed8']
   return (
     <section id="analytics" className="dark-panel relative overflow-hidden py-20 sm:py-24">
-      <div className="grid-lines absolute inset-0" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <p className="section-eyebrow justify-center !text-brand-400">Live From The Platform</p>
-          <h2 className="font-display mt-3 text-3xl font-extrabold text-white sm:text-4xl">Analytics Preview</h2>
+          <p className="section-eyebrow justify-center !text-brand-400">Dashboards</p>
+          <h2 className="font-display mt-3 text-3xl font-extrabold text-white sm:text-4xl">A look inside</h2>
           <p className="mt-3 text-sm leading-relaxed text-white/60">
-            A glimpse of the dashboards inside DineIQ — sample data from a five-location restaurant group.
+            Sample data from a restaurant group with five locations.
           </p>
         </Reveal>
 
@@ -260,7 +242,7 @@ function AnalyticsPreview() {
           <Reveal className="lg:col-span-2">
             <div className="glass h-full rounded-2xl p-5">
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-display text-sm font-bold text-white">Revenue vs Target — 2026</h3>
+                <h3 className="font-display text-sm font-bold text-white">Revenue vs target, 2026</h3>
               </div>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -340,8 +322,8 @@ function AnalyticsPreview() {
                   </div>
                 ))}
               </div>
-              <Link to="/login" className="btn btn-outline mt-5 w-full !py-2.5 text-xs uppercase tracking-wider">
-                Open Full Dashboard
+              <Link to="/login" className="btn btn-outline mt-5 w-full !rounded-lg !py-2.5 text-xs">
+                Open the full dashboard
               </Link>
             </div>
           </Reveal>
@@ -351,7 +333,7 @@ function AnalyticsPreview() {
   )
 }
 
-/* ---------------- Menu intelligence spotlight ---------------- */
+/* ---------------- Menu matrix spotlight ---------------- */
 
 function MenuIntelligenceSection() {
   return (
@@ -360,17 +342,17 @@ function MenuIntelligenceSection() {
         <Reveal>
           <p className="section-eyebrow">Menu Matrix</p>
           <h2 className="font-display mt-3 text-3xl font-extrabold text-ink-900 sm:text-4xl">
-            Every Dish, Classified & Decoded
+            Know which dishes earn their place
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-ink-500">
-            DineIQ scores each menu item on sales volume, revenue, cost, profit margin, guest rating,
-            repeat-purchase rate and wastage — then classifies it into the Menu Matrix.
+            Each menu item is scored on sales volume, revenue, cost, margin, guest rating, repeat orders
+            and wastage, then placed in one of three groups.
           </p>
           <ul className="mt-6 space-y-3">
             {[
-              'High Performance — protect, promote and feature',
-              'Medium Performance — optimize price, portion or placement',
-              'Low Performance — rework, reprice or retire',
+              'High performers: keep them, feature them',
+              'Medium performers: adjust price, portion or placement',
+              'Low performers: rework, reprice or take off the menu',
             ].map((t) => (
               <li key={t} className="flex items-start gap-2.5 text-sm text-ink-700">
                 <CheckCircle2 size={17} className="mt-0.5 shrink-0 text-brand-500" />
@@ -378,14 +360,13 @@ function MenuIntelligenceSection() {
               </li>
             ))}
           </ul>
-          <Link to="/login" className="btn btn-primary mt-8 !px-8 !py-3.5 text-sm uppercase tracking-wider">
-            Explore Menu Intelligence <ArrowRight size={16} />
+          <Link to="/login" className="btn btn-primary mt-8 !rounded-lg !px-7 !py-3 text-sm">
+            View menu analysis <ArrowRight size={16} />
           </Link>
         </Reveal>
         <Reveal delay={120}>
-          <div className="card relative overflow-hidden p-6">
-            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-brand-50" />
-            <div className="relative">
+          <div className="card p-6">
+            <div>
               <div className="mb-5 flex items-center justify-between">
                 <h3 className="font-display text-sm font-bold text-ink-900">Menu Performance Classification</h3>
               </div>
@@ -403,10 +384,10 @@ function MenuIntelligenceSection() {
                         width: `${Math.min(100, (m.revenue / 30000) * 100 + 8)}%`,
                         background:
                           m.perfClass === 'High'
-                            ? 'linear-gradient(90deg,#34d399,#0d9459)'
+                            ? '#0d9459'
                             : m.perfClass === 'Medium'
-                              ? 'linear-gradient(90deg,#fbbf24,#d97706)'
-                              : 'linear-gradient(90deg,#fb7185,#e11d48)',
+                              ? '#d97706'
+                              : '#e11d48',
                       }}
                     />
                   </div>
@@ -427,16 +408,16 @@ const SPLIT_SECTIONS = [
     id: 'customer',
     eyebrow: 'Know Your Guests',
     title: 'Customer Intelligence',
-    desc: 'RFM segmentation, churn-risk scoring and lifetime value — DineIQ tells you who your most valuable guests are, who is drifting away, and what to do about it.',
+    desc: 'RFM segments, churn risk and lifetime value show who your regulars are, who has stopped coming in, and who is worth a follow-up offer.',
     points: ['6 RFM segments from Champions to Hibernating', 'Churn-risk alerts with win-back playbooks', 'Order frequency & spending patterns per guest'],
-    icon: BrainCircuit,
+    icon: Users,
     img: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1000&q=80',
   },
   {
     id: 'sales',
     eyebrow: 'See What Comes Next',
     title: 'Sales & Forecasting',
-    desc: 'Daily, weekly and monthly forecasts for revenue and orders with confidence ranges — plus anomaly alerts when reality deviates from the model.',
+    desc: 'Daily, weekly and monthly forecasts for revenue and orders with confidence ranges, plus alerts when actual numbers drift away from the forecast.',
     points: ['Revenue & order forecasts with ranges', 'Dual Python / Spark pipeline comparison', 'Automatic anomaly detection & severity badges'],
     icon: LineChart,
     img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1000&q=80',
@@ -444,8 +425,8 @@ const SPLIT_SECTIONS = [
   {
     id: 'inventory',
     eyebrow: 'Waste Less, Earn More',
-    title: 'Inventory & Wastage Intelligence',
-    desc: 'Live stock levels, consumption velocity, par-level alerts and wastage-risk scoring keep every kitchen stocked without over-ordering.',
+    title: 'Inventory & Wastage',
+    desc: 'Stock levels, usage rates, par-level alerts and wastage risk help each kitchen order enough without over-ordering.',
     points: ['Low-stock and out-of-stock alerts', 'Category & location wastage breakdowns', 'Purchase planning with reorder quantities'],
     icon: Package,
     img: 'https://images.unsplash.com/photo-1580913428023-02c695666d61?auto=format&fit=crop&w=1000&q=80',
@@ -453,8 +434,8 @@ const SPLIT_SECTIONS = [
   {
     id: 'pricing',
     eyebrow: 'Price With Confidence',
-    title: 'Pricing & Promotion Intelligence',
-    desc: 'Demand elasticity per item and campaign ROI per promotion show you exactly where a price change or discount will pay off — before you commit.',
+    title: 'Pricing & Promotions',
+    desc: 'Price sensitivity per item and ROI per campaign show where a price change or discount is likely to pay off before you commit to it.',
     points: ['Price sensitivity classification per item', 'Promotion conversion & uplift tracking', 'What-if simulation for price & discount moves'],
     icon: Tags,
     img: 'https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&w=1000&q=80',
@@ -468,18 +449,14 @@ function SplitSections() {
         <div key={s.id} id={s.id === 'customer' ? 'customer' : undefined} className="py-16 sm:py-20 odd:bg-ink-50/60">
           <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2">
             <Reveal className={i % 2 === 1 ? 'lg:order-2' : ''}>
-              <div className="group relative overflow-hidden rounded-2xl shadow-xl">
+              <div className="group relative overflow-hidden rounded-xl">
                 <img
                   src={s.img}
                   alt={s.title}
                   loading="lazy"
                   className="food-card-img aspect-[16/10] w-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-transparent" />
-                <div className="glass absolute bottom-4 left-4 flex items-center gap-2.5 rounded-xl px-4 py-2.5">
-                  <s.icon size={18} className="text-brand-400" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-white">{s.title}</span>
-                </div>
+
               </div>
             </Reveal>
             <Reveal delay={100} className={i % 2 === 1 ? 'lg:order-1' : ''}>
@@ -505,26 +482,25 @@ function SplitSections() {
 /* ---------------- How it works ---------------- */
 
 const STEPS = [
-  { icon: Database, title: '1. Connect Your Data', desc: 'POS, inventory, loyalty and delivery-platform data flows into the DineIQ lake.' },
-  { icon: Gauge, title: '2. Process & Score', desc: 'Dual Python and Spark pipelines clean, transform and score every record.' },
-  { icon: Sparkles, title: '3. Surface Intelligence', desc: 'Dashboards turn scores into classifications, forecasts and recommendations.' },
-  { icon: CheckCircle2, title: '4. Act & Measure', desc: 'Act on recommendations, then measure the impact in the next cycle.' },
+  { icon: Database, title: '1. Connect your data', desc: 'POS, inventory, loyalty and delivery-platform exports are loaded into one data store.' },
+  { icon: Gauge, title: '2. Clean and score', desc: 'Python and Spark pipelines clean every record and score each menu item.' },
+  { icon: LayoutDashboard, title: '3. Review dashboards', desc: 'Each role gets its own view: classifications, forecasts and suggested actions.' },
+  { icon: CheckCircle2, title: '4. Act and measure', desc: 'Make the change, then check the result in the next reporting cycle.' },
 ]
 
 function HowItWorks() {
   return (
     <section id="about" className="dark-panel relative overflow-hidden py-20 sm:py-24">
-      <div className="grid-lines absolute inset-0" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <p className="section-eyebrow justify-center !text-brand-400">The Pipeline</p>
-          <h2 className="font-display mt-3 text-3xl font-extrabold text-white sm:text-4xl">How DineIQ Works</h2>
+          <p className="section-eyebrow justify-center !text-brand-400">How it works</p>
+          <h2 className="font-display mt-3 text-3xl font-extrabold text-white sm:text-4xl">From raw data to decisions</h2>
         </Reveal>
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s, i) => (
             <Reveal key={s.title} delay={i * 100}>
-              <div className="glass group h-full rounded-2xl p-6 transition hover:bg-white/10">
-                <div className="mb-4 grid h-11 w-11 place-items-center rounded-xl bg-brand-500/20 text-brand-400 transition group-hover:bg-brand-500 group-hover:text-white">
+              <div className="glass h-full rounded-xl p-6">
+                <div className="mb-4 grid h-10 w-10 place-items-center rounded-lg bg-white/5 text-brand-400">
                   <s.icon size={20} />
                 </div>
                 <h3 className="font-display text-sm font-bold text-white">{s.title}</h3>
@@ -547,11 +523,11 @@ function Testimonial() {
         <Reveal>
           <Quote size={34} className="mx-auto text-brand-200" />
           <p className="font-display mt-5 text-xl font-bold leading-relaxed text-ink-900 sm:text-2xl">
-            "DineIQ found $18k of monthly profit hiding in our menu matrix — and cut wastage by 23% in the
-            first quarter."
+            "We found about $18k a month in margin we were leaving on the menu, and wastage came down
+            23% in the first quarter."
           </p>
           <div className="mt-6 flex items-center justify-center gap-3">
-            <span className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-brand-400 to-brand-600 font-display font-bold text-white">
+            <span className="grid h-11 w-11 place-items-center rounded-full bg-ink-800 font-display font-bold text-white">
               VL
             </span>
             <div className="text-left">
@@ -567,22 +543,21 @@ function Testimonial() {
 
 function FinalCta() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-brand-600 via-brand-500 to-brand-400 py-16 sm:py-20">
-      <div className="grid-lines absolute inset-0 opacity-40" />
+    <section className="relative overflow-hidden bg-brand-600 py-16 sm:py-20">
       <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6">
         <Reveal>
           <h2 className="font-display text-3xl font-extrabold text-white sm:text-4xl">
-            Ready to turn your restaurant data into decisions?
+            Try it with your own login
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm text-white/85">
-            Create a free demo account and explore every dashboard with realistic sample data.
+            Create a free demo account and look around every dashboard with sample data.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link to="/register" className="btn !rounded-xl !bg-white !px-9 !py-4 text-sm font-bold uppercase tracking-wider text-brand-600 shadow-xl hover:-translate-y-0.5">
-              Create Account
+            <Link to="/register" className="btn !rounded-lg !bg-white !px-7 !py-3.5 text-sm font-bold text-brand-700 hover:!bg-brand-50">
+              Create account
             </Link>
-            <Link to="/login" className="btn btn-outline !rounded-xl !px-9 !py-4 text-sm uppercase tracking-[0.15em]">
-              Login
+            <Link to="/login" className="btn btn-outline !rounded-lg !px-7 !py-3.5 text-sm">
+              Log in
             </Link>
           </div>
         </Reveal>
@@ -608,18 +583,15 @@ function Footer() {
                 <span className="font-display block text-lg font-extrabold leading-none text-white">
                   DineIQ Analytics
                 </span>
-                <span className="block text-[0.55rem] font-semibold uppercase tracking-[0.35em] text-white/50">
-                  Menu Matrix
+                <span className="block text-[0.6rem] font-medium uppercase tracking-[0.12em] text-white/50">
+                  Restaurant analytics
                 </span>
               </span>
             </div>
             <p className="mt-4 max-w-sm text-xs leading-relaxed text-white/50">
-              An intelligent analytics platform for restaurants — sales, menus, customers, inventory,
-              wastage, pricing and promotions, unified into one decision layer.
+              Analytics for restaurant groups: sales, menus, customers, inventory, wastage, pricing
+              and promotions in one place.
             </p>
-            <div className="mt-5 flex items-center gap-2 text-xs text-white/50">
-              <Star size={14} className="text-brand-400" /> Menu Matrix — Dining Intelligence
-            </div>
           </div>
           {cols.map((c) => (
             <div key={c.title}>
@@ -652,7 +624,7 @@ function Footer() {
           <div className="flex items-center gap-5">
             <span>Privacy</span>
             <span>Terms</span>
-            <span className="flex items-center gap-1.5"><BellDot size={12} /> v1.0</span>
+            <span>v1.0</span>
           </div>
         </div>
       </div>
@@ -660,7 +632,7 @@ function Footer() {
   )
 }
 
-/* ---------------- Newsletter band (Food Funday style) ---------------- */
+/* ---------------- Newsletter band ---------------- */
 
 function Newsletter() {
   const [email, setEmail] = useState('')
@@ -679,7 +651,7 @@ function Newsletter() {
           <p className="font-script text-3xl text-brand-400">Stay in the loop</p>
           <p className="mt-2 text-sm text-white/70">Get product updates and analytics tips. No spam, ever.</p>
           <form
-            className="mx-auto mt-6 flex max-w-lg overflow-hidden rounded-2xl bg-white p-1.5 shadow-2xl"
+            className="mx-auto mt-6 flex max-w-lg overflow-hidden rounded-xl bg-white p-1.5"
             onSubmit={(e) => {
               e.preventDefault()
               if (email.includes('@')) setSent(true)
@@ -687,13 +659,13 @@ function Newsletter() {
           >
             <input
               className="flex-1 bg-transparent px-4 text-sm outline-none"
-              placeholder="Enter Your E-Mail Id"
+              placeholder="Your email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               aria-label="Email"
             />
-            <button type="submit" className="btn btn-primary !rounded-xl !px-6 !py-3 text-xs uppercase tracking-wider">
-              {sent ? 'Subscribed ✓' : 'Notify Me'}
+            <button type="submit" className="btn btn-primary !rounded-lg !px-5 !py-2.5 text-sm">
+              {sent ? 'Subscribed' : 'Subscribe'}
             </button>
           </form>
         </Reveal>
@@ -706,7 +678,7 @@ function Newsletter() {
 
 export default function Landing() {
   useEffect(() => {
-    document.title = 'DineIQ Analytics — Menu Matrix | Dining Intelligence'
+    document.title = 'DineIQ Analytics | Restaurant analytics'
   }, [])
 
   return (

@@ -1,34 +1,48 @@
 ================================================
-DineIQ Analytics - Data Quality Report
+DineIQ Analytics - Data Quality Report (Spark)
 ================================================
 
 TABLE: orders (204,000 rows)
-  ⚠ Missing customer_id:  6,117 (3.0%)
-  ⚠ Duplicate records:    4,000 (2.0%)
-  ℹ Cancelled orders:     2,040 (1.0%)
-  ✓ Negative totals:      0 (0.0%)
+  ⚠ Missing customer_id:             6,117 (3.0%)
+  ⚠ Duplicate records:               4,000 (2.0%)
+  ⚠ Duplicate order_id:              4,000 (2.0%)
+  ✓ Invalid dates:                       0 (0.0%)
+  ✓ Invalid restaurant reference:        0 (0.0%)
+  ✓ Negative totals:                     0 (0.0%)
+  ✓ Discount > subtotal:                 0 (0.0%)
+  ℹ Cancelled orders:                2,040 (1.0%)
 
 TABLE: order_items (2,000,000 rows)
-  ⚠ Negative quantities:  20,000 (1.0%)
-  ℹ Loss-making lines:    20,000 (1.0%)
+  ✓ Missing item_id:                     0 (0.0%)
+  ✓ Unknown menu item:                   0 (0.0%)
+  ✓ Duplicate order-line records:        0 (0.0%)
+  ⚠ Negative quantities:            20,000 (1.0%)
+  ✓ Invalid unit price (<= 0):           0 (0.0%)
+  ✓ Discount > line value:               0 (0.0%)
+  ℹ Loss-making lines:              20,000 (1.0%)
 
 TABLE: ratings (180,000 rows)
-  ⚠ Missing rating:       3,600 (2.0%)
-  ✗ Invalid rating > 5:   920 (0.5%)
-  ✓ Invalid rating < 1:   880 (0.5%)
+  ⚠ Missing rating:                  3,600 (2.0%)
+  ✗ Invalid rating > 5:                920 (0.5%)
+  ✗ Invalid rating < 1:                880 (0.5%)
+  ✓ Invalid dates:                       0 (0.0%)
 
 TABLE: wastage (80,000 rows)
-  ✗ Impossible wastage:   800 (1.0%)
+  ✗ Impossible wastage (> 1000):       800 (1.0%)
+  ✓ Negative wastage:                    0 (0.0%)
+  ✓ Invalid location reference:          0 (0.0%)
 
 TABLE: menu_items (150 rows)
-  ℹ Loss-making items:    5 (3.3%)
+  ✓ Invalid menu price (<= 0):           0 (0.0%)
+  ✓ Missing preparation cost:            0 (0.0%)
+  ℹ Loss-making items:                   5 (3.3%)
 
 ================================================
 SUMMARY
 ================================================
 ✗ ERRORS:    3  (must fix before ML)
-⚠ WARNINGS:  3  (clean before ML)
+⚠ WARNINGS:  5  (clean before ML)
 ℹ INFO:      3  (expected/intentional)
 ================================================
 
-Completed in 0:00:08.237222
+Completed in 0:00:34.141554

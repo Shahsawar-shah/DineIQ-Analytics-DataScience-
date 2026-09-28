@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, Lock, LogIn, Mail, ShieldCheck } from 'lucide-react'
+import { Eye, EyeOff, Lock, LogIn, Mail } from 'lucide-react'
 import { useAuth, roleHome } from '../../context/AuthContext'
 import AuthShell from './AuthShell'
 
@@ -41,9 +41,9 @@ export default function Login() {
 
   return (
     <AuthShell
-      title="Welcome Back"
-      script="Sign in to intelligence"
-      subtitle="Log in to your DineIQ Analytics workspace."
+      title="Welcome back"
+      script="Good to see you"
+      subtitle="Log in to your DineIQ workspace."
     >
       <form onSubmit={submit} noValidate className="space-y-4">
         {errors.form && (
@@ -94,11 +94,11 @@ export default function Login() {
             <input type="checkbox" className="h-3.5 w-3.5 accent-brand-500" defaultChecked /> Remember me
           </label>
           <button type="button" className="font-semibold text-brand-600 hover:underline">
-            Forgot Password?
+            Forgot password?
           </button>
         </div>
 
-        <button type="submit" disabled={busy} className="btn btn-primary w-full !py-3.5 text-sm uppercase tracking-[0.15em] disabled:opacity-70">
+        <button type="submit" disabled={busy} className="btn btn-primary w-full !py-3 text-sm disabled:opacity-70">
           {busy ? (
             <span className="flex items-center gap-2">
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
@@ -106,20 +106,17 @@ export default function Login() {
             </span>
           ) : (
             <>
-              <LogIn size={16} /> Login
+              <LogIn size={16} /> Log in
             </>
           )}
         </button>
 
-        <p className="flex items-center justify-center gap-1.5 text-xs text-ink-400">
-          <ShieldCheck size={13} className="text-emerald-500" /> Secured with a real JWT session
-        </p>
       </form>
 
       <p className="mt-6 text-center text-sm text-ink-500">
         Don&apos;t have an account?{' '}
         <Link to="/register" className="font-bold text-brand-600 hover:underline">
-          Create Account
+          Create one
         </Link>
       </p>
     </AuthShell>

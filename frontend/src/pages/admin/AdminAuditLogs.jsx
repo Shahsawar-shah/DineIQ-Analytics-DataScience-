@@ -1,21 +1,10 @@
-import { useMemo, useState } from 'react'
-import { Download, Search } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Download, RefreshCw, Search } from 'lucide-react'
+import { api } from '../../services/api'
 import PageHeader from '../../components/layout/PageHeader'
 import DataTable from '../../components/ui/DataTable'
-import { downloadCSV } from '../../utils/helpers'
-
-const AUDIT_LOGS = [
-  { time: '2026-09-27 14:23:11', user: 'admin@dineiq.demo', action: 'Login', details: 'Admin logged in successfully', type: 'auth' },
-  { time: '2026-09-27 14:20:05', user: 'manager@dineiq.demo', action: 'View Dashboard', details: 'Accessed Manager Dashboard', type: 'view' },
-  { time: '2026-09-27 13:45:22', user: 'admin@dineiq.demo', action: 'Add User', details: 'Created user: inventory@dineiq.demo', type: 'crud' },
-  { time: '2026-09-27 13:30:00', user: 'system', action: 'Spark Pipeline', details: 'MLlib training completed - F1: 0.82', type: 'ml' },
-  { time: '2026-09-27 12:15:44', user: 'system', action: 'Data Quality', details: '1,289,177 records passed quality checks', type: 'data' },
-  { time: '2026-09-27 11:00:00', user: 'system', action: 'Ingestion', details: '1,305,677 records ingested via Spark', type: 'data' },
-  { time: '2026-09-26 18:30:00', user: 'admin@dineiq.demo', action: 'Deploy', details: 'Production deployment to VPS 187.127.98.233', type: 'system' },
-  { time: '2026-09-26 16:00:00', user: 'system', action: 'ML Training', details: 'XGBoost trained - F1: 1.00, Accuracy: 100%', type: 'ml' },
-  { time: '2026-09-26 14:00:00', user: 'system', action: 'Feature Engineering', details: '30 features extracted for 150 menu items', type: 'data' },
-  { time: '2026-09-26 12:00:00', user: 'system', action: 'Data Cleaning', details: '13,500 records removed, 3,000 quarantined', type: 'data' },
-]
+import LoadingState, { ErrorState } from '../../components/ui/LoadingState'
+import { downloadCSV, fmtNum } from '../../utils/helpers'
 
 const TYPE_BADGE = {
   auth: 'badge-blue',
@@ -25,54 +14,69 @@ const TYPE_BADGE = {
   data: 'badge-green',
   system: 'badge-gray',
 }
-
 const TYPES = ['auth', 'view', 'crud', 'ml', 'data', 'system']
 
 export default function AdminAuditLogs() {
   const [filters, setFilters] = useState({ type: 'all', q: '' })
+  const [query, setQuery] = useState('')
+  const [refresh, setRefresh] = useState(0)
+  const [state, setState] = useState({ loading: true, error: null, data: null })
 
-  const rows = useMemo(
-    () =>
-      AUDIT_LOGS.filter(
-        (l) =>
-          (filters.type === 'all' || l.type === filters.type) &&
-          (filters.q === '' || `${l.user} ${l.action} ${l.details}`.toLowerCase().includes(filters.q.toLowerCase())),
-      ),
-    [filters],
-  )
+  // debounce the search box so every keystroke is not a request
+  useEffect(() => {
+    const t = setTimeout(() => setQuery(filters.q.trim()), 350)
+    return () => clearTimeout(t)
+  }, [filters.q])
+
+  useEffect(() => {
+    setState((s) => ({ ...s, loading: true }))
+    api.admin.auditLogs({ limit: 500, eventType: filters.type === 'all' ? undefined : filters.type, q: query || undefined })
+      .then((data) => setState({ loading: false, error: null, data }))
+      .catch((err) => setState({ loading: false, error: err.message, data: null }))
+  }, [filters.type, query, refresh])
 
   const columns = [
-    { key: 'time', header: 'Time', render: (r) => <span className="text-ink-400">{r.time}</span> },
-    { key: 'user', header: 'User', render: (r) => <span className="font-semibold text-ink-900">{r.user}</span> },
+    { key: 'time', header: 'Time', render: (r) => <span className="whitespace-nowrap text-ink-400">{r.created_at?.replace('T', ' ').slice(0, 19)}</span> },
+    { key: 'user', header: 'User', render: (r) => <span className="font-semibold text-ink-900">{r.user_email}</span> },
+    { key: 'role', header: 'Role', render: (r) => <span className="text-xs text-ink-500">{r.user_role ?? '—'}</span> },
     { key: 'action', header: 'Action', render: (r) => r.action },
-    { key: 'details', header: 'Details', render: (r) => <span className="text-ink-500">{r.details}</span> },
-    { key: 'type', header: 'Type', render: (r) => <span className={`badge ${TYPE_BADGE[r.type] ?? 'badge-gray'}`}>{r.type}</span> },
+    { key: 'endpoint', header: 'Endpoint', render: (r) => <span className="font-mono text-[0.68rem] text-ink-500">{r.method} {r.endpoint}{r.details ? `?${r.details}` : ''}</span> },
+    { key: 'result', header: 'Result', render: (r) => <span className={`badge ${r.result === 'success' ? 'badge-green' : 'badge-red'}`}>{r.status_code} {r.result}</span> },
+    { key: 'ms', header: 'Duration', align: 'right', render: (r) => (r.duration_ms === null ? '—' : `${r.duration_ms} ms`) },
+    { key: 'type', header: 'Type', render: (r) => <span className={`badge ${TYPE_BADGE[r.event_type] ?? 'badge-gray'}`}>{r.event_type}</span> },
   ]
 
-  const exportCsv = () => {
-    downloadCSV(rows, 'dineiq-audit-logs.csv')
-  }
+  const rows = state.data?.logs ?? []
 
   return (
     <>
       <PageHeader
         title="Audit Logs"
-        subtitle="Immutable trail of platform events"
-        actions={<button className="btn btn-ghost !px-4 !py-2.5 text-xs" onClick={exportCsv}><Download size={14} /> Export CSV</button>}
+        subtitle={state.data ? `${fmtNum(state.data.total)} events recorded: every API call, login, prediction and export` : 'Every API call, login, prediction and export'}
+        actions={
+          <div className="flex gap-2">
+            <button className="btn btn-ghost !px-4 !py-2.5 text-xs" onClick={() => setRefresh((n) => n + 1)}><RefreshCw size={14} /> Refresh</button>
+            <button className="btn btn-ghost !px-4 !py-2.5 text-xs" onClick={() => downloadCSV(rows, 'dineiq-audit-logs.csv')}><Download size={14} /> Export CSV</button>
+          </div>
+        }
       />
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <button className={`chip ${filters.type === 'all' ? 'chip-active' : ''}`} onClick={() => setFilters((f) => ({ ...f, type: 'all' }))}>All</button>
         {TYPES.map((t) => (
-          <button key={t} className={`chip ${filters.type === t ? 'chip-active' : ''}`} onClick={() => setFilters((f) => ({ ...f, type: t }))}>{t}</button>
+          <button key={t} className={`chip ${filters.type === t ? 'chip-active' : ''}`} onClick={() => setFilters((f) => ({ ...f, type: t }))}>
+            {t}{state.data?.by_type?.[t] ? ` (${fmtNum(state.data.by_type[t])})` : ''}
+          </button>
         ))}
         <div className="relative ml-auto">
           <Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-300" />
-          <input className="input !w-56 !rounded-xl !py-2 !pl-9 text-xs" placeholder="Search events…" value={filters.q} onChange={(e) => setFilters((f) => ({ ...f, q: e.target.value }))} />
+          <input className="input !w-56 !rounded-xl !py-2 !pl-9 text-xs" placeholder="Search user, action, endpoint…" value={filters.q} onChange={(e) => setFilters((f) => ({ ...f, q: e.target.value }))} />
         </div>
       </div>
-      <div className="card p-2 sm:p-4">
-        <DataTable columns={columns} rows={rows} rowKey={(r) => `${r.time}-${r.action}`} />
-      </div>
+      {state.error ? <ErrorState message={state.error} /> : !state.data ? <LoadingState /> : (
+        <div className="card p-2 sm:p-4">
+          <DataTable columns={columns} rows={rows} rowKey={(r) => r.id} maxHeight={620} emptyMessage="No audit events match these filters." />
+        </div>
+      )}
     </>
   )
 }

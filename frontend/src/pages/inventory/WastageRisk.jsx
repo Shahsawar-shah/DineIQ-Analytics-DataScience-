@@ -65,7 +65,7 @@ export default function WastageRisk() {
             <div className="meter mt-3">
               <span style={{
                 width: `${s.score}%`,
-                background: s.band === 'Critical' ? 'linear-gradient(90deg,#fb7185,#e11d48)' : s.band === 'Warning' ? 'linear-gradient(90deg,#fbbf24,#d97706)' : 'linear-gradient(90deg,#34d399,#0d9459)',
+                background: s.band === 'Critical' ? '#e11d48' : s.band === 'Warning' ? '#d97706' : '#0d9459',
                 transitionDelay: `${i * 40}ms`,
               }} />
             </div>

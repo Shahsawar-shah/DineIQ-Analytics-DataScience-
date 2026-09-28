@@ -1,22 +1,11 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-import os
-from dotenv import load_dotenv
+"""PostgreSQL connection helper. The URL is read from config/.env via settings."""
 
-load_dotenv()
+import psycopg2
 
-DATABASE_URL = os.getenv("DATABASE_URL",
-    "postgresql://user:pass@localhost/dineiq")
-
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine)
-Base = declarative_base()
+from settings import DATABASE_URL
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+def get_connection():
+    if not DATABASE_URL:
+        raise RuntimeError("DATABASE_URL is not set. Add it to config/.env.")
+    return psycopg2.connect(DATABASE_URL, connect_timeout=5)

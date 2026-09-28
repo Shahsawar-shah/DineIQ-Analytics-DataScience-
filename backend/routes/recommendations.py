@@ -1,12 +1,15 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
 from pathlib import Path
 import pandas as pd
+
+from middleware.auth_middleware import require_analytics
+from routes.common import REPORTS, read_csv, read_json
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 PROCESSED = PROJECT_ROOT / "processed_data"
 FEATURES = PROCESSED / "features"
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_analytics)])
 
 
 @router.get("/all")
@@ -124,6 +127,8 @@ def get_recommendations():
             "estimated_impact": "Reduce promotion cost"
         })
 
+    recommendations += analysis_recommendations(merged)
+
     return {
         "total": len(recommendations),
         "critical": len([r for r in recommendations
@@ -132,5 +137,88 @@ def get_recommendations():
                     if r["priority"] == "High"]),
         "medium": len([r for r in recommendations
                       if r["priority"] == "Medium"]),
+        "low": len([r for r in recommendations
+                   if r["priority"] == "Low"]),
         "recommendations": recommendations
     }
+
+
+def _optional(name):
+    try:
+        return read_json(REPORTS / name)
+    except HTTPException:
+        return None
+
+
+def analysis_recommendations(merged):
+    """Recommendations backed by the basket, pricing, promotion and
+    churn analyses (SRS Step 37). Each carries its evidence."""
+    recs = []
+
+    basket = _optional("basket_results.json")
+    if basket:
+        for combo in basket["combos"][:3]:
+            recs.append({
+                "item_id": combo["antecedents"][0]["item_id"],
+                "item_name": combo["rule"],
+                "action": "Bundle Frequently Purchased Items",
+                "priority": "Medium",
+                "evidence": {"support": combo["support"], "confidence": combo["confidence"],
+                             "lift": combo["lift"], "orders_together": combo["order_count"]},
+                "reason": combo["reason"],
+                "estimated_impact": "Higher basket size on orders that already contain one of the items",
+            })
+
+    pricing = _optional("price_sensitivity.json")
+    if pricing:
+        for item in pricing["items"]:
+            if item["sensitivity"] in ("Highly Price Sensitive", "Moderately Price Sensitive"):
+                recs.append({
+                    "item_id": item["item_id"],
+                    "item_name": item["item_name"],
+                    "action": "Review Pricing",
+                    "priority": "High" if item["sensitivity"] == "Highly Price Sensitive" else "Medium",
+                    "evidence": {"elasticity": item["elasticity"],
+                                 "significant_price_changes": item["significant_changes"],
+                                 "profit_percentage": item["profit_percentage"]},
+                    "reason": (f"{item['sensitivity']}: demand moved {abs(item['elasticity']):.2f}% for every 1% "
+                               f"price change, with {item['significant_changes']} statistically significant shift(s)"),
+                    "estimated_impact": "Avoid further price rises; test small discounts instead",
+                })
+
+    promotions = _optional("promotion_analysis.json")
+    if promotions:
+        for promo in promotions["promotions"]:
+            if promo["is_trap"]:
+                recs.append({
+                    "item_id": None,
+                    "item_name": promo["promo_name"],
+                    "action": "Review Ineffective Promotion",
+                    "priority": "Critical",
+                    "evidence": {"promo_margin_pct": promo["promo_margin_pct"],
+                                 "regular_margin_pct": promo["regular_margin_pct"],
+                                 "sales_change_pct": promo["sales_change_pct"],
+                                 "profit_change_pct": promo["profit_change_pct"],
+                                 "promo_profit": promo["promo_profit"]},
+                    "reason": "; ".join(r["evidence"] for r in promo["trap_rules"]),
+                    "estimated_impact": f"Stops a promotion that returned {promo['promo_profit']:,.0f} profit",
+                })
+
+    customers = read_csv(FEATURES / "customer_features.csv",
+                         usecols=["churn_at_risk", "monetary_value", "spend_prior_90d", "spend_recent_90d"])
+    at_risk = customers[customers["churn_at_risk"].fillna(False).astype(bool)]
+    if len(at_risk):
+        lost_spend = float((at_risk["spend_prior_90d"] - at_risk["spend_recent_90d"]).sum())
+        recs.append({
+            "item_id": None,
+            "item_name": "At-Risk customer segment",
+            "action": "Target Customer Segment",
+            "priority": "High",
+            "evidence": {"customers": int(len(at_risk)),
+                         "spend_decline_90d": round(lost_spend, 2),
+                         "avg_lifetime_value": round(float(at_risk["monetary_value"].mean()), 2)},
+            "reason": (f"{len(at_risk):,} customers inactive for 60+ days with falling order frequency and "
+                       f"spend, {lost_spend:,.0f} less spend than the previous 90 days"),
+            "estimated_impact": "Win-back campaign on their favourite category",
+        })
+    return recs

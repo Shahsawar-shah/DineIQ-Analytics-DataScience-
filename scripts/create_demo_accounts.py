@@ -1,24 +1,39 @@
-"""Creates the standard demo accounts (one per role) used for competition judging."""
-import psycopg2
-import bcrypt
+"""Creates the standard demo accounts (one per role) used for competition judging.
 
-DATABASE_URL = "postgresql://dineiq_user:DineIQ2024Strong@187.127.98.233:5432/dineiq_analytics"
+The database URL is read from config/.env (DATABASE_URL) — never hard-coded.
+Run:  python scripts/create_demo_accounts.py
+"""
+import os
+from pathlib import Path
+
+import bcrypt
+import psycopg2
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parent.parent / "config" / ".env")
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+DEMO_PASSWORD = os.getenv("DEMO_ACCOUNT_PASSWORD", "Demo@12345")
 
 DEMO_USERS = [
-    {"name": "Admin User", "email": "admin@dineiq.demo", "password": "Demo@12345", "role": "Admin"},
-    {"name": "Restaurant Manager", "email": "manager@dineiq.demo", "password": "Demo@12345", "role": "Restaurant Manager"},
-    {"name": "Inventory Manager", "email": "inventory@dineiq.demo", "password": "Demo@12345", "role": "Inventory Manager"},
-    {"name": "Demo Customer", "email": "customer@dineiq.demo", "password": "Demo@12345", "role": "Customer"},
+    {"name": "Super Admin", "email": "superadmin@dineiq.demo", "role": "Super Admin"},
+    {"name": "Admin User", "email": "admin@dineiq.demo", "role": "Admin"},
+    {"name": "Restaurant Manager", "email": "manager@dineiq.demo", "role": "Restaurant Manager"},
+    {"name": "Inventory Manager", "email": "inventory@dineiq.demo", "role": "Inventory Manager"},
+    {"name": "Cashier", "email": "cashier@dineiq.demo", "role": "Cashier"},
+    {"name": "Demo Customer", "email": "customer@dineiq.demo", "role": "Customer"},
 ]
 
 
 def main():
+    if not DATABASE_URL:
+        raise SystemExit("DATABASE_URL is not set — add it to config/.env")
     conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
     try:
         for u in DEMO_USERS:
             password_hash = bcrypt.hashpw(
-                u["password"].encode(), bcrypt.gensalt()).decode()
+                DEMO_PASSWORD.encode(), bcrypt.gensalt()).decode()
             cur.execute(
                 """
                 INSERT INTO users (name, email, password_hash, role, is_active)

@@ -1,67 +1,45 @@
-from fastapi import APIRouter
-from pathlib import Path
-import pandas as pd
+"""
+Promotion effectiveness and trap detection API (SRS Steps 27-28).
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-PROCESSED = PROJECT_ROOT / "processed_data"
+Serves reports/promotion_analysis.json from
+python_pipeline/promotion_analysis.py, which detects traps from actual order
+and profit data — the generator's is_promotion_trap flag is not used.
+"""
 
-router = APIRouter()
+from fastapi import APIRouter, Depends
+
+from middleware.auth_middleware import require_analytics
+from routes.common import REPORTS, read_json
+
+router = APIRouter(dependencies=[Depends(require_analytics)])
+
+
+def _results():
+    return read_json(REPORTS / "promotion_analysis.json")
 
 
 @router.get("/summary")
 def get_promotions_summary():
-    promotions = pd.read_csv(
-        PROCESSED / "promotions_clean.csv")
-    orders = pd.read_csv(PROCESSED / "orders_clean.csv")
-
-    promo_orders = orders[
-        orders["promotion_id"].notna()]
-    total_orders = len(orders)
-
+    data = _results()
+    summary = data["summary"]
     return {
-        "total_promotions": int(len(promotions)),
-        "active_promotions": int(
-            promotions["is_active"].sum()
-            if "is_active" in promotions.columns
-            else len(promotions)),
-        "promotion_traps": int(
-            promotions["is_promotion_trap"].sum()
-            if "is_promotion_trap" in promotions.columns
-            else 3),
-        "promo_orders": int(len(promo_orders)),
-        "promo_order_pct": round(
-            len(promo_orders)/total_orders*100, 1)
+        "total_promotions": summary["total_promotions"],
+        "promotion_traps": summary["traps_detected"],
+        "effective_promotions": summary["effective"],
+        "neutral_promotions": summary["neutral"],
+        "promo_orders": summary["promo_orders"],
+        "promo_order_pct": summary["promo_order_pct"],
+        "thresholds": data["thresholds"],
+        "validation": summary["validation"],
+        "generated_at": data["generated_at"],
     }
+
+
+@router.get("/effectiveness")
+def get_promotion_effectiveness():
+    return _results()["promotions"]
 
 
 @router.get("/traps")
 def get_promotion_traps():
-    promotions = pd.read_csv(
-        PROCESSED / "promotions_clean.csv")
-    if "is_promotion_trap" in promotions.columns:
-        traps = promotions[
-            promotions["is_promotion_trap"] == True]  # noqa: E712
-        return traps.fillna(0).to_dict(orient="records")
-    return [
-        {
-            "promotion_id": 1,
-            "promo_name": "Mega Sale 50% Off",
-            "discount_percentage": 50,
-            "is_promotion_trap": True,
-            "reason": "Discount too high - profit becomes negative"
-        },
-        {
-            "promotion_id": 2,
-            "promo_name": "Flash Deal 45% Off",
-            "discount_percentage": 45,
-            "is_promotion_trap": True,
-            "reason": "Sales increase but margin collapses"
-        },
-        {
-            "promotion_id": 3,
-            "promo_name": "Super Discount 40% Off",
-            "discount_percentage": 40,
-            "is_promotion_trap": True,
-            "reason": "Customers only buy during promotion"
-        }
-    ]
+    return [p for p in _results()["promotions"] if p["is_trap"]]

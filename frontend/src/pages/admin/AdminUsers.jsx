@@ -9,10 +9,14 @@ import LoadingState, { ErrorState } from '../../components/ui/LoadingState'
 import { api } from '../../services/api'
 import { downloadCSV } from '../../utils/helpers'
 
-const ROLES = ['Customer', 'Admin', 'Restaurant Manager', 'Inventory Manager']
+// Must match ALL_ROLES in backend/middleware/auth_middleware.py. Only a Super Admin
+// may assign Admin / Super Admin; the backend enforces that and returns a 403 message.
+const ROLES = ['Customer', 'Cashier', 'Restaurant Manager', 'Inventory Manager', 'Admin', 'Super Admin']
 
 const ROLE_BADGE = {
+  'Super Admin': 'badge-violet',
   Admin: 'badge-red',
+  Cashier: 'badge-orange',
   'Restaurant Manager': 'badge-blue',
   'Inventory Manager': 'badge-green',
   Customer: 'badge-gray',
@@ -76,13 +80,12 @@ export default function AdminUsers() {
     setAddBusy(true)
     setAddError(null)
     try {
-      const res = await api.auth.register(form.name, form.email, form.password, form.role)
-      if (res?.detail) throw new Error(res.detail)
+      await api.auth.createUser(form)
       setAdding(false)
       showToast(`${form.name} was added successfully.`, 'success')
       await loadUsers()
     } catch (err) {
-      setAddError(err.message || 'Could not create user — please try again.')
+      setAddError(err.message || 'Could not create the user. Please try again.')
       showToast('Failed to add user.', 'error')
     } finally {
       setAddBusy(false)
@@ -105,7 +108,7 @@ export default function AdminUsers() {
       showToast(`${editForm.name} was updated.`, 'success')
       await loadUsers()
     } catch (err) {
-      setEditError(err.message || 'Could not update user — please try again.')
+      setEditError(err.message || 'Could not update the user. Please try again.')
       showToast('Failed to update user.', 'error')
     } finally {
       setEditBusy(false)
@@ -133,7 +136,7 @@ export default function AdminUsers() {
       header: 'Name',
       render: (r) => (
         <div className="flex items-center gap-2.5">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-ink-600 to-ink-800 text-[0.65rem] font-bold text-white">
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-ink-700 text-[0.65rem] font-bold text-white">
             {r.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
           </span>
           <p className="font-semibold text-ink-900">{r.name}</p>
@@ -233,7 +236,7 @@ export default function AdminUsers() {
         </form>
       </Modal>
 
-      <Modal open={!!editing} onClose={() => setEditing(null)} title={`Edit user — ${editing?.name ?? ''}`}>
+      <Modal open={!!editing} onClose={() => setEditing(null)} title={`Edit user: ${editing?.name ?? ''}`}>
         <form className="space-y-4" onSubmit={submitEdit}>
           <div><label className="label">Name</label>
             <input className="input" required value={editForm.name} onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))} />

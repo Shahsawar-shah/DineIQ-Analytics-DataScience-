@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { API_BASE_URL } from '../config/api'
 
 const AuthContext = createContext(null)
 
-const API = 'http://187.127.98.233:8000/api/auth'
+const API = `${API_BASE_URL}/auth`
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
@@ -90,6 +91,10 @@ export function roleHome(role) {
       return '/manager/dashboard'
     case 'Inventory Manager':
       return '/inventory/dashboard'
+    case 'Super Admin':
+      return '/superadmin/dashboard'
+    case 'Cashier':
+      return '/cashier/orders'
     default:
       return '/'
   }

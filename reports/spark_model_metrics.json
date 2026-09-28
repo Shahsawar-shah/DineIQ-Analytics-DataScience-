@@ -1,18 +1,208 @@
 {
-  "random_forest": {
-    "accuracy": 0.75,
-    "f1": 0.7743
-  },
-  "logistic_regression": {
-    "accuracy": 0.875,
-    "f1": 0.8172
-  },
+  "pipeline": "spark",
+  "platform": "Apache Spark MLlib 4.2.0",
+  "task": "Menu performance classification (4 classes)",
+  "model_version": "spark-menu-20260928-112528",
+  "trained_at": "2026-09-28T11:25:28",
+  "train_test_split": "70/30",
+  "split_method": "stratified by class, deterministic item_id hash",
+  "train_size": 105,
+  "test_size": 45,
+  "features": [
+    "profit_percentage",
+    "total_quantity_sold",
+    "avg_rating",
+    "wastage_percentage",
+    "promotion_dependency",
+    "weekend_ratio",
+    "repeat_purchase_rate",
+    "rating_trend",
+    "contribution_margin",
+    "total_revenue"
+  ],
+  "classes": [
+    "Profit Driver",
+    "Volume Driver",
+    "Hidden Opportunity",
+    "Low Performer"
+  ],
   "best_model": "Logistic Regression",
-  "best_f1": 0.8172,
-  "gbt_binary": {
-    "accuracy": 1.0,
-    "f1": 1.0,
-    "task": "binary: Profit Driver vs rest"
+  "best_f1": 0.7708,
+  "models": {
+    "Random Forest": {
+      "accuracy": 0.9333,
+      "precision": 0.7153,
+      "recall": 0.625,
+      "f1_score": 0.6486,
+      "weighted_f1": 0.9088,
+      "train": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "per_class": {
+        "Profit Driver": {
+          "precision": 0.9565,
+          "recall": 1.0,
+          "f1": 0.9778,
+          "support": 22
+        },
+        "Volume Driver": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 2
+        },
+        "Hidden Opportunity": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6667,
+          "support": 2
+        },
+        "Low Performer": {
+          "precision": 0.9048,
+          "recall": 1.0,
+          "f1": 0.95,
+          "support": 19
+        }
+      },
+      "confusion_matrix": [
+        [
+          22,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          19
+        ]
+      ],
+      "prediction_latency_ms": 236.844,
+      "latency_per_record_ms": 5.2632
+    },
+    "Logistic Regression": {
+      "accuracy": 0.8667,
+      "precision": 0.9322,
+      "recall": 0.6974,
+      "f1_score": 0.7708,
+      "weighted_f1": 0.8593,
+      "train": {
+        "accuracy": 0.8952,
+        "precision": 0.8246,
+        "recall": 0.6023,
+        "f1_score": 0.6505
+      },
+      "per_class": {
+        "Profit Driver": {
+          "precision": 0.8462,
+          "recall": 1.0,
+          "f1": 0.9167,
+          "support": 22
+        },
+        "Volume Driver": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6667,
+          "support": 2
+        },
+        "Hidden Opportunity": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6667,
+          "support": 2
+        },
+        "Low Performer": {
+          "precision": 0.8824,
+          "recall": 0.7895,
+          "f1": 0.8333,
+          "support": 19
+        }
+      },
+      "confusion_matrix": [
+        [
+          22,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          4,
+          0,
+          0,
+          15
+        ]
+      ],
+      "prediction_latency_ms": 111.934,
+      "latency_per_record_ms": 2.4874
+    }
   },
-  "trained_at": "2026-09-27T13:15:07.995157"
+  "gbt_binary": {
+    "accuracy": 0.9778,
+    "precision": 0.9783,
+    "recall": 0.9783,
+    "f1_score": 0.9778,
+    "weighted_f1": 0.9778,
+    "train": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0
+    },
+    "per_class": {
+      "Other": {
+        "precision": 1.0,
+        "recall": 0.9565,
+        "f1": 0.9778,
+        "support": 23
+      },
+      "Profit Driver": {
+        "precision": 0.9565,
+        "recall": 1.0,
+        "f1": 0.9778,
+        "support": 22
+      }
+    },
+    "confusion_matrix": [
+      [
+        22,
+        1
+      ],
+      [
+        0,
+        22
+      ]
+    ],
+    "prediction_latency_ms": 170.58,
+    "latency_per_record_ms": 3.7907,
+    "note": "Binary classification only (Profit Driver vs rest)"
+  },
+  "saved_model_path": "models/spark_menu_classifier"
 }

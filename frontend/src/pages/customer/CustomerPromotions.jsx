@@ -16,7 +16,7 @@ export default function CustomerPromotions() {
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {CUSTOMER_PROMOS.map((p, i) => (
           <div key={p.id} className="card card-hover anim-fade-up overflow-hidden" style={{ animationDelay: `${i * 80}ms` }}>
-            <div className="flex items-center gap-3 bg-gradient-to-r from-brand-500 to-brand-400 px-5 py-4 text-white">
+            <div className="flex items-center gap-3 bg-brand-500 px-5 py-4 text-white">
               <Tag size={20} />
               <div>
                 <p className="font-display text-sm font-bold">{p.title}</p>

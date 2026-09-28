@@ -4,7 +4,9 @@ import { CheckCircle2, Eye, EyeOff, Lock, Mail, UserPlus, User as UserIcon, XCir
 import { useAuth, roleHome } from '../../context/AuthContext'
 import AuthShell from './AuthShell'
 
-const ROLES = ['Customer', 'Admin', 'Restaurant Manager', 'Inventory Manager']
+// Only roles the backend allows on public sign-up (SELF_REGISTER_ROLES in backend/routes/auth.py).
+// Admin accounts are created by an administrator from the Users page, never from here.
+const ROLES = ['Customer', 'Restaurant Manager', 'Inventory Manager']
 
 const PW_RULES = [
   { label: 'At least 8 characters', test: (v) => v.length >= 8 },
@@ -34,7 +36,7 @@ export default function Register() {
     else if (PW_RULES.some((r) => !r.test(password))) e.password = 'Password does not meet all requirements'
     if (!confirm) e.confirm = 'Please confirm your password'
     else if (confirm !== password) e.confirm = 'Passwords do not match'
-    if (!role) e.role = 'Please select a role'
+    if (!ROLES.includes(role)) e.role = 'Please select a role'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -44,8 +46,8 @@ export default function Register() {
     if (!validate() || !role) return
     setBusy(true)
     try {
-      await register(fullName.trim(), email, password, role)
-      navigate(roleHome(role), { replace: true })
+      const data = await register(fullName.trim(), email, password, role)
+      navigate(roleHome(data.user.role), { replace: true })
     } catch (err) {
       setErrors({ form: err.message || 'Registration failed' })
     } finally {
@@ -57,9 +59,9 @@ export default function Register() {
 
   return (
     <AuthShell
-      title="Create Account"
-      script="Join DineIQ today"
-      subtitle="Register for DineIQ Analytics and pick the workspace that fits your role."
+      title="Create an account"
+      script="Get started"
+      subtitle="Pick the role you want to try. You can create more accounts later."
     >
       <form onSubmit={submit} noValidate className="space-y-4">
         {errors.form && (
@@ -166,10 +168,14 @@ export default function Register() {
               ))}
             </select>
           </div>
-          {errors.role && <p className="mt-1.5 text-xs font-medium text-rose-600">{errors.role}</p>}
+          {errors.role ? (
+            <p className="mt-1.5 text-xs font-medium text-rose-600">{errors.role}</p>
+          ) : (
+            <p className="mt-1.5 text-[0.7rem] text-ink-400">Admin accounts are set up by your administrator.</p>
+          )}
         </div>
 
-        <button type="submit" disabled={busy} className="btn btn-primary w-full !py-3.5 text-sm uppercase tracking-[0.15em] disabled:opacity-70">
+        <button type="submit" disabled={busy} className="btn btn-primary w-full !py-3 text-sm disabled:opacity-70">
           {busy ? (
             <span className="flex items-center gap-2">
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
@@ -177,20 +183,17 @@ export default function Register() {
             </span>
           ) : (
             <>
-              <UserPlus size={16} /> Create Account
+              <UserPlus size={16} /> Create account
             </>
           )}
         </button>
 
-        <p className="text-center text-[0.7rem] text-ink-400">
-          Your account is created on the DineIQ Analytics server and secured with a hashed password.
-        </p>
       </form>
 
       <p className="mt-6 text-center text-sm text-ink-500">
         Already have an account?{' '}
         <Link to="/login" className="font-bold text-brand-600 hover:underline">
-          Login
+          Log in
         </Link>
       </p>
     </AuthShell>

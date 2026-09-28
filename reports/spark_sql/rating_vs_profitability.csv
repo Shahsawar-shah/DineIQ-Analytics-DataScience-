@@ -1,0 +1,151 @@
+item_name,avg_rating,ratings,units,profit_pct
+Fruit Trifle,4.08,1325,16276,63.82
+Chicken Jalfrezi,4.07,1344,11121,54.9
+Seafood Chowder,4.04,1373,55602,69.26
+Grilled Salmon,4.03,1228,20421,55.82
+Stuffed Mushrooms,4.03,1336,6888,55.12
+Full English Breakfast,4.02,388,18475,59.86
+Reshmi Kabab,4.01,1258,17571,64.51
+Strawberry Shake,4.01,1284,15979,55.5
+Minestrone,4.01,1240,19631,58.56
+Hummus & Pita,4.0,1192,30118,57.1
+Special Chicken Corn Soup,4.0,1222,18269,-52.33
+Mineral Water,4.0,1210,16655,56.21
+Fish Tikka,4.0,1246,19259,59.39
+Brownie with Ice Cream,4.0,1210,6395,56.1
+Beef Nihari,4.0,1276,51694,55.82
+Pesto Pasta,4.0,1296,19624,69.36
+Greek Salad,3.99,1175,19365,60.79
+Lahori Fried Fish,3.99,1205,41121,58.96
+Garlic Bread,3.99,1220,12121,64.26
+Seekh Kabab,3.99,1221,31768,58.95
+Onion Rings,3.99,1242,9520,64.89
+Hot & Sour Soup,3.99,1186,10153,68.05
+Tom Yum Soup,3.99,1174,20647,64.22
+Chicken Caesar,3.99,1252,34469,59.41
+Asian Sesame Salad,3.99,1204,1658,61.24
+Anda Paratha,3.98,1198,8504,56.53
+Prawn Karahi,3.98,1246,9174,61.0
+Mutton Korma,3.98,1203,25498,58.92
+Chicken Tikka,3.98,1214,19154,68.29
+Thai Prawn Curry,3.98,1197,10499,61.31
+Mac & Cheese,3.98,1211,53667,56.0
+Grilled Chicken Breast,3.98,1214,18886,54.7
+Prawn Tempura,3.98,1258,61273,58.81
+Caramel Custard,3.98,1259,5295,68.07
+Special Mint Margarita,3.98,1217,18359,-52.5
+Mixed Grill Platter,3.98,1226,61079,58.43
+Cheese Omelette,3.98,1171,12805,60.47
+Club Sandwich,3.98,1233,23437,67.94
+Malai Boti,3.98,1179,15875,57.06
+Peach Iced Tea,3.98,1172,19652,67.38
+Kulfi,3.98,388,20111,62.0
+Paratha Roll,3.98,1246,19457,64.29
+Kachumber Salad,3.98,1239,37058,68.95
+Butter Chicken,3.98,1239,6184,67.69
+Bruschetta,3.98,1250,30917,55.84
+Tuna Salad,3.98,1239,30883,58.12
+Fish & Chips,3.97,1187,19286,70.32
+Fresh Lime Soda,3.97,1235,20379,59.81
+Gajar Halwa,3.97,1200,23220,66.06
+Mulligatawny,3.97,1291,24296,61.57
+Cobb Salad,3.97,1176,23276,65.68
+Ice Cream Sundae,3.97,1212,17755,55.41
+Special Chicken Wings,3.97,1215,18365,-52.75
+Cream of Mushroom,3.97,1261,19227,59.61
+Fattoush,3.97,1169,19384,69.35
+Green Tea,3.97,1217,15294,68.11
+Ravioli,3.97,1209,13309,54.72
+Nachos Supreme,3.97,1230,9653,59.48
+Tandoori Chicken,3.97,1192,16044,57.36
+Loaded Fries,3.97,1167,13669,61.08
+Eggs Benedict,3.97,1262,19008,66.97
+Lobster Thermidor,3.97,1194,20521,63.65
+Soft Drink,3.97,1237,22029,63.67
+French Onion Soup,3.97,1314,15010,65.45
+Samosa Platter,3.97,1254,19421,59.12
+Doodh Patti Chai,3.97,1215,8484,59.48
+Seekh Kabab Rolls,3.97,1235,826,68.84
+Vegetable Curry,3.97,1180,770,68.86
+Granola Bowl,3.97,1232,819,68.04
+Falooda,3.97,1283,4048,63.6
+Chapli Kabab,3.96,1215,21493,55.25
+Tiramisu,3.96,1132,47336,63.8
+T-Bone Steak,3.96,1164,32227,58.93
+Broccoli Cheddar Soup,3.96,1239,43757,66.92
+Chicken Tikka Bites,3.96,1249,19230,59.73
+Palak Paneer,3.96,385,14152,61.8
+Crab Curry,3.96,1260,39348,54.8
+Lamb Chops,3.96,1180,19135,67.93
+Chicken Pakora,3.96,1180,14238,60.06
+Apple Pie,3.96,1191,18926,64.63
+Sweet Lassi,3.96,1205,4794,55.28
+Aglio e Olio,3.96,1174,46351,58.76
+Daal Makhani,3.96,1259,24696,60.79
+Beef Steak,3.96,1233,1681,84.75
+Spring Rolls,3.96,1185,9336,63.86
+Carbonara,3.96,1237,6783,59.63
+Pumpkin Soup,3.96,1284,21348,60.63
+Baked Ziti,3.96,1274,9331,60.77
+Wonton Soup,3.96,1224,21242,56.12
+Shahi Tukray,3.96,1211,51612,61.52
+Pancakes,3.96,1272,40672,65.76
+Mutton Karahi,3.96,1176,18209,64.32
+Cold Coffee,3.96,1305,8062,55.74
+Cappuccino,3.96,1247,19197,66.93
+Spaghetti Bolognese,3.96,1210,19372,72.01
+Omelette Platter,3.96,1228,23524,67.38
+Fish Masala,3.96,1222,21564,59.63
+Chocolate Lava Cake,3.96,1197,19070,66.0
+Chocolate Shake,3.96,1206,19731,56.49
+Chicken Tikka Masala,3.96,1229,14713,57.09
+Grilled Prawns,3.96,1232,1764,84.8
+Vegetable Soup,3.96,1175,1097,67.38
+Chicken Shashlik,3.96,1241,3908,57.58
+Russian Salad,3.95,1252,11407,64.15
+Mango Lassi,3.95,1256,19075,61.69
+Caesar Salad,3.95,1261,1814,84.68
+Grilled Fish Tikka,3.95,1228,10960,62.41
+Aloo Paratha,3.95,1180,36388,57.31
+Grilled Chicken Salad,3.95,1153,33451,61.84
+Dynamite Prawns,3.95,387,20034,57.33
+Waldorf Salad,3.95,1240,45893,60.94
+Calamari Rings,3.95,1253,27266,58.2
+Pink Sauce Pasta,3.95,1159,10406,64.02
+Rasmalai,3.95,1241,36847,59.8
+Chicken Biryani,3.95,1183,19421,69.21
+Seafood Linguine,3.95,1203,22843,55.89
+Chana Puri,3.95,1274,9602,56.32
+Beef Pulao,3.95,1256,9457,54.39
+Quinoa Salad,3.95,1180,27160,65.86
+Garlic Butter Prawns,3.95,1192,12514,63.51
+Tomato Basil Soup,3.95,1179,13623,65.58
+Chickpea Salad,3.95,1178,8216,55.31
+Beef Lasagna,3.95,1184,20562,65.07
+Kheer,3.94,1296,14587,61.26
+Fettuccine Alfredo,3.94,1175,1757,84.74
+Chicken Lasagna,3.94,1204,28204,61.42
+Halwa Puri,3.94,1313,1771,84.68
+Garden Salad,3.94,1190,7301,66.78
+French Toast,3.94,1266,19524,57.54
+Chicken Handi,3.94,1268,18911,68.23
+Fresh Orange Juice,3.94,390,13250,60.79
+Avocado Toast,3.94,1162,7010,64.98
+Special Gulab Jamun,3.94,1220,18005,-52.49
+Special Chicken Karahi,3.94,1258,18351,-51.34
+Grilled Pomfret,3.94,1215,6928,66.15
+Kashmiri Chai,3.94,1243,329,56.74
+Mutton Biryani,3.93,1080,16448,59.88
+Cheesecake,3.93,1231,19408,55.78
+Lentil Soup,3.93,1290,19203,60.15
+Haleem,3.92,1255,14882,63.69
+Mozzarella Sticks,3.92,1212,19528,68.08
+Behari Boti,3.92,1232,12131,63.0
+Penne Arrabiata,3.92,1226,24713,55.18
+Spinach Tortellini,3.92,1209,3755,59.77
+Chicken Noodle Soup,3.88,390,22855,66.5
+Chicken Tikka Pasta,3.69,388,25794,59.64
+Pasta Salad,3.68,389,22970,58.41
+Waffles,3.66,390,10565,66.77
+Seafood Platter,3.66,389,38689,69.14
+BBQ Ribs,3.66,386,11295,65.23

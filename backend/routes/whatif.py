@@ -1,13 +1,19 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pathlib import Path
 from pydantic import BaseModel
 import pandas as pd
+
+from middleware.auth_middleware import require_analytics
+from routes.pricing import item_elasticities
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 PROCESSED = PROJECT_ROOT / "processed_data"
 FEATURES = PROCESSED / "features"
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_analytics)])
+
+# Used only when an item has no measured elasticity; the response says so.
+DEFAULT_ELASTICITY = -1.0
 
 
 class WhatIfRequest(BaseModel):
@@ -15,6 +21,8 @@ class WhatIfRequest(BaseModel):
     price_change_pct: float = 0
     discount_pct: float = 0
     prep_quantity_change_pct: float = 0
+    demand_change_pct: float = 0
+    elasticity: float | None = None
 
 
 @router.post("/simulate")
@@ -35,10 +43,16 @@ def simulate(req: WhatIfRequest):
     # New price
     new_price = current_price * (1 + req.price_change_pct/100)
 
-    # Price elasticity effect on demand
-    elasticity = -1.2
-    demand_change = elasticity * req.price_change_pct / 100
-    new_qty = current_qty * (1 + demand_change)
+    # Price elasticity: user override > measured for this item > labelled default
+    measured = item_elasticities().get(req.item_id)
+    if req.elasticity is not None:
+        elasticity, elasticity_source = req.elasticity, "user supplied"
+    elif measured is not None:
+        elasticity, elasticity_source = measured, "measured from price history"
+    else:
+        elasticity, elasticity_source = DEFAULT_ELASTICITY, "assumed default (no price history)"
+    demand_change = elasticity * req.price_change_pct / 100 + req.demand_change_pct / 100
+    new_qty = max(current_qty * (1 + demand_change), 0)
 
     # Discount effect
     effective_price = new_price * (1 - req.discount_pct/100)
@@ -58,6 +72,11 @@ def simulate(req: WhatIfRequest):
         "item_id": req.item_id,
         "item_name": str(row["item_name"]),
         "note": "Simulated estimates only - not actual results",
+        "assumptions": {
+            "elasticity": round(float(elasticity), 3),
+            "elasticity_source": elasticity_source,
+            "extra_demand_change_pct": req.demand_change_pct,
+        },
         "current": {
             "price": round(current_price, 2),
             "revenue": round(current_revenue, 2),

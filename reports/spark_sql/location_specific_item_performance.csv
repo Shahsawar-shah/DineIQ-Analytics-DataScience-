@@ -1,0 +1,61 @@
+restaurant_name,item_name,units,margin,rank_in_location
+DineIQ Bahria Town Karachi,Seafood Platter,1583,47672.01,1
+DineIQ Bahria Town Karachi,Prawn Tempura,2515,44462.53,2
+DineIQ Bahria Town Karachi,Lahori Fried Fish,1603,44328.71,3
+DineIQ Bahria Town Lahore,Prawn Tempura,3343,59058.31,1
+DineIQ Bahria Town Lahore,Seafood Platter,1866,56126.95,2
+DineIQ Bahria Town Lahore,Lahori Fried Fish,1978,54764.63,3
+DineIQ Bahria Town Rawalpindi,Seafood Platter,1034,30970.83,1
+DineIQ Bahria Town Rawalpindi,Lahori Fried Fish,1054,29146.49,2
+DineIQ Bahria Town Rawalpindi,Prawn Tempura,1641,29063.89,3
+DineIQ Blue Area Islamabad,Lahori Fried Fish,1248,34400.38,1
+DineIQ Blue Area Islamabad,Prawn Tempura,1815,32083.14,2
+DineIQ Blue Area Islamabad,Seafood Platter,1051,31654.07,3
+DineIQ Clifton Karachi,Seafood Platter,2848,85605.61,1
+DineIQ Clifton Karachi,Lahori Fried Fish,3023,83713.02,2
+DineIQ Clifton Karachi,Prawn Tempura,4398,77815.67,3
+DineIQ DHA Karachi,Seafood Platter,2932,87974.42,1
+DineIQ DHA Karachi,Lahori Fried Fish,2860,79142.35,2
+DineIQ DHA Karachi,Prawn Tempura,4470,79088.3,3
+DineIQ DHA Lahore,Lahori Fried Fish,2176,60315.34,1
+DineIQ DHA Lahore,Seafood Platter,1941,58272.96,2
+DineIQ DHA Lahore,Prawn Tempura,3122,55241.43,3
+DineIQ F-10 Islamabad,Seafood Platter,1231,36969.89,1
+DineIQ F-10 Islamabad,Prawn Tempura,1961,34664.51,2
+DineIQ F-10 Islamabad,Lahori Fried Fish,1241,34217.66,3
+DineIQ F-7 Islamabad,Lahori Fried Fish,2539,70384.99,1
+DineIQ F-7 Islamabad,Seafood Platter,2342,70334.94,2
+DineIQ F-7 Islamabad,Prawn Tempura,3701,65470.56,3
+DineIQ G-9 Islamabad,Seafood Platter,1212,36398.4,1
+DineIQ G-9 Islamabad,Lahori Fried Fish,1224,33740.4,2
+DineIQ G-9 Islamabad,Prawn Tempura,1791,31821.62,3
+DineIQ Garden Town Lahore,Lahori Fried Fish,2199,60572.18,1
+DineIQ Garden Town Lahore,Seafood Platter,1970,59085.7,2
+DineIQ Garden Town Lahore,Prawn Tempura,3122,55305.36,3
+DineIQ Gulberg Lahore,Seafood Platter,2031,60871.83,1
+DineIQ Gulberg Lahore,Lahori Fried Fish,2099,58074.85,2
+DineIQ Gulberg Lahore,Prawn Tempura,3094,54862.72,3
+DineIQ Gulshan Karachi,Seafood Platter,2886,86397.27,1
+DineIQ Gulshan Karachi,Lahori Fried Fish,3073,85315.6,2
+DineIQ Gulshan Karachi,Prawn Tempura,4530,80412.75,3
+DineIQ Johar Town Lahore,Lahori Fried Fish,2076,57517.74,1
+DineIQ Johar Town Lahore,Seafood Platter,1900,57097.9,2
+DineIQ Johar Town Lahore,Prawn Tempura,3140,55356.02,3
+DineIQ Korangi Karachi,Seafood Platter,1618,48767.29,1
+DineIQ Korangi Karachi,Lahori Fried Fish,1642,45697.06,2
+DineIQ Korangi Karachi,Prawn Tempura,2490,44146.86,3
+DineIQ Malir Karachi,Seafood Platter,1625,48784.0,1
+DineIQ Malir Karachi,Lahori Fried Fish,1696,46939.0,2
+DineIQ Malir Karachi,Prawn Tempura,2371,42081.02,3
+DineIQ Model Town Lahore,Seafood Platter,2013,60319.94,1
+DineIQ Model Town Lahore,Lahori Fried Fish,2157,60079.68,2
+DineIQ Model Town Lahore,Prawn Tempura,3181,56395.37,3
+DineIQ North Nazimabad Karachi,Lahori Fried Fish,3072,85166.52,1
+DineIQ North Nazimabad Karachi,Seafood Platter,2716,81501.22,2
+DineIQ North Nazimabad Karachi,Prawn Tempura,4464,79069.48,3
+DineIQ Saddar Karachi,Seafood Platter,2902,87242.54,1
+DineIQ Saddar Karachi,Lahori Fried Fish,3109,86149.64,2
+DineIQ Saddar Karachi,Prawn Tempura,4646,82267.03,3
+DineIQ Saddar Rawalpindi,Seafood Platter,988,29651.89,1
+DineIQ Saddar Rawalpindi,Lahori Fried Fish,1052,29259.57,2
+DineIQ Saddar Rawalpindi,Prawn Tempura,1478,26093.27,3

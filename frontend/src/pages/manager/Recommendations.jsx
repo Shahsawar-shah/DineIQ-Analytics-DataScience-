@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Sparkles } from 'lucide-react'
+import { AlertOctagon, AlertTriangle, CircleAlert, ListChecks } from 'lucide-react'
 import { api } from '../../services/api'
 import PageHeader from '../../components/layout/PageHeader'
 import KpiCard from '../../components/ui/KpiCard'
@@ -32,7 +32,7 @@ function formatEvidenceValue(key, value) {
 
 function RecommendationCard({ rec, delay }) {
   return (
-    <div className="card card-hover anim-fade-up p-5" style={{ animationDelay: `${delay}ms` }}>
+    <div className="card anim-fade-up p-5" style={{ animationDelay: `${delay}ms` }}>
       <div className="mb-2.5 flex items-center justify-between gap-2">
         <span className="badge badge-orange">{rec.action}</span>
         <span className={`badge ${PRIORITY_TONE[rec.priority] ?? 'badge-gray'}`}>{rec.priority}</span>
@@ -79,15 +79,15 @@ export default function Recommendations() {
     <>
       <PageHeader
         title="Recommendations"
-        subtitle="Prioritized actions generated from live menu performance data"
+        subtitle="Suggested actions, ranked by priority, based on menu performance"
         actions={<span className="badge badge-green"><span className="live-dot mr-1 inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" /> Live data feed</span>}
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="Total Recommendations" value={String(data.total)} icon={Sparkles} accent="#f95d0b" />
-        <KpiCard label="Critical" value={String(data.critical)} icon={Sparkles} accent="#d92d20" delay={60} />
-        <KpiCard label="High Priority" value={String(data.high)} icon={Sparkles} accent="#b54708" delay={120} />
-        <KpiCard label="Medium Priority" value={String(data.medium)} icon={Sparkles} accent="#1d4ed8" delay={180} />
+        <KpiCard label="Total Recommendations" value={String(data.total)} icon={ListChecks} accent="#f95d0b" />
+        <KpiCard label="Critical" value={String(data.critical)} icon={AlertOctagon} accent="#d92d20" delay={60} />
+        <KpiCard label="High Priority" value={String(data.high)} icon={AlertTriangle} accent="#b54708" delay={120} />
+        <KpiCard label="Medium Priority" value={String(data.medium)} icon={CircleAlert} accent="#1d4ed8" delay={180} />
       </div>
 
       <div className="my-5 flex flex-wrap gap-2">

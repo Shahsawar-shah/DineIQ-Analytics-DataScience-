@@ -148,7 +148,7 @@ export default function InventoryDashboard() {
 
       <div className="mt-5 grid gap-4 sm:grid-cols-3">
         <InsightCard tone="danger" title="Squid (Calamari) is out of stock" text="Delivery arrives Sep 26. Feature alternative starters to protect 860 monthly sales." />
-        <InsightCard tone="warn" title="Produce drives 34% of wastage" text="Roma tomatoes and romaine lettuce are the top contributors — adjust crate sizes." delay={70} />
+        <InsightCard tone="warn" title="Produce drives 34% of wastage" text="Roma tomatoes and romaine lettuce are the biggest contributors. Consider smaller crate sizes." delay={70} />
         <InsightCard tone="info" title="Reorder 36 kg coffee beans" text="Forecast shows +12% beverage demand; current stock covers 18 days." delay={140} />
       </div>
     </>

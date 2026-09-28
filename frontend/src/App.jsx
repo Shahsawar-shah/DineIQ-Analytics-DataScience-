@@ -57,7 +57,7 @@ function NotFound() {
     <div className="grid min-h-screen place-items-center bg-[#f6f7fb] p-6 text-center">
       <div className="card anim-pop max-w-md p-10">
         <p className="font-script text-4xl text-brand-500">Oops!</p>
-        <h1 className="font-display mt-2 text-3xl font-extrabold text-ink-900">404 — Page not found</h1>
+        <h1 className="font-display mt-2 text-3xl font-extrabold text-ink-900">404: Page not found</h1>
         <p className="mt-3 text-sm text-ink-500">The page you are looking for does not exist in DineIQ Analytics.</p>
         <a href="/" className="btn btn-primary mt-6 !px-6 !py-3 text-xs uppercase tracking-wider">Back to home</a>
       </div>
@@ -141,6 +141,51 @@ export default function App() {
         <Route path="dual-pipeline" element={<DualPipeline />} />
         <Route path="market-basket" element={<MarketBasket />} />
         <Route path="reports" element={<ReportsPage scope="Business Intelligence" />} />
+      </Route>
+
+      {/* Super Admin: all admin pages (incl. user management) + analytics suite */}
+      <Route
+        path="/superadmin"
+        element={
+          <ProtectedRoute role="Super Admin">
+            <DashboardLayout role="Super Admin" />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="/superadmin/dashboard" replace />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="roles" element={<AdminRoles />} />
+        <Route path="locations" element={<AdminLocations />} />
+        <Route path="data-management" element={<AdminDataManagement />} />
+        <Route path="data-quality" element={<AdminDataQuality />} />
+        <Route path="system-monitoring" element={<AdminSystemMonitoring />} />
+        <Route path="audit-logs" element={<AdminAuditLogs />} />
+        <Route path="reports" element={<AdminReports />} />
+        <Route path="settings" element={<AdminSettings />} />
+        <Route path="menu-intelligence" element={<MenuIntelligence />} />
+        <Route path="customer-intelligence" element={<CustomerIntelligence />} />
+        <Route path="forecasting" element={<Forecasting />} />
+        <Route path="dual-pipeline" element={<DualPipeline />} />
+        <Route path="market-basket" element={<MarketBasket />} />
+        <Route path="pricing" element={<Pricing />} />
+        <Route path="promotions" element={<Promotions />} />
+        <Route path="anomalies" element={<AnomalyDetection />} />
+        <Route path="recommendations" element={<Recommendations />} />
+      </Route>
+
+      {/* Cashier: orders and menu only */}
+      <Route
+        path="/cashier"
+        element={
+          <ProtectedRoute role="Cashier">
+            <DashboardLayout role="Cashier" />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="/cashier/orders" replace />} />
+        <Route path="orders" element={<Orders />} />
+        <Route path="menu" element={<MenuIntelligence />} />
       </Route>
 
       {/* Inventory Manager */}

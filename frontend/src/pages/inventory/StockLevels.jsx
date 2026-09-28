@@ -13,7 +13,7 @@ export default function StockLevels() {
       <PageHeader title="Stock Levels" subtitle="Current stock vs par level per item"
         actions={<span className={`badge ${lowCount > 0 ? 'badge-amber' : 'badge-green'}`}>{lowCount} items need attention</span>} />
 
-      <ChartCard title="Stock Coverage" subtitle="Stock as % of par level — 100% means fully covered" height={380}>
+      <ChartCard title="Stock Coverage" subtitle="Stock as % of par level (100% = fully covered)" height={380}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} layout="vertical" margin={{ left: 70 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#eef0f6" horizontal={false} />
@@ -49,7 +49,7 @@ export default function StockLevels() {
                 <p className="truncate text-sm font-bold text-ink-900">{i.item}</p>
                 <StatusBadge status={i.status} />
               </div>
-              <div className="meter mb-1"><span style={{ width: `${pct}%`, background: pct === 0 ? '#e11d48' : pct < 70 ? 'linear-gradient(90deg,#fbbf24,#d97706)' : 'linear-gradient(90deg,#34d399,#0d9459)' }} /></div>
+              <div className="meter mb-1"><span style={{ width: `${pct}%`, background: pct === 0 ? '#e11d48' : pct < 70 ? '#d97706' : '#0d9459' }} /></div>
               <div className="flex justify-between text-[0.68rem] text-ink-400">
                 <span>{i.stock} / {i.parLevel} {i.unit}</span>
                 <span className="font-semibold">{pct}%</span>

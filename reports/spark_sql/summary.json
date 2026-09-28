@@ -1,0 +1,91 @@
+{
+  "generated_at": "2026-09-28T12:37:32",
+  "spark_version": "4.2.0",
+  "queries": [
+    {
+      "query": "ingestion_top_items_by_revenue",
+      "rows": 10,
+      "seconds": 4.63
+    },
+    {
+      "query": "menu_profitability",
+      "rows": 150,
+      "seconds": 2.93
+    },
+    {
+      "query": "high_selling_loss_making_items",
+      "rows": 5,
+      "seconds": 2.08
+    },
+    {
+      "query": "category_popularity",
+      "rows": 10,
+      "seconds": 3.56
+    },
+    {
+      "query": "peak_hours",
+      "rows": 24,
+      "seconds": 0.89
+    },
+    {
+      "query": "peak_days_and_weekend_pattern",
+      "rows": 7,
+      "seconds": 1.26
+    },
+    {
+      "query": "monthly_trend",
+      "rows": 13,
+      "seconds": 0.96
+    },
+    {
+      "query": "channel_analysis",
+      "rows": 4,
+      "seconds": 2.22
+    },
+    {
+      "query": "channel_peak_hours",
+      "rows": 96,
+      "seconds": 0.75
+    },
+    {
+      "query": "location_performance",
+      "rows": 20,
+      "seconds": 3.97
+    },
+    {
+      "query": "location_specific_item_performance",
+      "rows": 60,
+      "seconds": 1.99
+    },
+    {
+      "query": "promotion_driven_sales",
+      "rows": 16,
+      "seconds": 2.02
+    },
+    {
+      "query": "high_wastage_items",
+      "rows": 20,
+      "seconds": 1.18
+    },
+    {
+      "query": "wastage_by_location_and_reason",
+      "rows": 100,
+      "seconds": 0.67
+    },
+    {
+      "query": "rating_vs_profitability",
+      "rows": 150,
+      "seconds": 1.43
+    },
+    {
+      "query": "customer_rfm",
+      "rows": 1000,
+      "seconds": 1.55
+    },
+    {
+      "query": "duplicate_transactions",
+      "rows": 0,
+      "seconds": 0.81
+    }
+  ]
+}

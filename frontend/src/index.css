@@ -2,9 +2,9 @@
 @import "tailwindcss";
 
 /* ============================================================
-   DINEIQ ANALYTICS — MENU MATRIX DESIGN SYSTEM
-   Landing language: Food Funday (dark charcoal + brand orange)
-   Dashboard language: Riday (light panels, donut KPIs, pills)
+   DINEIQ ANALYTICS - DESIGN SYSTEM
+   Landing: dark charcoal + brand orange
+   Dashboards: light panels, flat surfaces, restrained accents
    ============================================================ */
 
 @theme {
@@ -37,8 +37,8 @@
 }
 
 :root {
-  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.05), 0 6px 18px -6px rgba(16, 24, 40, 0.08);
-  --shadow-card-hover: 0 4px 10px rgba(16, 24, 40, 0.08), 0 18px 34px -12px rgba(249, 93, 11, 0.18);
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-card-hover: 0 2px 8px rgba(16, 24, 40, 0.07);
 }
 
 html {
@@ -67,18 +67,15 @@ body {
   border: 1px solid #eef0f6;
   border-radius: 1rem;
   box-shadow: var(--shadow-card);
-  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 .card-hover:hover {
   box-shadow: var(--shadow-card-hover);
-  transform: translateY(-3px);
-  border-color: #ffd9c2;
+  border-color: #e2e4ee;
 }
 
 .dark-panel {
-  background:
-    radial-gradient(1200px 500px at 85% -10%, rgba(249, 93, 11, 0.16), transparent 60%),
-    linear-gradient(150deg, #191825 0%, #121220 55%, #171423 100%);
+  background: #16161f;
   color: #fff;
 }
 
@@ -90,33 +87,31 @@ body {
   border-radius: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  transition: all 0.22s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   cursor: pointer;
   white-space: nowrap;
 }
-.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .btn-primary {
-  background: linear-gradient(135deg, #fb7f38, #f95d0b 55%, #e04a05);
+  background: #f95d0b;
   color: #fff;
-  box-shadow: 0 8px 20px -6px rgba(249, 93, 11, 0.55);
 }
-.btn-primary:hover { box-shadow: 0 12px 26px -6px rgba(249, 93, 11, 0.7); transform: translateY(-2px); }
+.btn-primary:hover { background: #e04a05; }
 
 .btn-outline {
   border: 1.5px solid rgba(255, 255, 255, 0.35);
   color: #fff;
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(6px);
+  background: transparent;
 }
-.btn-outline:hover { border-color: #f95d0b; background: rgba(249, 93, 11, 0.12); transform: translateY(-2px); }
+.btn-outline:hover { border-color: #fff; background: rgba(255, 255, 255, 0.08); }
 
 .btn-ghost {
-  border: 1.5px solid #e5e7f0;
+  border: 1px solid #e2e4ee;
   color: var(--color-ink-700);
   background: #fff;
 }
-.btn-ghost:hover { border-color: #f95d0b; color: #f95d0b; background: #fff4ec; }
+.btn-ghost:hover { border-color: #c9cbd8; color: var(--color-ink-900); background: #f6f7fb; }
 
 .input {
   width: 100%;
@@ -149,9 +144,9 @@ body {
   gap: 0.5rem;
   font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #f95d0b;
+  color: #e04a05;
 }
 
 /* ---------- Sidebar / dashboard navigation ---------- */
@@ -165,21 +160,20 @@ body {
   font-size: 0.855rem;
   font-weight: 500;
   color: var(--color-ink-500);
-  transition: all 0.18s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   position: relative;
 }
-.sidebar-link:hover { background: #fdf0e7; color: #e04a05; }
+.sidebar-link:hover { background: #f4f5f9; color: var(--color-ink-900); }
 .sidebar-link.active {
-  background: linear-gradient(135deg, #fb7f38, #f95d0b);
-  color: #fff;
+  background: #fff1e8;
+  color: #c2410c;
   font-weight: 600;
-  box-shadow: 0 6px 14px -4px rgba(249, 93, 11, 0.5);
 }
 
 .sidebar-heading {
   font-size: 0.65rem;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #a2a5b8;
   padding: 0 0.85rem;
@@ -196,20 +190,20 @@ body {
   border: 1px solid #edeff5;
   background: #fff;
   color: var(--color-ink-500);
-  transition: all 0.2s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   position: relative;
   cursor: pointer;
 }
-.topbar-icon-btn:hover { color: #f95d0b; border-color: #ffd9c2; background: #fff4ec; }
+.topbar-icon-btn:hover { color: var(--color-ink-900); background: #f4f5f9; }
 
 /* ---------- Tables ---------- */
 
 .dq-table { width: 100%; font-size: 0.84rem; border-collapse: separate; border-spacing: 0; }
 .dq-table thead th {
   text-align: left;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--color-ink-400);
   padding: 0.75rem 1rem;
@@ -223,7 +217,7 @@ body {
   white-space: nowrap;
 }
 .dq-table tbody tr { transition: background 0.15s ease; }
-.dq-table tbody tr:hover { background: #fff7f2; }
+.dq-table tbody tr:hover { background: #fafafc; }
 .dq-table tbody tr:last-child td { border-bottom: none; }
 
 /* ---------- Status badges ---------- */
@@ -236,7 +230,6 @@ body {
   padding: 0.22rem 0.65rem;
   font-size: 0.68rem;
   font-weight: 600;
-  letter-spacing: 0.03em;
   white-space: nowrap;
 }
 .badge-green { background: #e7f8ef; color: #0d9459; }
@@ -249,7 +242,7 @@ body {
 
 /* ---------- Progress bars ---------- */
 
-.meter { height: 7px; border-radius: 999px; background: #f0f1f6; overflow: hidden; }
+.meter { height: 6px; border-radius: 999px; background: #f0f1f6; overflow: hidden; }
 .meter > span { display: block; height: 100%; border-radius: 999px; transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
 
 /* ---------- Landing page helpers ---------- */
@@ -264,9 +257,8 @@ body {
   position: relative;
   font-size: 0.8rem;
   font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.8);
   transition: color 0.2s ease;
   padding: 0.35rem 0;
 }
@@ -285,9 +277,9 @@ body {
 .nav-link-landing:hover::after, .nav-link-landing.active::after { width: 100%; }
 
 .food-card-img {
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
+  transition: transform 0.5s ease;
 }
-.group:hover .food-card-img { transform: scale(1.08) rotate(0.6deg); }
+.group:hover .food-card-img { transform: scale(1.03); }
 
 .chip {
   display: inline-flex;
@@ -301,20 +293,19 @@ body {
   font-weight: 600;
   color: var(--color-ink-600);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
-.chip:hover { border-color: #ffb488; color: #e04a05; }
+.chip:hover { border-color: #c9cbd8; color: var(--color-ink-900); }
 .chip.chip-active {
-  background: linear-gradient(135deg, #fb7f38, #f95d0b);
-  border-color: transparent;
+  background: var(--color-ink-900);
+  border-color: var(--color-ink-900);
   color: #fff;
-  box-shadow: 0 6px 14px -4px rgba(249, 93, 11, 0.45);
 }
 
 /* ---------- Animations ---------- */
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(26px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes fadeIn {
@@ -322,11 +313,11 @@ body {
   to { opacity: 1; }
 }
 @keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-28px); }
+  from { opacity: 0; transform: translateX(-16px); }
   to { opacity: 1; transform: translateX(0); }
 }
 @keyframes popIn {
-  0% { opacity: 0; transform: scale(0.92); }
+  0% { opacity: 0; transform: scale(0.98); }
   100% { opacity: 1; transform: scale(1); }
 }
 @keyframes floatY {
@@ -350,23 +341,23 @@ body {
   to { background-position: 400px 0; }
 }
 
-.anim-fade-up { animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
-.anim-fade-in { animation: fadeIn 0.6s ease both; }
-.anim-slide-left { animation: slideInLeft 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
-.anim-pop { animation: popIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-fade-up { animation: fadeUp 0.35s ease-out both; }
+.anim-fade-in { animation: fadeIn 0.25s ease both; }
+.anim-slide-left { animation: slideInLeft 0.25s ease-out both; }
+.anim-pop { animation: popIn 0.15s ease-out both; }
 .anim-float { animation: floatY 5s ease-in-out infinite; }
 .anim-wheel { animation: scrollWheel 1.8s ease-in-out infinite; }
 .live-dot { animation: pulseDot 2s infinite; }
 
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1), transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateY(12px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
   will-change: opacity, transform;
 }
 .reveal.reveal-visible { opacity: 1; transform: translateY(0); }
 
-.page-enter { animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.page-enter { animation: fadeIn 0.2s ease both; }
 
 @media (prefers-reduced-motion: reduce) {
   .anim-fade-up, .anim-fade-in, .anim-slide-left, .anim-pop, .anim-float, .anim-wheel, .live-dot, .page-enter { animation: none; }
@@ -391,7 +382,6 @@ body {
 }
 
 .glass {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
+  background: #1e1e2a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }

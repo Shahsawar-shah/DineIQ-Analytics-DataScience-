@@ -72,7 +72,7 @@ export default function PurchasePlanning() {
                 )
               })}
               {toReorder.length === 0 && (
-                <tr><td colSpan={9} className="!py-8 !text-center text-ink-400">Nothing to reorder — stock above par.</td></tr>
+                <tr><td colSpan={9} className="!py-8 !text-center text-ink-400">Nothing to reorder. All stock is above par.</td></tr>
               )}
             </tbody>
           </table>

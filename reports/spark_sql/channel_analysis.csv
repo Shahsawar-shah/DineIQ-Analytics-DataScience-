@@ -1,0 +1,5 @@
+order_channel,orders,avg_basket_size,avg_order_value,avg_discount,profit_margin_pct
+Dine-in,86581,9.9,269.21,7.22,59.52
+Takeaway,47894,9.9,269.12,7.19,59.55
+App,38513,9.89,268.74,7.19,59.53
+Delivery,19070,9.91,269.46,7.11,59.62

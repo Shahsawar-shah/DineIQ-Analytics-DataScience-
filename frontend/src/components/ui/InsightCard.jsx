@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2, Info, Sparkles } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Info, TrendingDown, TrendingUp } from 'lucide-react'
 
 /** Insight / alert card used for wastage risks, anomalies and tips. */
 export function InsightCard({ tone = 'info', title, text, meta, delay = 0 }) {
@@ -10,14 +10,14 @@ export function InsightCard({ tone = 'info', title, text, meta, delay = 0 }) {
   }[tone]
   const Icon = cfg.icon
   return (
-    <div className="card card-hover anim-fade-up flex gap-3 p-4" style={{ animationDelay: `${delay}ms` }}>
-      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl" style={{ background: cfg.bg, color: cfg.fg }}>
-        <Icon size={19} />
+    <div className="card anim-fade-up flex gap-3 p-4" style={{ animationDelay: `${delay}ms` }}>
+      <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg" style={{ background: cfg.bg, color: cfg.fg }}>
+        <Icon size={17} />
       </div>
       <div className="min-w-0">
         <p className="text-sm font-semibold text-ink-900">{title}</p>
         <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-ink-500">{text}</p>
-        {meta && <p className="mt-1.5 text-[0.68rem] font-bold uppercase tracking-[0.1em] text-ink-400">{meta}</p>}
+        {meta && <p className="mt-1.5 text-[0.7rem] font-semibold text-ink-400">{meta}</p>}
       </div>
     </div>
   )
@@ -36,11 +36,11 @@ export function RecommendationCard({ area, title, detail, impact, confidence, de
       <p className="mt-1.5 text-xs leading-relaxed text-ink-500">{detail}</p>
       <div className="mt-4">
         <div className="mb-1 flex justify-between text-[0.68rem] font-semibold text-ink-400">
-          <span>Model confidence</span>
+          <span>Confidence</span>
           <span className="text-ink-700">{confidence}%</span>
         </div>
         <div className="meter">
-          <span style={{ width: `${confidence}%`, background: 'linear-gradient(90deg,#fb7f38,#f95d0b)' }} />
+          <span style={{ width: `${confidence}%`, background: '#f95d0b' }} />
         </div>
       </div>
     </div>
@@ -52,11 +52,11 @@ export function ForecastCard({ label, value, range, delta, delay = 0 }) {
   const positive = delta >= 0
   return (
     <div className="card card-hover anim-fade-up p-5" style={{ animationDelay: `${delay}ms` }}>
-      <p className="text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-ink-400">{label}</p>
+      <p className="text-xs font-medium text-ink-500">{label}</p>
       <p className="font-display mt-1.5 text-2xl font-extrabold text-ink-900">{value}</p>
       <p className="mt-1 text-xs text-ink-400">Range: {range}</p>
       <p className={`mt-2 inline-flex items-center gap-1 text-xs font-bold ${positive ? 'text-emerald-600' : 'text-rose-600'}`}>
-        <Sparkles size={13} /> {positive ? '+' : ''}
+        {positive ? <TrendingUp size={13} /> : <TrendingDown size={13} />} {positive ? '+' : ''}
         {delta}% vs last period
       </p>
     </div>
@@ -87,7 +87,7 @@ export function MiniStat({ icon, color, label, value }) {
         {icon}
       </div>
       <div>
-        <p className="text-[0.66rem] font-bold uppercase tracking-[0.1em] text-ink-400">{label}</p>
+        <p className="text-[0.7rem] font-medium text-ink-500">{label}</p>
         <p className="font-display text-sm font-extrabold text-ink-900">{value}</p>
       </div>
     </div>

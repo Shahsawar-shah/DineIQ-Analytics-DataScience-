@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import {
   BarChart3, BookOpen, CalendarDays, ChevronRight, Clock, Flame, Heart, Package, ShoppingBag,
-  Sparkles, Star, Tag, TrendingUp, Wallet,
+  Star, Tag, TrendingUp, Wallet,
 } from 'lucide-react'
 import {
   Area, AreaChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip as RTooltip, XAxis, YAxis,
@@ -44,8 +44,8 @@ export default function CustomerDashboard() {
   return (
     <>
       <PageHeader
-        title={`Welcome back, ${firstName} 👋`}
-        subtitle="Your personal dining intelligence snapshot"
+        title={`Welcome back, ${firstName}`}
+        subtitle="Your orders, rewards and offers"
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -141,7 +141,7 @@ export default function CustomerDashboard() {
           <div className="space-y-3">
             {CUSTOMER_PROMOS.map((p) => (
               <div key={p.id} className="flex items-center gap-3 rounded-xl border border-dashed border-brand-300 bg-brand-50/50 p-3.5">
-                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 text-white">
+                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-500 text-white">
                   <Tag size={17} />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -198,9 +198,9 @@ export default function CustomerDashboard() {
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <InsightCard tone="info" title="You're 2 orders from Gold tier" text="Reach 25 lifetime orders to unlock 2x loyalty points and a free dessert every month." delay={0} />
-        <InsightCard tone="success" title="New match for your taste" text="Grilled Salmon Bowl matches 94% with your profile — try it this weekend." delay={60} />
+        <InsightCard tone="success" title="Something new to try" text="Based on what you usually order, you might like the Grilled Salmon Bowl." delay={60} />
         <InsightCard tone="warn" title="BUNDLE20 expires soon" text="Your 20% combo discount is valid until September 30. Use it before it's gone." delay={120} />
-        <InsightCard tone="info" title="Rate your last order" text="Tell us about the Truffle Mushroom Risotto — your ratings shape your recommendations." delay={180} />
+        <InsightCard tone="info" title="Rate your last order" text="How was the Truffle Mushroom Risotto? Your ratings help us suggest better dishes." delay={180} />
       </div>
 
       <div className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
@@ -210,7 +210,7 @@ export default function CustomerDashboard() {
           { icon: TrendingUp, label: 'Avg. Basket', value: fmtMoney(38.2, 2) },
           { icon: BarChart3, label: 'Favorite Location', value: 'Downtown' },
         ].map((s) => (
-          <div key={s.label} className="card card-hover flex items-center gap-3 p-4">
+          <div key={s.label} className="card flex items-center gap-3 p-4">
             <div className="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-500">
               <s.icon size={18} />
             </div>

@@ -12,7 +12,7 @@ export default function CustomerRatings() {
     <>
       <PageHeader
         title="Ratings & Reviews"
-        subtitle="Your feedback powers the intelligence for everyone"
+        subtitle="Your reviews help other guests and the kitchen team"
         actions={
           <button className="btn btn-primary !px-5 !py-2.5 text-xs" onClick={() => setModal(true)}>
             <Star size={14} /> Write a review
@@ -31,7 +31,7 @@ export default function CustomerRatings() {
                 <span className="w-3 text-ink-400">{s}</span>
                 <Star size={11} className="fill-amber-400 text-amber-400" />
                 <div className="meter flex-1">
-                  <span style={{ width: `${s === 5 ? 66 : s === 4 ? 34 : 0}%`, background: 'linear-gradient(90deg,#fbbf24,#f59e0b)' }} />
+                  <span style={{ width: `${s === 5 ? 66 : s === 4 ? 34 : 0}%`, background: '#f59e0b' }} />
                 </div>
                 <span className="w-8 text-right text-ink-400">{s === 5 ? '2' : s === 4 ? '1' : '0'}</span>
               </div>

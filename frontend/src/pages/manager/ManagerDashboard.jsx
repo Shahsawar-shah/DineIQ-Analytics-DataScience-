@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { CheckCircle2, Clock, DollarSign, ShieldCheck, ShoppingBag, Star, Users } from 'lucide-react'
+import { CalendarDays, CheckCircle2, Clock, DollarSign, Receipt, Repeat, ShieldCheck, ShoppingBag, Star, TrendingUp, TriangleAlert, UserCheck, Users } from 'lucide-react'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { api } from '../../services/api'
 import PageHeader from '../../components/layout/PageHeader'
@@ -35,8 +35,8 @@ export default function ManagerDashboard() {
   return (
     <>
       <PageHeader
-        title="Business Intelligence Overview"
-        subtitle="Live across menu, orders, customers and wastage"
+        title="Overview"
+        subtitle="Menu, orders, customers and wastage across all locations"
         actions={<span className="badge badge-green"><span className="live-dot mr-1 inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" /> Live data feed</span>}
       />
 
@@ -46,6 +46,16 @@ export default function ManagerDashboard() {
         <KpiCard label="Total Customers" value={summary.total_customers.toLocaleString()} icon={Users} accent="#6938ef" delay={120} />
         <KpiCard label="Avg Rating" value={summary.avg_rating.toFixed(2)} icon={Star} accent="#f9a825" delay={180} />
         <KpiCard label="Avg Wastage" value={`${summary.avg_wastage_percentage.toFixed(1)}%`} icon={ShieldCheck} accent="#d92d20" delay={240} />
+      </div>
+
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-6">
+        <KpiCard label="Gross Profit" value={`$${Math.round(summary.total_profit).toLocaleString()}`} icon={TrendingUp} accent="#0d9459" />
+        <KpiCard label="Avg Order Value" value={`$${summary.avg_order_value.toFixed(2)}`} icon={Receipt} accent="#1d4ed8" delay={60} />
+        <KpiCard label="Active Customers (90d)" value={summary.active_customers.toLocaleString()} icon={UserCheck} accent="#6938ef" delay={120} />
+        <KpiCard label="Repeat Customers" value={summary.repeat_customers.toLocaleString()} icon={Repeat} accent="#f95d0b" delay={180} />
+        <KpiCard label="Churn-Risk Customers" value={summary.at_risk_customers.toLocaleString()} icon={TriangleAlert} accent="#d92d20" delay={240} />
+        <KpiCard label="Forecast Units (7d)" value={summary.forecast_units_next_7_days ? Math.round(summary.forecast_units_next_7_days).toLocaleString() : '—'} icon={CalendarDays} accent="#f9a825" delay={300}
+          footer={<p className="mt-1 text-[0.68rem] text-ink-400">Model estimate</p>} />
       </div>
 
       <div className="mt-5 grid gap-5 xl:grid-cols-3">
@@ -82,37 +92,31 @@ export default function ManagerDashboard() {
             <p className="font-display text-4xl font-extrabold text-emerald-600">{summary.data_quality_score}%</p>
             <p className="mt-1 text-xs text-ink-400">records passing quality checks</p>
             <div className="mt-5 w-full space-y-2 text-left text-xs">
-              <div className="flex justify-between"><span className="text-ink-500">Processed</span><span className="font-semibold text-ink-900">{summary.records_processed.toLocaleString()}</span></div>
-              <div className="flex justify-between"><span className="text-ink-500">Cleaned</span><span className="font-semibold text-ink-900">{summary.records_cleaned.toLocaleString()}</span></div>
-              <div className="flex justify-between"><span className="text-ink-500">Removed</span><span className="font-semibold text-rose-600">{summary.records_removed.toLocaleString()}</span></div>
-              <div className="flex justify-between"><span className="text-ink-500">Quarantined</span><span className="font-semibold text-amber-600">{summary.records_quarantined.toLocaleString()}</span></div>
+              <div className="flex justify-between"><span className="text-ink-500">Processed</span><span className="font-semibold text-ink-900">{summary.records_processed?.toLocaleString() ?? "—"}</span></div>
+              <div className="flex justify-between"><span className="text-ink-500">Cleaned</span><span className="font-semibold text-ink-900">{summary.records_cleaned?.toLocaleString() ?? "—"}</span></div>
+              <div className="flex justify-between"><span className="text-ink-500">Removed</span><span className="font-semibold text-rose-600">{summary.records_removed?.toLocaleString() ?? "—"}</span></div>
+              <div className="flex justify-between"><span className="text-ink-500">Quarantined</span><span className="font-semibold text-amber-600">{summary.records_quarantined?.toLocaleString() ?? "—"}</span></div>
             </div>
           </div>
         </ChartCard>
       </div>
 
       <div className="mt-5 grid gap-5 sm:grid-cols-2">
-        <div className="card p-5">
-          <h3 className="font-display flex items-center gap-2 text-sm font-bold text-ink-900">
-            <span className="text-xl">🐍</span> Python Pipeline
-          </h3>
-          <p className="mt-3 flex items-center gap-2 text-lg font-bold text-emerald-600">
-            <CheckCircle2 size={18} /> {summary.ml_pipeline.python.status === 'complete' ? 'Complete' : summary.ml_pipeline.python.status}
-          </p>
-          <p className="mt-2 text-xs text-ink-500">Best model: <span className="font-semibold text-ink-900">{summary.ml_pipeline.python.best_model}</span></p>
-          <p className="text-xs text-ink-500">Accuracy: <span className="font-semibold text-ink-900">{summary.ml_pipeline.python.accuracy}%</span> · F1: <span className="font-semibold text-ink-900">{summary.ml_pipeline.python.f1_score.toFixed(2)}</span></p>
-        </div>
-
-        <div className="card p-5">
-          <h3 className="font-display flex items-center gap-2 text-sm font-bold text-ink-900">
-            <span className="text-xl">⚡</span> Spark Pipeline
-          </h3>
-          <p className="mt-3 flex items-center gap-2 text-lg font-bold text-emerald-600">
-            <CheckCircle2 size={18} /> Complete
-          </p>
-          <p className="mt-2 text-xs text-ink-500">Best Model: <span className="font-semibold text-ink-900">Logistic Regression</span></p>
-          <p className="text-xs text-ink-500">F1: <span className="font-semibold text-ink-900">0.82</span> | Accuracy: <span className="font-semibold text-ink-900">87.5%</span></p>
-        </div>
+        {[['Python pipeline', summary.ml_pipeline.python], ['Spark MLlib pipeline', summary.ml_pipeline.spark]].map(([title, p]) => (
+          <div key={title} className="card p-5">
+            <h3 className="font-display flex items-center gap-2 text-sm font-bold text-ink-900">{title}</h3>
+            {p ? (
+              <>
+                <p className="mt-3 flex items-center gap-2 text-lg font-bold text-emerald-600"><CheckCircle2 size={18} /> Trained</p>
+                <p className="mt-2 text-xs text-ink-500">Best model: <span className="font-semibold text-ink-900">{p.best_model}</span></p>
+                <p className="text-xs text-ink-500">Test accuracy: <span className="font-semibold text-ink-900">{(p.accuracy * 100).toFixed(1)}%</span> · Macro F1: <span className="font-semibold text-ink-900">{p.f1_score.toFixed(2)}</span></p>
+                <p className="text-[0.68rem] text-ink-400">Version {p.model_version}</p>
+              </>
+            ) : (
+              <p className="mt-3 flex items-center gap-2 text-sm font-bold text-amber-600"><Clock size={16} /> Not trained yet</p>
+            )}
+          </div>
+        ))}
       </div>
     </>
   )

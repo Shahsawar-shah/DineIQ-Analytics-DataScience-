@@ -1,0 +1,185 @@
+{
+  "generated_at": "2026-09-28T10:55:22",
+  "summary": {
+    "errors": 3,
+    "warnings": 5,
+    "info": 3
+  },
+  "tables": {
+    "orders": {
+      "rows": 204000,
+      "checks": [
+        {
+          "check": "Missing customer_id",
+          "count": 6117,
+          "pct": 3.0,
+          "severity": "warning"
+        },
+        {
+          "check": "Duplicate records",
+          "count": 4000,
+          "pct": 1.96,
+          "severity": "warning"
+        },
+        {
+          "check": "Duplicate order_id",
+          "count": 4000,
+          "pct": 1.96,
+          "severity": "warning"
+        },
+        {
+          "check": "Invalid dates",
+          "count": 0,
+          "pct": 0.0,
+          "severity": "error"
+        },
+        {
+          "check": "Invalid restaurant reference",
+          "count": 0,
+          "pct": 0.0,
+          "severity": "error"
+        },
+        {
+          "check": "Negative totals",
+          "count": 0,
+          "pct": 0.0,
+          "severity": "error"
+        },
+        {
+          "check": "Discount > subtotal",
+          "count": 0,
+          "pct": 0.0,
+          "severity": "error"
+        },
+        {
+          "check": "Cancelled orders",
+          "count": 2040,
+          "pct": 1.0,
+          "severity": "info"
+        }
+      ]
+    },
+    "order_items": {
+      "rows": 2000000,
+      "checks": [
+        {
+          "check": "Missing item_id",
+          "count": 0,
+          "pct": 0.0,
+          "severity": "warning"
+        },
+        {
+          "check": "Unknown menu item",
+          "count": 0,
+          "pct": 0.0,
+          "severity": "error"
+        },
+        {
+          "check": "Duplicate order-line records",
+          "count": 0,
+          "pct": 0.0,
+          "severity": "warning"
+        },
+        {
+          "check": "Negative quantities",
+          "count": 20000,
+          "pct": 1.0,
+          "severity": "warning"
+        },
+        {
+          "check": "Invalid unit price (<= 0)",
+          "count": 0,
+          "pct": 0.0,
+          "severity": "error"
+        },
+        {
+          "check": "Discount > line value",
+          "count": 0,
+          "pct": 0.0,
+          "severity": "error"
+        },
+        {
+          "check": "Loss-making lines",
+          "count": 20000,
+          "pct": 1.0,
+          "severity": "info"
+        }
+      ]
+    },
+    "ratings": {
+      "rows": 180000,
+      "checks": [
+        {
+          "check": "Missing rating",
+          "count": 3600,
+          "pct": 2.0,
+          "severity": "warning"
+        },
+        {
+          "check": "Invalid rating > 5",
+          "count": 920,
+          "pct": 0.51,
+          "severity": "error"
+        },
+        {
+          "check": "Invalid rating < 1",
+          "count": 880,
+          "pct": 0.49,
+          "severity": "error"
+        },
+        {
+          "check": "Invalid dates",
+          "count": 0,
+          "pct": 0.0,
+          "severity": "error"
+        }
+      ]
+    },
+    "wastage": {
+      "rows": 80000,
+      "checks": [
+        {
+          "check": "Impossible wastage (> 1000)",
+          "count": 800,
+          "pct": 1.0,
+          "severity": "error"
+        },
+        {
+          "check": "Negative wastage",
+          "count": 0,
+          "pct": 0.0,
+          "severity": "error"
+        },
+        {
+          "check": "Invalid location reference",
+          "count": 0,
+          "pct": 0.0,
+          "severity": "error"
+        }
+      ]
+    },
+    "menu_items": {
+      "rows": 150,
+      "checks": [
+        {
+          "check": "Invalid menu price (<= 0)",
+          "count": 0,
+          "pct": 0.0,
+          "severity": "error"
+        },
+        {
+          "check": "Missing preparation cost",
+          "count": 0,
+          "pct": 0.0,
+          "severity": "warning"
+        },
+        {
+          "check": "Loss-making items",
+          "count": 5,
+          "pct": 3.33,
+          "severity": "info"
+        }
+      ]
+    }
+  }
+}

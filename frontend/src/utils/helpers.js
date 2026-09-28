@@ -26,3 +26,11 @@ export function downloadExcel(data, filename) {
 export function downloadPDF() {
   window.print()
 }
+
+/** Number formatters for API data (null-safe). */
+export const fmtNum = (n, digits = 0) =>
+  n === null || n === undefined || Number.isNaN(Number(n)) ? '—' : Number(n).toLocaleString('en-US', { maximumFractionDigits: digits })
+export const fmtMoney = (n, digits = 0) =>
+  n === null || n === undefined || Number.isNaN(Number(n)) ? '—' : `$${Number(n).toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits })}`
+export const fmtPct = (n, digits = 1) =>
+  n === null || n === undefined || Number.isNaN(Number(n)) ? '—' : `${Number(n).toFixed(digits)}%`

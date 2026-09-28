@@ -1,4 +1,6 @@
-const BASE = 'http://187.127.98.233:8000/api'
+import { API_BASE_URL } from '../config/api'
+
+const BASE = API_BASE_URL
 
 const getToken = () => localStorage.getItem('dineiq_token')
 
@@ -13,26 +15,28 @@ const asJson = async (res) => {
   return data
 }
 
+const get = (path) => fetch(`${BASE}${path}`, { headers: authHeaders() }).then(asJson)
+const send = (method, path, body) => fetch(`${BASE}${path}`, {
+  method,
+  headers: authHeaders(),
+  body: body === undefined ? undefined : JSON.stringify(body),
+}).then(asJson)
+const qs = (params) => {
+  const s = new URLSearchParams(Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== ''))
+  return s.toString() ? `?${s}` : ''
+}
+
 export const api = {
   menu: {
-    items: () => fetch(`${BASE}/menu/items`,
-      { headers: authHeaders() }).then(r => r.json()),
-    summary: () => fetch(`${BASE}/menu/summary`,
-      { headers: authHeaders() }).then(r => r.json()),
-    topRevenue: (n=10) => fetch(`${BASE}/menu/top-revenue?limit=${n}`,
-      { headers: authHeaders() }).then(r => r.json()),
-    classifications: () => fetch(`${BASE}/menu/classifications`,
-      { headers: authHeaders() }).then(r => r.json()),
-    profitDrivers: () => fetch(`${BASE}/menu/profit-drivers`,
-      { headers: authHeaders() }).then(r => r.json()),
-    volumeDrivers: () => fetch(`${BASE}/menu/volume-drivers`,
-      { headers: authHeaders() }).then(r => r.json()),
-    hiddenOpportunities: () => fetch(`${BASE}/menu/hidden-opportunities`,
-      { headers: authHeaders() }).then(r => r.json()),
-    lowPerformers: () => fetch(`${BASE}/menu/low-performers`,
-      { headers: authHeaders() }).then(r => r.json()),
-    highWastage: (n=10) => fetch(`${BASE}/menu/high-wastage?limit=${n}`,
-      { headers: authHeaders() }).then(r => r.json()),
+    items: () => get('/menu/items'),
+    summary: () => get('/menu/summary'),
+    topRevenue: (n = 10) => get(`/menu/top-revenue?limit=${n}`),
+    classifications: () => get('/menu/classifications'),
+    profitDrivers: () => get('/menu/profit-drivers'),
+    volumeDrivers: () => get('/menu/volume-drivers'),
+    hiddenOpportunities: () => get('/menu/hidden-opportunities'),
+    lowPerformers: () => get('/menu/low-performers'),
+    highWastage: (n = 10) => get(`/menu/high-wastage?limit=${n}`),
   },
   auth: {
     login: (email, password) => fetch(`${BASE}/auth/login`, {
@@ -45,89 +49,95 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, password, role })
     }).then(r => r.json()),
-    me: () => fetch(`${BASE}/auth/me`, {
-      headers: authHeaders()
-    }).then(r => r.json()),
-    users: () => fetch(`${BASE}/auth/users`,
-      { headers: authHeaders() }).then(asJson),
-    updateUser: (id, data) => fetch(`${BASE}/auth/users/${id}`, {
-      method: 'PUT',
-      headers: authHeaders(),
-      body: JSON.stringify(data)
-    }).then(asJson),
-    deleteUser: (id) => fetch(`${BASE}/auth/users/${id}`, {
-      method: 'DELETE',
-      headers: authHeaders()
-    }).then(asJson)
+    me: () => get('/auth/me'),
+    roles: () => get('/auth/roles'),
+    users: () => get('/auth/users'),
+    createUser: (data) => send('POST', '/auth/users', data),
+    updateUser: (id, data) => send('PUT', `/auth/users/${id}`, data),
+    deleteUser: (id) => send('DELETE', `/auth/users/${id}`),
   },
 
   dashboard: {
-    summary: () => fetch(`${BASE}/dashboard/summary`,
-      { headers: authHeaders() }).then(r => r.json()),
-    kpis: () => fetch(`${BASE}/dashboard/kpis`,
-      { headers: authHeaders() }).then(r => r.json()),
-    mlMetrics: () => fetch(`${BASE}/dashboard/ml-metrics`,
-      { headers: authHeaders() }).then(asJson),
+    summary: () => get('/dashboard/summary'),
+    mlMetrics: () => get('/dashboard/ml-metrics'),
   },
 
   customers: {
-    summary: () => fetch(`${BASE}/customers/summary`,
-      { headers: authHeaders() }).then(r => r.json()),
-    segments: () => fetch(`${BASE}/customers/segments`,
-      { headers: authHeaders() }).then(r => r.json()),
-    rfm: (n=20) => fetch(`${BASE}/customers/rfm?limit=${n}`,
-      { headers: authHeaders() }).then(r => r.json()),
-    atRisk: (n=20) => fetch(`${BASE}/customers/at-risk?limit=${n}`,
-      { headers: authHeaders() }).then(r => r.json()),
+    summary: () => get('/customers/summary'),
+    segments: () => get('/customers/segments'),
+    rfm: (n = 20) => get(`/customers/rfm?limit=${n}`),
+    rfmDistribution: () => get('/customers/rfm-distribution'),
+    atRisk: (n = 20) => get(`/customers/at-risk?limit=${n}`),
+    promotionSensitive: (n = 20) => get(`/customers/promotion-sensitive?limit=${n}`),
   },
 
   wastage: {
-    summary: () => fetch(`${BASE}/wastage/summary`,
-      { headers: authHeaders() }).then(r => r.json()),
-    highRisk: (n=10) => fetch(`${BASE}/wastage/high-risk?limit=${n}`,
-      { headers: authHeaders() }).then(r => r.json()),
-    byReason: () => fetch(`${BASE}/wastage/by-reason`,
-      { headers: authHeaders() }).then(r => r.json()),
+    summary: () => get('/wastage/summary'),
+    highRisk: (n = 10) => get(`/wastage/high-risk?limit=${n}`),
+    byReason: () => get('/wastage/by-reason'),
+    trends: () => get('/wastage/trends'),
+    byLocation: () => get('/wastage/by-location'),
+  },
+
+  forecast: {
+    demand: ({ level = 'overall', entityId, horizon = 30 } = {}) =>
+      get(`/forecast/demand${qs({ level, entity_id: entityId, horizon })}`),
+    metrics: (level = 'overall') => get(`/forecast/metrics?level=${level}`),
+    comparison: () => get('/forecast/comparison'),
+    entities: (level) => get(`/forecast/entities?level=${level}`),
+  },
+
+  basket: {
+    rules: ({ minLift = 1, minConfidence = 0, includeLossItems = true, limit = 50 } = {}) =>
+      get(`/basket/rules${qs({ min_lift: minLift, min_confidence: minConfidence, include_loss_items: includeLossItems, limit })}`),
+    bundles: () => get('/basket/bundles'),
+    recommendations: () => get('/basket/recommendations'),
+  },
+
+  pricing: {
+    sensitivity: (sensitivity) => get(`/pricing/sensitivity${qs({ sensitivity })}`),
+    item: (id) => get(`/pricing/items/${id}`),
+  },
+
+  dualPipeline: {
+    summary: () => get('/dual-pipeline/summary'),
+    customers: ({ status = 'all', segment, limit = 200, offset = 0 } = {}) =>
+      get(`/dual-pipeline/customers${qs({ status, segment, limit, offset })}`),
+    menu: (split = 'all') => get(`/dual-pipeline/menu?split=${split}`),
   },
 
   locations: {
-    summary: () => fetch(`${BASE}/locations/summary`,
-      { headers: authHeaders() }).then(r => r.json()),
-    top: (n=5) => fetch(`${BASE}/locations/top?limit=${n}`,
-      { headers: authHeaders() }).then(r => r.json()),
+    summary: () => get('/locations/summary'),
+    top: (n = 5) => get(`/locations/top?limit=${n}`),
   },
 
   recommendations: {
-    all: () => fetch(`${BASE}/recommendations/all`,
-      { headers: authHeaders() }).then(r => r.json()),
+    all: () => get('/recommendations/all'),
   },
 
   anomalies: {
-    sales: () => fetch(`${BASE}/anomalies/sales`,
-      { headers: authHeaders() }).then(r => r.json()),
+    sales: () => get('/anomalies/sales'),
+    ratings: () => get('/anomalies/ratings'),
   },
 
   orders: {
-    summary: () => fetch(`${BASE}/orders/summary`,
-      { headers: authHeaders() }).then(r => r.json()),
-    byChannel: () => fetch(`${BASE}/orders/by-channel`,
-      { headers: authHeaders() }).then(r => r.json()),
+    summary: () => get('/orders/summary'),
+    byChannel: () => get('/orders/by-channel'),
   },
 
   promotions: {
-    summary: () => fetch(`${BASE}/promotions/summary`,
-      { headers: authHeaders() }).then(r => r.json()),
-    traps: () => fetch(`${BASE}/promotions/traps`,
-      { headers: authHeaders() }).then(r => r.json()),
+    summary: () => get('/promotions/summary'),
+    traps: () => get('/promotions/traps'),
+    effectiveness: () => get('/promotions/effectiveness'),
   },
 
   whatif: {
-    items: () => fetch(`${BASE}/whatif/items`,
-      { headers: authHeaders() }).then(r => r.json()),
-    simulate: (data) => fetch(`${BASE}/whatif/simulate`, {
-      method: 'POST',
-      headers: authHeaders(),
-      body: JSON.stringify(data)
-    }).then(r => r.json()),
-  }
+    items: () => get('/whatif/items'),
+    simulate: (data) => send('POST', '/whatif/simulate', data),
+  },
+
+  admin: {
+    auditLogs: ({ limit = 200, eventType, q } = {}) => get(`/admin/audit-logs${qs({ limit, event_type: eventType, q })}`),
+    sparkJobs: (limit = 50) => get(`/admin/spark-jobs?limit=${limit}`),
+  },
 }

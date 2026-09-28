@@ -1,0 +1,116 @@
+{
+  "generated_at": "2026-09-28T11:29:34",
+  "menu_classification": {
+    "task": "Menu performance classification",
+    "spark_model": "Logistic Regression (spark-menu-20260928-112528)",
+    "python_model": "Decision Tree (python-menu-20260928-112212)",
+    "total_records": 150,
+    "agreement_count": 132,
+    "disagreement_count": 18,
+    "agreement_pct": 88.0,
+    "test_records": 45,
+    "test_agreement_pct": 84.44,
+    "spark_test_accuracy_pct": 86.67,
+    "python_test_accuracy_pct": 95.56,
+    "mean_probability_difference": 0.146
+  },
+  "customer_segmentation": {
+    "task": "Customer segmentation (K-Means, k=5)",
+    "spark_model": "spark-kmeans-20260928-112748",
+    "python_model": "python-kmeans-20260928-112821",
+    "test_records": 19747,
+    "agreement_count": 19699,
+    "disagreement_count": 48,
+    "agreement_pct": 99.76,
+    "mean_numerical_difference": 0.0038,
+    "boundary_disagreements": 48,
+    "spark_test_silhouette": 0.454,
+    "python_test_silhouette": 0.2996,
+    "silhouette_note": "Spark ClusteringEvaluator uses squared Euclidean distance, scikit-learn silhouette_score uses Euclidean distance, so the two values are not directly comparable",
+    "per_segment": [
+      {
+        "segment": "At-Risk",
+        "records": 5848,
+        "matches": 5827,
+        "agreement_pct": 99.64
+      },
+      {
+        "segment": "Frequent",
+        "records": 2813,
+        "matches": 2810,
+        "agreement_pct": 99.89
+      },
+      {
+        "segment": "High-Value Loyal",
+        "records": 4737,
+        "matches": 4737,
+        "agreement_pct": 100.0
+      },
+      {
+        "segment": "Occasional",
+        "records": 2998,
+        "matches": 2980,
+        "agreement_pct": 99.4
+      },
+      {
+        "segment": "Promotion-Driven",
+        "records": 3351,
+        "matches": 3345,
+        "agreement_pct": 99.82
+      }
+    ],
+    "segment_crosstab": {
+      "rows_spark": [
+        "At-Risk",
+        "Frequent",
+        "High-Value Loyal",
+        "Occasional",
+        "Promotion-Driven"
+      ],
+      "cols_python": [
+        "At-Risk",
+        "Frequent",
+        "High-Value Loyal",
+        "Occasional",
+        "Promotion-Driven"
+      ],
+      "counts": [
+        [
+          5827,
+          4,
+          15,
+          0,
+          2
+        ],
+        [
+          1,
+          2810,
+          0,
+          0,
+          2
+        ],
+        [
+          0,
+          0,
+          4737,
+          0,
+          0
+        ],
+        [
+          15,
+          3,
+          0,
+          2980,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          5,
+          3345
+        ]
+      ]
+    }
+  }
+}

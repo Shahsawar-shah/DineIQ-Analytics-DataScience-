@@ -1,0 +1,2 @@
+# The backend uses the root requirements file.
+-r ../requirements.txt

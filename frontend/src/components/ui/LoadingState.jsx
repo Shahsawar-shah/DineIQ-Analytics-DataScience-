@@ -1,3 +1,5 @@
+import { AlertTriangle } from 'lucide-react'
+
 /** Light-theme loading skeleton for dashboard pages waiting on real API data. */
 export default function LoadingState() {
   return (
@@ -13,8 +15,8 @@ export default function LoadingState() {
 export function ErrorState({ message }) {
   return (
     <div className="card border-rose-100 bg-rose-50/60 p-8 text-center">
-      <p className="text-2xl">⚠️</p>
-      <p className="mt-2 text-sm font-bold text-rose-600">Error loading data</p>
+      <AlertTriangle size={22} className="mx-auto text-rose-500" />
+      <p className="mt-2 text-sm font-bold text-rose-600">Could not load this data</p>
       <p className="mt-1 text-xs text-ink-500">{message}</p>
     </div>
   )

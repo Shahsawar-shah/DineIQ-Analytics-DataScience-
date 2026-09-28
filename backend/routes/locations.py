@@ -1,12 +1,14 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 from pathlib import Path
 import pandas as pd
+
+from middleware.auth_middleware import require_analytics
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 PROCESSED = PROJECT_ROOT / "processed_data"
 FEATURES = PROCESSED / "features"
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_analytics)])
 
 
 @router.get("/summary")

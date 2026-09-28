@@ -1,0 +1,63 @@
+{
+  "pipeline": "spark",
+  "platform": "Apache Spark MLlib 4.2.0",
+  "algorithm": "StandardScaler + KMeans (k-means||)",
+  "k": 5,
+  "model_version": "spark-kmeans-20260928-112748",
+  "trained_at": "2026-09-28T11:27:48",
+  "features": [
+    "log_recency",
+    "log_frequency",
+    "log_monetary",
+    "log_aov",
+    "promo_order_ratio"
+  ],
+  "train_size": 45980,
+  "test_size": 19747,
+  "test_silhouette": 0.454,
+  "prediction_latency_ms": 737.7,
+  "segment_sizes": {
+    "Occasional": 9837,
+    "Frequent": 9213,
+    "At-Risk": 19265,
+    "Promotion-Driven": 11552,
+    "High-Value Loyal": 15860
+  },
+  "segment_profiles": {
+    "Occasional": {
+      "recency_days": 88.968,
+      "frequency": 1.232,
+      "monetary_value": 177.975,
+      "avg_order_value": 146.335,
+      "promo_order_ratio": 0.027
+    },
+    "Frequent": {
+      "recency_days": 5.203,
+      "frequency": 1.636,
+      "monetary_value": 385.231,
+      "avg_order_value": 241.541,
+      "promo_order_ratio": 0.056
+    },
+    "At-Risk": {
+      "recency_days": 90.338,
+      "frequency": 1.982,
+      "monetary_value": 517.664,
+      "avg_order_value": 273.987,
+      "promo_order_ratio": 0.04
+    },
+    "Promotion-Driven": {
+      "recency_days": 54.562,
+      "frequency": 2.315,
+      "monetary_value": 457.194,
+      "avg_order_value": 201.699,
+      "promo_order_ratio": 0.897
+    },
+    "High-Value Loyal": {
+      "recency_days": 36.198,
+      "frequency": 6.292,
+      "monetary_value": 1959.926,
+      "avg_order_value": 311.205,
+      "promo_order_ratio": 0.091
+    }
+  }
+}

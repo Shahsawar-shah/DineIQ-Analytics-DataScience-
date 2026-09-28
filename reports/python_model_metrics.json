@@ -1,0 +1,236 @@
+{
+  "pipeline": "python",
+  "platform": "scikit-learn / XGBoost",
+  "task": "Menu performance classification (4 classes)",
+  "model_version": "python-menu-20260928-112212",
+  "trained_at": "2026-09-28T11:22:12",
+  "train_test_split": "70/30",
+  "split_method": "stratified by class, deterministic item_id hash",
+  "train_size": 105,
+  "test_size": 45,
+  "features": [
+    "profit_percentage",
+    "total_quantity_sold",
+    "avg_rating",
+    "wastage_percentage",
+    "promotion_dependency",
+    "weekend_ratio",
+    "repeat_purchase_rate",
+    "rating_trend",
+    "contribution_margin",
+    "total_revenue"
+  ],
+  "classes": [
+    "Profit Driver",
+    "Volume Driver",
+    "Hidden Opportunity",
+    "Low Performer"
+  ],
+  "best_model": "Decision Tree",
+  "models": {
+    "XGBoost": {
+      "accuracy": 0.8889,
+      "precision": 0.7123,
+      "recall": 0.7123,
+      "f1_score": 0.7123,
+      "weighted_f1": 0.8889,
+      "train": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "weighted_f1": 1.0
+      },
+      "per_class": {
+        "Profit Driver": {
+          "precision": 0.9545,
+          "recall": 0.9545,
+          "f1": 0.9545,
+          "support": 22
+        },
+        "Volume Driver": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 2
+        },
+        "Hidden Opportunity": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 2
+        },
+        "Low Performer": {
+          "precision": 0.8947,
+          "recall": 0.8947,
+          "f1": 0.8947,
+          "support": 19
+        }
+      },
+      "confusion_matrix": [
+        [
+          21,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          2,
+          0,
+          17
+        ]
+      ],
+      "prediction_latency_ms": 2.791,
+      "latency_per_record_ms": 0.062
+    },
+    "Random Forest": {
+      "accuracy": 0.8889,
+      "precision": 0.6937,
+      "recall": 0.5987,
+      "f1_score": 0.6244,
+      "weighted_f1": 0.8651,
+      "train": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "weighted_f1": 1.0
+      },
+      "per_class": {
+        "Profit Driver": {
+          "precision": 0.88,
+          "recall": 1.0,
+          "f1": 0.9362,
+          "support": 22
+        },
+        "Volume Driver": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 2
+        },
+        "Hidden Opportunity": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6667,
+          "support": 2
+        },
+        "Low Performer": {
+          "precision": 0.8947,
+          "recall": 0.8947,
+          "f1": 0.8947,
+          "support": 19
+        }
+      },
+      "confusion_matrix": [
+        [
+          22,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          2,
+          0,
+          0,
+          17
+        ]
+      ],
+      "prediction_latency_ms": 11.576,
+      "latency_per_record_ms": 0.2572
+    },
+    "Decision Tree": {
+      "accuracy": 0.9556,
+      "precision": 0.8641,
+      "recall": 0.8618,
+      "f1_score": 0.8627,
+      "weighted_f1": 0.9555,
+      "train": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "weighted_f1": 1.0
+      },
+      "per_class": {
+        "Profit Driver": {
+          "precision": 0.9565,
+          "recall": 1.0,
+          "f1": 0.9778,
+          "support": 22
+        },
+        "Volume Driver": {
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1": 0.5,
+          "support": 2
+        },
+        "Hidden Opportunity": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 2
+        },
+        "Low Performer": {
+          "precision": 1.0,
+          "recall": 0.9474,
+          "f1": 0.973,
+          "support": 19
+        }
+      },
+      "confusion_matrix": [
+        [
+          22,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          18
+        ]
+      ],
+      "prediction_latency_ms": 1.061,
+      "latency_per_record_ms": 0.0236
+    }
+  }
+}

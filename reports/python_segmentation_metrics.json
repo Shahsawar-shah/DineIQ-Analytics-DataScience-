@@ -1,0 +1,63 @@
+{
+  "pipeline": "python",
+  "platform": "scikit-learn",
+  "algorithm": "StandardScaler + KMeans (k-means++, n_init=10)",
+  "k": 5,
+  "model_version": "python-kmeans-20260928-112821",
+  "trained_at": "2026-09-28T11:28:21",
+  "features": [
+    "log_recency",
+    "log_frequency",
+    "log_monetary",
+    "log_aov",
+    "promo_order_ratio"
+  ],
+  "train_size": 45980,
+  "test_size": 19747,
+  "test_silhouette": 0.2996,
+  "prediction_latency_ms": 15.2,
+  "segment_sizes": {
+    "At-Risk": 19245,
+    "High-Value Loyal": 15911,
+    "Promotion-Driven": 11552,
+    "Occasional": 9796,
+    "Frequent": 9223
+  },
+  "segment_profiles": {
+    "At-Risk": {
+      "recency_days": 90.51,
+      "frequency": 1.976,
+      "monetary_value": 515.749,
+      "avg_order_value": 273.762,
+      "promo_order_ratio": 0.039
+    },
+    "High-Value Loyal": {
+      "recency_days": 36.287,
+      "frequency": 6.284,
+      "monetary_value": 1956.849,
+      "avg_order_value": 311.083,
+      "promo_order_ratio": 0.091
+    },
+    "Occasional": {
+      "recency_days": 88.821,
+      "frequency": 1.231,
+      "monetary_value": 177.47,
+      "avg_order_value": 146.0,
+      "promo_order_ratio": 0.027
+    },
+    "Frequent": {
+      "recency_days": 5.216,
+      "frequency": 1.636,
+      "monetary_value": 385.498,
+      "avg_order_value": 241.729,
+      "promo_order_ratio": 0.056
+    },
+    "Promotion-Driven": {
+      "recency_days": 54.569,
+      "frequency": 2.316,
+      "monetary_value": 457.517,
+      "avg_order_value": 201.81,
+      "promo_order_ratio": 0.897
+    }
+  }
+}

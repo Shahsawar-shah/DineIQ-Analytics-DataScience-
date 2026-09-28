@@ -1,28 +1,30 @@
 ================================================
-DineIQ Analytics - Data Cleaning Pipeline
+DineIQ Analytics - Data Cleaning Pipeline (Spark)
 ================================================
 
 [ORDERS] Loading 204,000 rows...
   ✓ Removed 4,000 duplicate records
-  ✓ Quarantined 6,000 missing customer_id
+  ✓ Quarantined 6,000 orders (missing customer_id / unknown restaurant)
   ✓ Flagged 1,942 cancelled orders
-  → Saved orders_clean.csv: 194,000 rows
+  → Saved orders_clean.csv + Parquet (partitioned by restaurant_id): 194,000 rows
 
 [ORDER_ITEMS] Loading 2,000,000 rows...
   ✓ Removed 20,000 negative quantities
+  ✓ Removed 0 duplicate order-line records
+  ✓ Quarantined 0 lines with unknown item_id
   ✓ Flagged 0 loss-making lines
-  → Saved order_items_clean.csv: 1,980,000 rows
+  → Saved order_items_clean.csv + Parquet: 1,980,000 rows
 
 [RATINGS] Loading 180,000 rows...
-  ✓ Removed 1,800 invalid ratings
-  ✓ Filled 3,600 missing with median
+  ✓ Removed 1,800 invalid ratings (outside 1-5)
+  ✓ Filled 3,600 missing with median (4.0)
   → Saved ratings_clean.csv: 178,200 rows
 
 [WASTAGE] Loading 80,000 rows...
-  ✓ Removed 800 impossible records
+  ✓ Removed 800 impossible records (quantity < 0 or > 1000)
   → Saved wastage_clean.csv: 79,200 rows
 
-[OTHER TABLES] Copying unchanged...
+[OTHER TABLES] Schema-validated copy...
   ✓ menu_categories_clean.csv: 10 rows
   ✓ menu_items_clean.csv: 150 rows
   ✓ restaurants_clean.csv: 20 rows
@@ -44,4 +46,4 @@ All decisions documented above.
 Data ready for feature engineering.
 ================================================
 
-Completed in 0:00:27.841600
+Completed in 0:01:09.758787

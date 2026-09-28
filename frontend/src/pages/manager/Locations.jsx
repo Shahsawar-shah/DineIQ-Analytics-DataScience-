@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Star } from 'lucide-react'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { api } from '../../services/api'
 import PageHeader from '../../components/layout/PageHeader'
@@ -35,7 +36,7 @@ export default function Locations() {
     { key: 'city', header: 'City', render: (r) => r.location_city },
     { key: 'revenue', header: 'Revenue', align: 'right', render: (r) => `$${r.total_revenue.toLocaleString()}` },
     { key: 'orders', header: 'Orders', align: 'right', render: (r) => r.total_orders.toLocaleString() },
-    { key: 'rating', header: 'Avg Rating', align: 'right', render: (r) => `⭐ ${r.avg_rating.toFixed(2)}` },
+    { key: 'rating', header: 'Avg Rating', align: 'right', render: (r) => <span className="inline-flex items-center justify-end gap-1"><Star size={12} className="fill-amber-400 text-amber-400" />{r.avg_rating.toFixed(2)}</span> },
     { key: 'wastage', header: 'Wastage Cost', align: 'right', render: (r) => `$${r.total_wastage_cost.toLocaleString()}` },
     { key: 'channel', header: 'Top Channel', render: (r) => <span className="badge badge-blue">{r.top_channel}</span> },
   ]

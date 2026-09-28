@@ -4,37 +4,52 @@ DineIQ Analytics - Spark MLlib Pipeline (independent of Python pipeline)
 Menu Performance Classification into 4 classes:
   0 Profit Driver, 1 Volume Driver, 2 Hidden Opportunity, 3 Low Performer
 
-Trains Random Forest, Gradient Boosted Trees (binary: Profit Driver vs rest)
-and multinomial Logistic Regression with Spark MLlib, picks the best of the
-two directly-comparable multiclass models (RF / LogReg) by macro F1, and
-classifies every menu item with it. Same label rules and feature set as
-python_pipeline/models.py, so results are cross-validated against it.
+Trains Random Forest and multinomial Logistic Regression (4-class) plus
+Gradient-Boosted Trees (binary: Profit Driver vs rest — GBTClassifier has no
+multiclass support) with Spark MLlib on a stratified 70/30 split, picks the
+best multiclass model by macro F1, and classifies every menu item with it.
+
+For every model it records accuracy, macro precision / recall / F1,
+per-class metrics, the test confusion matrix (computed with a Spark
+groupBy) and prediction latency; the best model is saved with a version.
+
+Same label rules, feature set and split rule as python_pipeline/models.py,
+so the two pipelines can be compared on the same unseen items.
 
 Run from anywhere:  python spark_jobs/spark_ml_models.py
 Reads from  <project root>/processed_data/features/menu_item_features.csv
 Writes to   <project root>/processed_data/spark_menu_classifications.csv
             <project root>/reports/spark_model_metrics.json
+            <project root>/models/spark_menu_classifier/
 """
 
-from pyspark.sql import SparkSession
-from pyspark.ml.feature import VectorAssembler, StringIndexer
+import json
+import statistics
+import time
+from datetime import datetime
+from pathlib import Path
+
 from pyspark.ml.classification import (
-    RandomForestClassifier,
     GBTClassifier,
-    LogisticRegression
+    LogisticRegression,
+    RandomForestClassifier,
 )
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
+from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.functions import vector_to_array
 from pyspark.sql import functions as F
-from pyspark.sql.types import *
-from pathlib import Path
-from datetime import datetime
-import json
+from pyspark.sql.types import DoubleType
+from pyspark.sql.window import Window
+
+from spark_utils import create_spark_session, track_job
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 FEATURES_PATH = PROJECT_ROOT / "processed_data" / "features" / "menu_item_features.csv"
 OUTPUT_PATH = PROJECT_ROOT / "processed_data" / "spark_menu_classifications.csv"
 METRICS_PATH = PROJECT_ROOT / "reports" / "spark_model_metrics.json"
+MODEL_DIR = PROJECT_ROOT / "models" / "spark_menu_classifier"
+TEST_SIZE = 0.3
+LATENCY_REPEATS = 5
 
 CLASS_NAMES = {
     0: "Profit Driver",
@@ -52,19 +67,6 @@ FEATURE_COLS = [
 ]
 
 
-def create_spark_session():
-    spark = (
-        SparkSession.builder
-        .master("local[2]")
-        .config("spark.driver.memory", "4g")
-        .config("spark.sql.shuffle.partitions", "8")
-        .appName("DineIQ_MLlib")
-        .getOrCreate()
-    )
-    spark.sparkContext.setLogLevel("ERROR")
-    return spark
-
-
 def load_features(spark):
     df = spark.read.csv(str(FEATURES_PATH), header=True, inferSchema=True)
     return df.fillna(0)
@@ -74,9 +76,13 @@ def create_labels(df):
     """Same rule-based labels as python_pipeline/models.py: percentile-based
     Volume Driver band, evaluated in Profit Driver -> Volume Driver ->
     Hidden Opportunity -> Low Performer priority order."""
-    median_qty = df.approxQuantile("total_quantity_sold", [0.5], 0.01)[0]
-    p25_profit = df.approxQuantile("profit_percentage", [0.25], 0.01)[0]
-    p60_profit = df.approxQuantile("profit_percentage", [0.60], 0.01)[0]
+    # Exact, linearly interpolated percentiles (same definition as pandas)
+    row = df.agg(
+        F.expr("percentile(total_quantity_sold, 0.5)").alias("median_qty"),
+        F.expr("percentile(profit_percentage, 0.25)").alias("p25_profit"),
+        F.expr("percentile(profit_percentage, 0.60)").alias("p60_profit"),
+    ).first()
+    median_qty, p25_profit, p60_profit = row["median_qty"], row["p25_profit"], row["p60_profit"]
 
     df = df.withColumn(
         "label",
@@ -104,132 +110,181 @@ def create_labels(df):
     return df, median_qty, p25_profit, p60_profit
 
 
+def stratified_split(df):
+    """Same rule as python_pipeline/models.py: within each class, order items
+    by a Knuth hash of item_id and send the first floor(n*0.3+0.5) to test."""
+    key = (F.col("item_id").cast("long") * F.lit(2654435761)) % F.lit(4294967296)
+    by_class = Window.partitionBy("label")
+    return (
+        df.withColumn("_rank", F.row_number().over(by_class.orderBy(key)) - 1)
+        .withColumn("_n", F.count("*").over(by_class))
+        .withColumn("is_test", F.col("_rank") < F.floor(F.col("_n") * TEST_SIZE + 0.5))
+        .drop("_rank", "_n")
+    )
+
+
+def confusion(pred_df, label_col, labels):
+    counts = {(int(r[label_col]), int(r["prediction"])): r["count"]
+              for r in pred_df.groupBy(label_col, "prediction").count().collect()}
+    return [[counts.get((a, p), 0) for p in labels] for a in labels]
+
+
+def metrics_from_confusion(cm):
+    """Accuracy and macro precision / recall / F1 from a confusion matrix."""
+    per_class = []
+    for i in range(len(cm)):
+        tp = cm[i][i]
+        predicted = sum(row[i] for row in cm)
+        support = sum(cm[i])
+        precision = tp / predicted if predicted else 0.0
+        recall = tp / support if support else 0.0
+        f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+        per_class.append({"precision": round(precision, 4), "recall": round(recall, 4),
+                          "f1": round(f1, 4), "support": support})
+    total = sum(sum(row) for row in cm)
+    n = len(per_class)
+    return {
+        "accuracy": round(sum(cm[i][i] for i in range(n)) / total, 4) if total else 0.0,
+        "precision": round(sum(c["precision"] for c in per_class) / n, 4),
+        "recall": round(sum(c["recall"] for c in per_class) / n, 4),
+        "f1_score": round(sum(c["f1"] for c in per_class) / n, 4),
+    }, per_class
+
+
+def measure_latency(model, test_df):
+    timings = []
+    n = test_df.count()
+    for _ in range(LATENCY_REPEATS):
+        started = time.perf_counter()
+        model.transform(test_df).select("prediction").collect()
+        timings.append((time.perf_counter() - started) * 1000)
+    batch_ms = statistics.median(timings)
+    return {"batch_ms": round(batch_ms, 3), "per_record_ms": round(batch_ms / n, 4)}
+
+
+def evaluate_model(model, train, test, label_col, labels, class_names):
+    test_pred = model.transform(test)
+    cm = confusion(test_pred, label_col, labels)
+    test_metrics, per_class = metrics_from_confusion(cm)
+    weighted_f1 = MulticlassClassificationEvaluator(
+        labelCol=label_col, predictionCol="prediction", metricName="f1").evaluate(test_pred)
+    train_metrics, _ = metrics_from_confusion(confusion(model.transform(train), label_col, labels))
+    latency = measure_latency(model, test)
+    return {
+        **test_metrics,
+        "weighted_f1": round(weighted_f1, 4),
+        "train": train_metrics,
+        "per_class": dict(zip(class_names, per_class)),
+        "confusion_matrix": cm,
+        "prediction_latency_ms": latency["batch_ms"],
+        "latency_per_record_ms": latency["per_record_ms"],
+    }
+
+
 def main():
     print("=" * 48)
     print("DineIQ - Spark MLlib Pipeline")
     print("=" * 48)
 
     METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    spark = create_spark_session("DineIQ_MLlib")
 
-    spark = create_spark_session()
-    df = load_features(spark)
-    df, median_qty, p25_profit, p60_profit = create_labels(df)
-    df = df.withColumn(
-        "is_profit_driver",
-        F.when(F.col("label") == 0, 1.0).otherwise(0.0),
-    )
+    with track_job("spark_ml_models", spark) as job:
+        df = load_features(spark)
+        df, median_qty, p25_profit, p60_profit = create_labels(df)
+        df = df.withColumn("is_profit_driver", F.when(F.col("label") == 0, 1.0).otherwise(0.0))
 
-    total_items = df.count()
-    print(f"Dataset: {total_items} menu items")
-    print(f"Features: {len(FEATURE_COLS)}")
-    print(f"Classes: {len(CLASS_NAMES)}")
+        total_items = df.count()
+        print(f"Dataset: {total_items} menu items")
+        print(f"Features: {len(FEATURE_COLS)}")
+        print(f"Classes: {len(CLASS_NAMES)}")
 
-    label_counts = {row["label"]: row["count"] for row in df.groupBy("label").count().collect()}
-    print("\nLabel Distribution:")
-    for class_id, name in CLASS_NAMES.items():
-        print(f"  {name + ':':<20}{label_counts.get(float(class_id), 0):>3} items")
+        label_counts = {row["label"]: row["count"] for row in df.groupBy("label").count().collect()}
+        print("\nLabel Distribution:")
+        for class_id, name in CLASS_NAMES.items():
+            print(f"  {name + ':':<20}{label_counts.get(float(class_id), 0):>3} items")
 
-    # STEP 4 - feature vector
-    assembler = VectorAssembler(inputCols=FEATURE_COLS, outputCol="features")
-    df_assembled = assembler.transform(df)
+        labels = sorted(int(k) for k in label_counts)
+        class_names = [CLASS_NAMES[c] for c in labels]
 
-    # STEP 5 - train/test split
-    train, test = df_assembled.randomSplit([0.7, 0.3], seed=42)
+        # Feature vector + stratified 70/30 split
+        df_assembled = VectorAssembler(inputCols=FEATURE_COLS, outputCol="features").transform(stratified_split(df))
+        df_assembled = df_assembled.cache()
+        train = df_assembled.where(~F.col("is_test"))
+        test = df_assembled.where(F.col("is_test"))
+        train_size, test_size = train.count(), test.count()
+        print(f"\nTrain/test split: {train_size} / {test_size} items (70/30, stratified)")
 
-    metrics = {}
+        models = {}
+        fitted = {}
 
-    # STEP 6.1 - Random Forest (multiclass)
-    rf = RandomForestClassifier(
-        labelCol="label", featuresCol="features",
-        numTrees=100, maxDepth=5, seed=42,
-    )
-    rf_model = rf.fit(train)
-    rf_test_pred = rf_model.transform(test)
+        rf = RandomForestClassifier(labelCol="label", featuresCol="features", numTrees=100, maxDepth=5, seed=42)
+        fitted["Random Forest"] = rf.fit(train)
+        models["Random Forest"] = evaluate_model(fitted["Random Forest"], train, test, "label", labels, class_names)
 
-    f1_eval = MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction", metricName="f1")
-    acc_eval = MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction", metricName="accuracy")
+        lr = LogisticRegression(labelCol="label", featuresCol="features", maxIter=100, regParam=0.01, family="multinomial")
+        fitted["Logistic Regression"] = lr.fit(train)
+        models["Logistic Regression"] = evaluate_model(fitted["Logistic Regression"], train, test, "label", labels, class_names)
 
-    metrics["random_forest"] = {
-        "accuracy": round(acc_eval.evaluate(rf_test_pred), 4),
-        "f1": round(f1_eval.evaluate(rf_test_pred), 4),
-    }
+        # GBT: binary task only, reported separately and not eligible as best model
+        gbt_model = GBTClassifier(labelCol="is_profit_driver", featuresCol="features", seed=42).fit(train)
+        gbt_metrics = evaluate_model(gbt_model, train, test, "is_profit_driver", [0, 1],
+                                     ["Other", "Profit Driver"])
+        gbt_metrics["note"] = "Binary classification only (Profit Driver vs rest)"
 
-    # STEP 6.2 - GBT (binary: Profit Driver vs rest — GBTClassifier has no
-    # multiclass support in Spark MLlib, so it is trained/evaluated on its own
-    # binary task and reported separately, not compared against RF/LogReg).
-    gbt = GBTClassifier(labelCol="is_profit_driver", featuresCol="features", seed=42)
-    gbt_model = gbt.fit(train)
-    gbt_test_pred = gbt_model.transform(test)
-    gbt_acc_eval = MulticlassClassificationEvaluator(labelCol="is_profit_driver", predictionCol="prediction", metricName="accuracy")
-    gbt_f1_eval = MulticlassClassificationEvaluator(labelCol="is_profit_driver", predictionCol="prediction", metricName="f1")
-    gbt_metrics = {
-        "accuracy": round(gbt_acc_eval.evaluate(gbt_test_pred), 4),
-        "f1": round(gbt_f1_eval.evaluate(gbt_test_pred), 4),
-        "task": "binary: Profit Driver vs rest",
-    }
+        best_label = max(models, key=lambda name: models[name]["f1_score"])
+        best_model = fitted[best_label]
+        trained_at = datetime.now()
+        model_version = f"spark-menu-{trained_at:%Y%m%d-%H%M%S}"
+        best_model.write().overwrite().save(str(MODEL_DIR))
 
-    # STEP 6.3 - Logistic Regression (multiclass)
-    lr = LogisticRegression(
-        labelCol="label", featuresCol="features",
-        maxIter=100, regParam=0.01, family="multinomial",
-    )
-    lr_model = lr.fit(train)
-    lr_test_pred = lr_model.transform(test)
-    metrics["logistic_regression"] = {
-        "accuracy": round(acc_eval.evaluate(lr_test_pred), 4),
-        "f1": round(f1_eval.evaluate(lr_test_pred), 4),
-    }
+        full_pred = best_model.transform(df_assembled).withColumn(
+            "max_prob", F.round(F.array_max(vector_to_array(F.col("probability"))), 2))
+        class_map = F.create_map([F.lit(x) for pair in CLASS_NAMES.items() for x in (float(pair[0]), pair[1])])
+        output = full_pred.select(
+            "item_id",
+            "item_name",
+            class_map[F.col("label")].alias("actual_class"),
+            class_map[F.col("prediction")].alias("spark_class"),
+            F.col("max_prob").alias("spark_probability"),
+            F.lit(best_label).alias("model_used"),
+            F.lit(model_version).alias("model_version"),
+            F.when(F.col("is_test"), "test").otherwise("train").alias("split"),
+        ).orderBy("item_id")
+        output.toPandas().to_csv(OUTPUT_PATH, index=False)
 
-    # STEP 8 - best model among the two directly-comparable multiclass models
-    best_name = max(metrics, key=lambda name: metrics[name]["f1"])
-    best_label = "Random Forest" if best_name == "random_forest" else "Logistic Regression"
-    best_model = rf_model if best_name == "random_forest" else lr_model
+        metrics = {
+            "pipeline": "spark",
+            "platform": f"Apache Spark MLlib {spark.version}",
+            "task": "Menu performance classification (4 classes)",
+            "model_version": model_version,
+            "trained_at": trained_at.isoformat(timespec="seconds"),
+            "train_test_split": "70/30",
+            "split_method": "stratified by class, deterministic item_id hash",
+            "train_size": train_size,
+            "test_size": test_size,
+            "features": FEATURE_COLS,
+            "classes": class_names,
+            "best_model": best_label,
+            "best_f1": models[best_label]["f1_score"],
+            "models": models,
+            "gbt_binary": gbt_metrics,
+            "saved_model_path": str(MODEL_DIR.relative_to(PROJECT_ROOT)),
+        }
+        METRICS_PATH.write_text(json.dumps(metrics, indent=2))
+        job.set_records(processed=total_items, output=total_items)
+        job.add_metric("best_model", best_label)
+        job.add_metric("best_macro_f1", models[best_label]["f1_score"])
 
-    full_pred = best_model.transform(df_assembled)
-    full_pred = full_pred.withColumn("max_prob", F.round(F.array_max(vector_to_array(F.col("probability"))), 2))
-
-    class_name_udf = F.create_map([F.lit(x) for pair in CLASS_NAMES.items() for x in (float(pair[0]), pair[1])])
-
-    output = full_pred.select(
-        "item_id",
-        "item_name",
-        class_name_udf[F.col("label")].alias("actual_class"),
-        class_name_udf[F.col("prediction")].alias("spark_class"),
-        F.col("max_prob").alias("spark_probability"),
-        F.lit(best_label).alias("model_used"),
-    ).orderBy("item_id")
-
-    # STEP 8 - save classifications
-    output.toPandas().to_csv(OUTPUT_PATH, index=False)
-
-    # STEP 9 - save metrics
-    metrics["best_model"] = best_label
-    metrics["best_f1"] = metrics[best_name]["f1"]
-    metrics["gbt_binary"] = gbt_metrics
-    metrics["trained_at"] = datetime.now().isoformat()
-    with open(METRICS_PATH, "w") as f:
-        json.dump(metrics, f, indent=2)
-
-    # STEP 10 - report
-    print("\nModel Results:")
-    print(f"{'Model':<21}| {'Accuracy':<9}| F1-Score")
-    print("─" * 41)
-    print(f"{'Random Forest':<21}| {metrics['random_forest']['accuracy']*100:>6.1f}%  | {metrics['random_forest']['f1']:.2f}")
-    print(f"{'Logistic Regression':<21}| {metrics['logistic_regression']['accuracy']*100:>6.1f}%  | {metrics['logistic_regression']['f1']:.2f}")
-    print(f"{'GBT (binary)':<21}| {gbt_metrics['accuracy']*100:>6.1f}%  | {gbt_metrics['f1']:.2f}  (Profit Driver vs rest — not compared above)")
-
-    print(f"\nBest Model: {best_label} (F1: {metrics['best_f1']:.2f})")
-
-    print("\nSample Classifications (first 5):")
-    print(f"{'item_name':<24}| {'spark_class':<20}| prob")
-    print("─" * 51)
-    sample = output.limit(5).toPandas()
-    for _, row in sample.iterrows():
-        print(f"{row['item_name']:<24}| {row['spark_class']:<20}| {row['spark_probability']:.2f}")
-
-    print(f"\nSaved: {OUTPUT_PATH.name}")
-    print(f"Saved: {METRICS_PATH.name}")
-    print("=" * 48)
+        print("\nModel Results (test set):")
+        print(f"{'Model':<21}| {'Accuracy':<9}| {'Prec':<5}| {'Recall':<6}| {'F1':<5}| Latency")
+        print("─" * 64)
+        for name, m in list(models.items()) + [("GBT (binary)", gbt_metrics)]:
+            print(f"{name:<21}| {m['accuracy']*100:>6.1f}%  | {m['precision']:.2f} | {m['recall']:.2f}  "
+                  f"| {m['f1_score']:.2f} | {m['prediction_latency_ms']:.1f} ms")
+        print(f"\nBest Model: {best_label} (macro F1: {models[best_label]['f1_score']:.2f})  version {model_version}")
+        print(f"\nSaved: {OUTPUT_PATH.name}, {METRICS_PATH.name}, {MODEL_DIR.name}/")
+        print("=" * 48)
 
     spark.stop()
 

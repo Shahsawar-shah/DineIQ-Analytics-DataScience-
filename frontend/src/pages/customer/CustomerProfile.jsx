@@ -16,7 +16,7 @@ export default function CustomerProfile() {
       <PageHeader title="Profile" subtitle="Your account and dining preferences" />
       <div className="grid gap-5 lg:grid-cols-3">
         <div className="card anim-fade-up p-6 text-center">
-          <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-gradient-to-br from-brand-400 to-brand-600 font-display text-2xl font-extrabold text-white shadow-lg shadow-brand-500/30">
+          <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-brand-500 font-display text-2xl font-extrabold text-white">
             {user?.name?.slice(0, 1) ?? 'A'}
           </div>
           <h2 className="font-display mt-4 text-lg font-extrabold text-ink-900">{user?.name}</h2>
@@ -27,7 +27,7 @@ export default function CustomerProfile() {
               { icon: UserIcon, label: 'Member since', value: 'Jan 2026' },
               { icon: MapPin, label: 'Home location', value: 'Downtown Flagship' },
               { icon: Heart, label: 'Favorite category', value: 'Main Course' },
-              { icon: ShieldCheck, label: 'Account', value: 'Live — JWT session' },
+              { icon: ShieldCheck, label: 'Account', value: 'Signed in' },
             ].map((r) => (
               <div key={r.label} className="flex items-center gap-3 rounded-xl bg-ink-50/70 px-3.5 py-2.5">
                 <r.icon size={15} className="text-brand-500" />

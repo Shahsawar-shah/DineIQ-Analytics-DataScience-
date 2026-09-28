@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Flame, Gem, TrendingUp, TriangleAlert } from 'lucide-react'
+import { Flame, Gem, Star, TrendingUp, TriangleAlert } from 'lucide-react'
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { api } from '../../services/api'
 import PageHeader from '../../components/layout/PageHeader'
@@ -85,7 +85,7 @@ export default function MenuIntelligence() {
     { key: 'category', header: 'Category', render: (r) => CATEGORY_NAMES[r.category_id] ?? `Category ${r.category_id}` },
     { key: 'revenue', header: 'Revenue', render: (r) => `$${r.total_revenue.toLocaleString()}` },
     { key: 'margin', header: 'Profit %', render: (r) => `${r.profit_percentage.toFixed(1)}%` },
-    { key: 'rating', header: 'Rating', render: (r) => `⭐ ${r.avg_rating.toFixed(1)}` },
+    { key: 'rating', header: 'Rating', render: (r) => <span className="inline-flex items-center gap-1"><Star size={12} className="fill-amber-400 text-amber-400" />{r.avg_rating.toFixed(1)}</span> },
     { key: 'wastage', header: 'Wastage %', render: (r) => `${r.wastage_percentage.toFixed(1)}%` },
     { key: 'class', header: 'Class', render: (r) => <span className={`badge ${CLASS_TONE[r.python_class] ?? 'badge-gray'}`}>{r.python_class}</span> },
     { key: 'prob', header: 'Confidence', render: (r) => `${(r.python_probability * 100).toFixed(0)}%` },
@@ -98,7 +98,7 @@ export default function MenuIntelligence() {
       header: 'Wastage',
       render: (r) => (
         <span className="badge badge-red">
-          {r.wastage_percentage > 50 && '⚠️ '}
+          {r.wastage_percentage > 50 && <TriangleAlert size={11} />}
           {r.wastage_percentage.toFixed(1)}%
         </span>
       ),

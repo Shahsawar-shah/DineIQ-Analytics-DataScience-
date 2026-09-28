@@ -1,0 +1,101 @@
+restaurant_name,wastage_reason,records,wastage_cost
+DineIQ North Nazimabad Karachi,Overproduction,1509,67800.51
+DineIQ Garden Town Lahore,Overproduction,1498,66391.23
+DineIQ Gulshan Karachi,Overproduction,1389,63901.19
+DineIQ DHA Karachi,Overproduction,1385,63661.24
+DineIQ G-9 Islamabad,Overproduction,1417,63632.61
+DineIQ Saddar Karachi,Overproduction,1405,62152.74
+DineIQ Bahria Town Rawalpindi,Overproduction,1412,61872.33
+DineIQ F-7 Islamabad,Overproduction,1415,61830.9
+DineIQ Malir Karachi,Overproduction,1422,61755.11
+DineIQ Model Town Lahore,Overproduction,1404,61679.14
+DineIQ Clifton Karachi,Overproduction,1375,61663.15
+DineIQ Bahria Town Lahore,Overproduction,1388,61175.42
+DineIQ F-10 Islamabad,Overproduction,1420,60705.61
+DineIQ Bahria Town Karachi,Overproduction,1394,60063.24
+DineIQ Blue Area Islamabad,Overproduction,1379,59158.04
+DineIQ Saddar Rawalpindi,Overproduction,1407,59154.58
+DineIQ Gulberg Lahore,Overproduction,1366,58038.32
+DineIQ DHA Lahore,Overproduction,1350,57928.67
+DineIQ Johar Town Lahore,Overproduction,1330,57618.1
+DineIQ Korangi Karachi,Overproduction,1360,57521.55
+DineIQ Garden Town Lahore,Spoilage,989,45583.89
+DineIQ Gulberg Lahore,Spoilage,1020,44643.95
+DineIQ Bahria Town Lahore,Spoilage,1012,44480.82
+DineIQ F-7 Islamabad,Spoilage,974,43809.2
+DineIQ DHA Karachi,Spoilage,1012,43553.78
+DineIQ F-10 Islamabad,Spoilage,982,43135.25
+DineIQ DHA Lahore,Spoilage,961,42785.81
+DineIQ Johar Town Lahore,Spoilage,979,42622.19
+DineIQ Clifton Karachi,Spoilage,1002,42202.25
+DineIQ G-9 Islamabad,Spoilage,989,42072.71
+DineIQ Korangi Karachi,Spoilage,967,41982.34
+DineIQ North Nazimabad Karachi,Spoilage,966,41890.78
+DineIQ Bahria Town Karachi,Spoilage,1008,41639.85
+DineIQ Malir Karachi,Spoilage,975,41512.49
+DineIQ Gulshan Karachi,Spoilage,943,41418.64
+DineIQ Model Town Lahore,Spoilage,981,40919.34
+DineIQ Blue Area Islamabad,Spoilage,909,40662.1
+DineIQ Saddar Karachi,Spoilage,958,40499.54
+DineIQ Saddar Rawalpindi,Spoilage,951,40319.74
+DineIQ Bahria Town Rawalpindi,Spoilage,969,39204.53
+DineIQ Saddar Rawalpindi,Prep Error,823,37982.29
+DineIQ Bahria Town Lahore,Prep Error,820,37730.04
+DineIQ F-7 Islamabad,Prep Error,847,37301.42
+DineIQ North Nazimabad Karachi,Prep Error,785,36589.28
+DineIQ G-9 Islamabad,Prep Error,821,35269.68
+DineIQ Clifton Karachi,Prep Error,808,35081.54
+DineIQ Bahria Town Rawalpindi,Prep Error,800,34937.32
+DineIQ Saddar Karachi,Prep Error,768,34221.08
+DineIQ Garden Town Lahore,Prep Error,811,34026.1
+DineIQ Gulshan Karachi,Prep Error,779,33885.38
+DineIQ Model Town Lahore,Prep Error,784,33711.96
+DineIQ DHA Karachi,Prep Error,763,33691.97
+DineIQ F-10 Islamabad,Prep Error,791,33205.78
+DineIQ Korangi Karachi,Prep Error,780,32852.27
+DineIQ DHA Lahore,Prep Error,763,32828.06
+DineIQ Malir Karachi,Prep Error,790,32634.24
+DineIQ Gulberg Lahore,Prep Error,754,32610.38
+DineIQ Bahria Town Karachi,Prep Error,764,32393.01
+DineIQ Johar Town Lahore,Prep Error,774,32277.71
+DineIQ Blue Area Islamabad,Prep Error,759,31767.89
+DineIQ G-9 Islamabad,Expired,591,29468.63
+DineIQ DHA Lahore,Expired,595,28555.35
+DineIQ Bahria Town Lahore,Expired,590,27959.1
+DineIQ DHA Karachi,Expired,600,27570.06
+DineIQ Clifton Karachi,Expired,593,27418.91
+DineIQ F-10 Islamabad,Expired,614,27205.69
+DineIQ Malir Karachi,Expired,630,26685.64
+DineIQ Johar Town Lahore,Expired,613,26574.0
+DineIQ Blue Area Islamabad,Expired,632,26326.94
+DineIQ Bahria Town Karachi,Expired,568,25811.19
+DineIQ Gulberg Lahore,Expired,602,25527.67
+DineIQ Saddar Rawalpindi,Expired,585,25348.65
+DineIQ Saddar Karachi,Expired,582,25002.32
+DineIQ Garden Town Lahore,Expired,623,24993.95
+DineIQ F-7 Islamabad,Expired,589,24826.62
+DineIQ Model Town Lahore,Expired,585,24792.82
+DineIQ Korangi Karachi,Expired,617,24548.07
+DineIQ North Nazimabad Karachi,Expired,593,24311.41
+DineIQ Bahria Town Rawalpindi,Expired,591,23737.47
+DineIQ Gulshan Karachi,Expired,544,23621.11
+DineIQ DHA Lahore,Customer Return,210,10801.61
+DineIQ Bahria Town Rawalpindi,Customer Return,196,10414.12
+DineIQ Saddar Rawalpindi,Customer Return,217,10006.55
+DineIQ F-10 Islamabad,Customer Return,233,9172.09
+DineIQ Model Town Lahore,Customer Return,195,9024.02
+DineIQ Garden Town Lahore,Customer Return,213,8882.43
+DineIQ Bahria Town Karachi,Customer Return,204,8762.81
+DineIQ DHA Karachi,Customer Return,190,8745.18
+DineIQ Malir Karachi,Customer Return,200,8720.09
+DineIQ F-7 Islamabad,Customer Return,198,8653.73
+DineIQ Gulshan Karachi,Customer Return,204,8642.38
+DineIQ Gulberg Lahore,Customer Return,204,8300.4
+DineIQ North Nazimabad Karachi,Customer Return,185,8255.77
+DineIQ Clifton Karachi,Customer Return,190,8072.74
+DineIQ Saddar Karachi,Customer Return,198,7430.05
+DineIQ Bahria Town Lahore,Customer Return,179,7094.54
+DineIQ Johar Town Lahore,Customer Return,174,7067.61
+DineIQ Korangi Karachi,Customer Return,173,7065.1
+DineIQ Blue Area Islamabad,Customer Return,179,6826.79
+DineIQ G-9 Islamabad,Customer Return,165,6221.8

@@ -1,23 +1,20 @@
-from fastapi import APIRouter, HTTPException, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
-import psycopg2
 import bcrypt
-import os
-from jose import jwt, JWTError
-from datetime import datetime, timedelta
-from dotenv import load_dotenv
-from pathlib import Path
+import psycopg2
 
-load_dotenv(Path(__file__).resolve().parent.parent.parent / "config" / ".env")
-
-DATABASE_URL = os.getenv("DATABASE_URL")
-SECRET_KEY = os.getenv("SECRET_KEY", "dineiq-secret-key-2024")
-ALGORITHM = os.getenv("ALGORITHM", "HS256")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+from database import get_connection
+from middleware.audit_middleware import submit_audit_log
+from middleware.auth_middleware import (
+    ALL_ROLES, PRIVILEGED_ROLES, SUPER_ADMIN, ADMIN, CUSTOMER,
+    create_token, require_admin, verify_token,
+)
 
 router = APIRouter()
-security = HTTPBearer()
+
+# Roles anyone can pick on the public Register page. Admin, Super Admin and
+# Cashier accounts are created by an administrator from the Users page.
+SELF_REGISTER_ROLES = {CUSTOMER, "Restaurant Manager", "Inventory Manager", "analyst"}
 
 
 class RegisterRequest(BaseModel):
@@ -38,64 +35,42 @@ class UpdateUserRequest(BaseModel):
     is_active: bool
 
 
-def get_db():
-    return psycopg2.connect(DATABASE_URL)
+def _audit_auth(request: Request, action: str, email: str, status_code: int, user=None):
+    submit_audit_log({
+        "user_id": user.get("id") if user else None,
+        "user_email": email,
+        "user_role": user.get("role") if user else None,
+        "action": action,
+        "event_type": "auth",
+        "method": request.method,
+        "endpoint": request.url.path,
+        "status_code": status_code,
+        "result": "success" if status_code < 400 else "failure",
+        "ip_address": request.client.host if request.client else None,
+    })
 
 
-def create_token(data: dict):
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    data.update({"exp": expire})
-    return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
+def _check_role_assignment(requested_role: str, caller_role: str):
+    if requested_role not in ALL_ROLES:
+        raise HTTPException(status_code=400, detail=f"Unknown role '{requested_role}'")
+    if requested_role in PRIVILEGED_ROLES and caller_role != SUPER_ADMIN:
+        raise HTTPException(
+            status_code=403,
+            detail="Only a Super Admin can assign the Admin or Super Admin role")
 
 
-def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    try:
-        payload = jwt.decode(
-            credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-
-@router.post("/register")
-def register(req: RegisterRequest):
-    conn = get_db()
+def _insert_user(name, email, password, role):
+    conn = get_connection()
     cur = conn.cursor()
     try:
-        # The very first account on the system becomes Admin automatically.
-        # After that, self-registration cannot grant Admin — every other
-        # requested role (Customer / Restaurant Manager / Inventory Manager)
-        # is honored as-is.
-        cur.execute("SELECT COUNT(*) FROM users")
-        count = cur.fetchone()[0]
-        if count == 0:
-            actual_role = "Admin"
-        elif req.role == "Admin":
-            raise HTTPException(
-                status_code=403,
-                detail="Admin registration is closed — ask an existing admin to create your account")
-        else:
-            actual_role = req.role
-
-        password_hash = bcrypt.hashpw(
-            req.password.encode(), bcrypt.gensalt()).decode()
+        password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
         cur.execute(
             "INSERT INTO users (name, email, password_hash, role) VALUES (%s, %s, %s, %s) RETURNING id",
-            (req.name, req.email, password_hash, actual_role)
+            (name, email, password_hash, role)
         )
         user_id = cur.fetchone()[0]
         conn.commit()
-        token = create_token({
-            "user_id": user_id,
-            "email": req.email,
-            "name": req.name,
-            "role": actual_role
-        })
-        return {
-            "token": token,
-            "user": {"id": user_id, "name": req.name,
-                     "email": req.email, "role": actual_role}
-        }
+        return user_id
     except psycopg2.errors.UniqueViolation:
         conn.rollback()
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -104,34 +79,61 @@ def register(req: RegisterRequest):
         conn.close()
 
 
+@router.post("/register")
+def register(req: RegisterRequest, request: Request):
+    conn = get_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT COUNT(*) FROM users")
+        count = cur.fetchone()[0]
+    finally:
+        cur.close()
+        conn.close()
+
+    # The very first account on an empty system becomes Super Admin.
+    if count == 0:
+        actual_role = SUPER_ADMIN
+    elif req.role not in SELF_REGISTER_ROLES:
+        _audit_auth(request, "auth.register", req.email, 403)
+        raise HTTPException(
+            status_code=403,
+            detail=f"'{req.role}' accounts are created by an administrator. Ask an admin to create your account.")
+    else:
+        actual_role = req.role
+
+    user_id = _insert_user(req.name, req.email, req.password, actual_role)
+    user = {"id": user_id, "name": req.name, "email": req.email, "role": actual_role}
+    _audit_auth(request, "auth.register", req.email, 200, user)
+    token = create_token({
+        "user_id": user_id, "email": req.email, "name": req.name, "role": actual_role
+    })
+    return {"token": token, "user": user}
+
+
 @router.post("/login")
-def login(req: LoginRequest):
-    conn = get_db()
+def login(req: LoginRequest, request: Request):
+    conn = get_connection()
     cur = conn.cursor()
     try:
         cur.execute(
             "SELECT id, name, email, password_hash, role FROM users WHERE email=%s AND is_active=TRUE",
             (req.email,)
         )
-        user = cur.fetchone()
-        if not user:
-            raise HTTPException(status_code=401, detail="Invalid credentials")
-        if not bcrypt.checkpw(req.password.encode(), user[3].encode()):
-            raise HTTPException(status_code=401, detail="Invalid credentials")
-        token = create_token({
-            "user_id": user[0],
-            "email": user[2],
-            "name": user[1],
-            "role": user[4]
-        })
-        return {
-            "token": token,
-            "user": {"id": user[0], "name": user[1],
-                     "email": user[2], "role": user[4]}
-        }
+        row = cur.fetchone()
     finally:
         cur.close()
         conn.close()
+
+    if not row or not bcrypt.checkpw(req.password.encode(), row[3].encode()):
+        _audit_auth(request, "auth.login", req.email, 401)
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    user = {"id": row[0], "name": row[1], "email": row[2], "role": row[4]}
+    _audit_auth(request, "auth.login", req.email, 200, user)
+    token = create_token({
+        "user_id": row[0], "email": row[2], "name": row[1], "role": row[4]
+    })
+    return {"token": token, "user": user}
 
 
 @router.get("/me")
@@ -144,11 +146,14 @@ def get_me(payload: dict = Depends(verify_token)):
     }
 
 
+@router.get("/roles")
+def list_roles(payload: dict = Depends(require_admin)):
+    return ALL_ROLES
+
+
 @router.get("/users")
-def list_users(payload: dict = Depends(verify_token)):
-    if payload.get("role") != "Admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
-    conn = get_db()
+def list_users(payload: dict = Depends(require_admin)):
+    conn = get_connection()
     cur = conn.cursor()
     try:
         cur.execute(
@@ -170,19 +175,29 @@ def list_users(payload: dict = Depends(verify_token)):
         conn.close()
 
 
+@router.post("/users")
+def create_user(req: RegisterRequest, payload: dict = Depends(require_admin)):
+    _check_role_assignment(req.role, payload.get("role"))
+    user_id = _insert_user(req.name, req.email, req.password, req.role)
+    return {"user": {"id": user_id, "name": req.name, "email": req.email, "role": req.role}}
+
+
 @router.put("/users/{user_id}")
-def update_user(user_id: int, req: UpdateUserRequest, payload: dict = Depends(verify_token)):
-    if payload.get("role") != "Admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
-    conn = get_db()
+def update_user(user_id: int, req: UpdateUserRequest, payload: dict = Depends(require_admin)):
+    _check_role_assignment(req.role, payload.get("role"))
+    conn = get_connection()
     cur = conn.cursor()
     try:
+        cur.execute("SELECT role FROM users WHERE id=%s", (user_id,))
+        existing = cur.fetchone()
+        if not existing:
+            raise HTTPException(status_code=404, detail="User not found")
+        if existing[0] in PRIVILEGED_ROLES and payload.get("role") != SUPER_ADMIN:
+            raise HTTPException(status_code=403, detail="Only a Super Admin can modify admin accounts")
         cur.execute(
             "UPDATE users SET name=%s, role=%s, is_active=%s WHERE id=%s",
             (req.name, req.role, req.is_active, user_id)
         )
-        if cur.rowcount == 0:
-            raise HTTPException(status_code=404, detail="User not found")
         conn.commit()
         return {"message": "User updated successfully"}
     finally:
@@ -191,16 +206,19 @@ def update_user(user_id: int, req: UpdateUserRequest, payload: dict = Depends(ve
 
 
 @router.delete("/users/{user_id}")
-def deactivate_user(user_id: int, payload: dict = Depends(verify_token)):
-    if payload.get("role") != "Admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
-    conn = get_db()
+def deactivate_user(user_id: int, payload: dict = Depends(require_admin)):
+    if user_id == payload.get("user_id"):
+        raise HTTPException(status_code=400, detail="You cannot deactivate your own account")
+    conn = get_connection()
     cur = conn.cursor()
     try:
-        cur.execute(
-            "UPDATE users SET is_active=FALSE WHERE id=%s", (user_id,))
-        if cur.rowcount == 0:
+        cur.execute("SELECT role FROM users WHERE id=%s", (user_id,))
+        existing = cur.fetchone()
+        if not existing:
             raise HTTPException(status_code=404, detail="User not found")
+        if existing[0] in PRIVILEGED_ROLES and payload.get("role") != SUPER_ADMIN:
+            raise HTTPException(status_code=403, detail="Only a Super Admin can deactivate admin accounts")
+        cur.execute("UPDATE users SET is_active=FALSE WHERE id=%s", (user_id,))
         conn.commit()
         return {"message": "User deactivated successfully"}
     finally:

@@ -1,141 +1,128 @@
-from fastapi import APIRouter
-from pathlib import Path
-import pandas as pd
+from fastapi import APIRouter, Depends, HTTPException
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-PROCESSED = PROJECT_ROOT / "processed_data"
-FEATURES = PROCESSED / "features"
+from middleware.auth_middleware import require_analytics
+from routes.common import FEATURES, PROCESSED, REPORTS, read_csv, read_json
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_analytics)])
+
+ACTIVE_WINDOW_DAYS = 90
+
+
+def _optional_json(name):
+    try:
+        return read_json(REPORTS / name)
+    except HTTPException:
+        return None
 
 
 @router.get("/summary")
 def get_summary():
-    menu = pd.read_csv(FEATURES / "menu_item_features.csv")
-    orders = pd.read_csv(PROCESSED / "orders_clean.csv")
-    customers = pd.read_csv(PROCESSED / "customers_clean.csv")
-    wastage = pd.read_csv(PROCESSED / "wastage_clean.csv")
-    classifications = pd.read_csv(
-        PROCESSED / "python_menu_classifications.csv")
+    """Executive KPIs (SRS Step 42) — every number is computed from the
+    processed data or read from a pipeline report."""
+    menu = read_csv(FEATURES / "menu_item_features.csv")
+    customers = read_csv(FEATURES / "customer_features.csv")
+    orders = read_csv(PROCESSED / "orders_clean.csv", usecols=["order_id", "total_amount", "is_cancelled"])
+    classifications = read_csv(PROCESSED / "python_menu_classifications.csv")
+    wastage = read_csv(PROCESSED / "wastage_clean.csv", usecols=["wastage_cost"])
+
+    completed = orders[~orders["is_cancelled"].astype(bool)]
+    total_profit = float((menu["contribution_margin"] * menu["total_quantity_sold"]).sum())
+    ordering = customers[customers["frequency"].notna()]
+
+    cleaning = _optional_json("cleaning_summary.json") or {}
+    forecast = _optional_json("forecast_results.json")
+    forecast_next_7 = None
+    if forecast:
+        forecast_next_7 = round(sum(p["forecast"] for p in forecast["series"]["overall"]["all"]["future"][:7]), 0)
+    python_metrics = _optional_json("python_model_metrics.json")
+    spark_metrics = _optional_json("spark_model_metrics.json")
+
     return {
         "total_revenue": round(float(menu["total_revenue"].sum()), 2),
-        "total_orders": int(len(orders)),
+        "total_profit": round(total_profit, 2),
+        "total_orders": int(len(completed)),
+        "cancelled_orders": int(len(orders) - len(completed)),
+        "avg_order_value": round(float(completed["total_amount"].mean()), 2),
         "total_customers": int(len(customers)),
+        "active_customers": int((ordering["recency_days"] <= ACTIVE_WINDOW_DAYS).sum()),
+        "repeat_customers": int((ordering["frequency"] >= 2).sum()),
+        "at_risk_customers": int(customers["churn_at_risk"].fillna(False).astype(bool).sum()),
         "avg_rating": round(float(menu["avg_rating"].mean()), 2),
-        "avg_profit_percentage": round(
-            float(menu["profit_percentage"].mean()), 2),
+        "avg_profit_percentage": round(float(menu["profit_percentage"].mean()), 2),
         "total_wastage_records": int(len(wastage)),
-        "avg_wastage_percentage": round(
-            float(menu["wastage_percentage"].mean()), 2),
-        "menu_classifications": classifications[
-            "python_class"].value_counts().to_dict(),
-        "records_processed": 1305677,
-        "records_cleaned": 1289177,
-        "records_removed": 13500,
-        "records_quarantined": 3000,
-        "data_quality_score": round((1289177/1305677)*100, 1),
+        "total_wastage_cost": round(float(wastage["wastage_cost"].sum()), 2),
+        "avg_wastage_percentage": round(float(menu["wastage_percentage"].mean()), 2),
+        "forecast_units_next_7_days": forecast_next_7,
+        "menu_classifications": classifications["python_class"].value_counts().to_dict(),
+        "records_processed": cleaning.get("original"),
+        "records_cleaned": cleaning.get("clean"),
+        "records_removed": cleaning.get("removed"),
+        "records_quarantined": cleaning.get("quarantined"),
+        "data_quality_score": cleaning.get("data_quality_score"),
         "ml_pipeline": {
             "python": {
-                "best_model": "XGBoost",
-                "accuracy": 100.0,
-                "f1_score": 1.00,
-                "status": "complete"
-            },
+                "best_model": python_metrics["best_model"],
+                "accuracy": python_metrics["models"][python_metrics["best_model"]]["accuracy"],
+                "f1_score": python_metrics["models"][python_metrics["best_model"]]["f1_score"],
+                "model_version": python_metrics["model_version"],
+            } if python_metrics else None,
             "spark": {
-                "status": "pending_vps",
-                "models": ["Random Forest", "GBT", "LogReg"]
-            }
-        }
+                "best_model": spark_metrics["best_model"],
+                "accuracy": spark_metrics["models"][spark_metrics["best_model"]]["accuracy"],
+                "f1_score": spark_metrics["models"][spark_metrics["best_model"]]["f1_score"],
+                "model_version": spark_metrics["model_version"],
+            } if spark_metrics else None,
+        },
+    }
+
+
+def _pipeline_block(metrics, extra_models=None):
+    models = dict(metrics["models"])
+    if extra_models:
+        models.update(extra_models)
+    return {
+        "platform": metrics["platform"],
+        "task": metrics["task"],
+        "model_version": metrics["model_version"],
+        "trained_at": metrics["trained_at"],
+        "train_test_split": metrics["train_test_split"],
+        "split_method": metrics["split_method"],
+        "train_size": metrics["train_size"],
+        "test_size": metrics["test_size"],
+        "features": metrics["features"],
+        "best_model": metrics["best_model"],
+        "classes": metrics["classes"],
+        "models": models,
     }
 
 
 @router.get("/ml-metrics")
 def get_ml_metrics():
+    """Real evaluation results written by the two training pipelines."""
+    python_metrics = read_json(REPORTS / "python_model_metrics.json")
+    spark_metrics = read_json(REPORTS / "spark_model_metrics.json")
+    comparison = read_json(REPORTS / "dual_pipeline_summary.json")
+    menu = comparison["menu_classification"]
+    customers = comparison["customer_segmentation"]
+
     return {
-        "python_pipeline": {
-            "train_test_split": "70/30",
-            "train_size": 105,
-            "test_size": 45,
-            "best_model": "XGBoost",
-            "models": {
-                "XGBoost": {
-                    "accuracy": 0.956,
-                    "precision": 1.00,
-                    "recall": 1.00,
-                    "f1_score": 0.82,
-                    "prediction_latency_ms": 2.3,
-                    "confusion_matrix": [
-                        [22, 0, 0, 0],
-                        [0, 4, 0, 0],
-                        [0, 0, 2, 0],
-                        [0, 0, 0, 17]
-                    ]
-                },
-                "Random Forest": {
-                    "accuracy": 0.889,
-                    "precision": 0.85,
-                    "recall": 0.85,
-                    "f1_score": 0.47,
-                    "prediction_latency_ms": 8.7,
-                    "confusion_matrix": [
-                        [20, 1, 0, 1],
-                        [0, 3, 1, 0],
-                        [0, 0, 2, 0],
-                        [1, 0, 0, 16]
-                    ]
-                },
-                "Decision Tree": {
-                    "accuracy": 0.956,
-                    "precision": 1.00,
-                    "recall": 1.00,
-                    "f1_score": 0.82,
-                    "prediction_latency_ms": 0.8,
-                    "confusion_matrix": [
-                        [22, 0, 0, 0],
-                        [0, 4, 0, 0],
-                        [0, 0, 2, 0],
-                        [0, 0, 0, 17]
-                    ]
-                }
-            },
-            "classes": ["Profit Driver", "Volume Driver",
-                        "Hidden Opportunity", "Low Performer"]
-        },
-        "spark_pipeline": {
-            "train_test_split": "70/30",
-            "train_size": 105,
-            "test_size": 45,
-            "best_model": "Random Forest",
-            "platform": "Apache Spark MLlib 4.2.0",
-            "models": {
-                "Logistic Regression": {
-                    "accuracy": 0.913,
-                    "precision": 0.83,
-                    "recall": 0.80,
-                    "f1_score": 0.90,
-                    "prediction_latency_ms": 45.2
-                },
-                "Random Forest": {
-                    "accuracy": 0.957,
-                    "precision": 0.78,
-                    "recall": 0.75,
-                    "f1_score": 0.95,
-                    "prediction_latency_ms": 62.1
-                },
-                "GBT": {
-                    "accuracy": 0.978,
-                    "precision": 1.00,
-                    "recall": 1.00,
-                    "f1_score": 0.98,
-                    "prediction_latency_ms": 38.5,
-                    "note": "Binary classification only"
-                }
-            }
-        },
+        "python_pipeline": _pipeline_block(python_metrics),
+        "spark_pipeline": _pipeline_block(spark_metrics, {"GBT (binary)": spark_metrics["gbt_binary"]}),
         "comparison": {
-            "total_items": 150,
-            "agreement_count": 134,
-            "agreement_pct": 89.3,
-            "different_count": 16
-        }
+            "task": menu["task"],
+            "total_items": menu["total_records"],
+            "agreement_count": menu["agreement_count"],
+            "different_count": menu["disagreement_count"],
+            "agreement_pct": menu["agreement_pct"],
+            "test_items": menu["test_records"],
+            "test_agreement_pct": menu["test_agreement_pct"],
+        },
+        "customer_comparison": {
+            "task": customers["task"],
+            "test_records": customers["test_records"],
+            "agreement_count": customers["agreement_count"],
+            "different_count": customers["disagreement_count"],
+            "agreement_pct": customers["agreement_pct"],
+        },
+        "generated_at": comparison["generated_at"],
     }

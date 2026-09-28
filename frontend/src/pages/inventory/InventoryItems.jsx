@@ -77,14 +77,14 @@ export default function InventoryItems() {
         <DataTable columns={columns} rows={rows} rowKey={(r) => r.id} emptyMessage="No items match your filters." />
       </div>
 
-      <Modal open={!!editing} onClose={() => setEditing(null)} title={`Edit — ${editing?.item ?? ''}`}>
+      <Modal open={!!editing} onClose={() => setEditing(null)} title={`Edit ${editing?.item ?? ''}`}>
         <div className="grid gap-4 sm:grid-cols-2">
           <div><label className="label">Stock on hand</label><input className="input" defaultValue={editing?.stock} /></div>
           <div><label className="label">Par level</label><input className="input" defaultValue={editing?.parLevel} /></div>
           <div><label className="label">Reorder quantity</label><input className="input" defaultValue={editing?.reorderQty} /></div>
           <div><label className="label">Supplier</label><input className="input" defaultValue={editing?.supplier} /></div>
         </div>
-        <p className="mt-4 rounded-xl bg-violet-50 p-3 text-xs text-violet-700">Demo note — changes are not persisted.</p>
+        <p className="mt-4 rounded-xl bg-violet-50 p-3 text-xs text-violet-700">Demo mode: changes are not saved.</p>
         <div className="mt-4 flex justify-end gap-2">
           <button className="btn btn-ghost !px-5 !py-2.5 text-xs" onClick={() => setEditing(null)}>Cancel</button>
           <button className="btn btn-primary !px-5 !py-2.5 text-xs" onClick={() => setEditing(null)}>Save</button>

@@ -1,8 +1,10 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pathlib import Path
 import pandas as pd
 
-router = APIRouter()
+from middleware.auth_middleware import require_operations
+
+router = APIRouter(dependencies=[Depends(require_operations)])
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 FEATURES_PATH = PROJECT_ROOT / "processed_data" / "features" / "menu_item_features.csv"
