@@ -142,3 +142,21 @@ def test_audit_event_classification():
     assert classify("PUT", "/api/auth/users/4")[0] == "auth"
     assert classify("POST", "/api/whatif/simulate")[0] == "crud"
     assert classify("GET", "/api/menu/items")[0] == "view"
+
+
+# --- Pipeline runner (does not launch Spark) ---------------------------------
+def test_pipeline_runner_access_and_validation(client, token_for):
+    body = {"preset": "core"}
+    assert client.post("/api/admin/run-pipeline", json=body, headers=token_for("Cashier")).status_code == 403
+    assert client.post("/api/admin/run-pipeline", json=body, headers=token_for("Restaurant Manager")).status_code == 403
+    assert client.post("/api/admin/run-pipeline", json={"preset": "nope"}, headers=token_for("Admin")).status_code == 400
+
+    presets = client.get("/api/admin/run-pipeline/presets", headers=token_for("Super Admin")).json()
+    assert presets["core"] == [
+        "spark_jobs/ingestion.py", "spark_jobs/data_quality.py", "spark_jobs/cleaning.py",
+        "spark_jobs/feature_engineering.py", "spark_jobs/spark_ml_models.py",
+        "python_pipeline/models.py", "python_pipeline/comparison.py",
+    ]
+    assert set(presets["core"]) <= set(presets["full"])
+    status = client.get("/api/admin/run-pipeline/status", headers=token_for("Admin"))
+    assert status.status_code == 200 and "steps" in status.json()

@@ -36,6 +36,8 @@ def classify(method: str, path: str):
     action = f"{section}.{parts[2]}" if len(parts) > 2 else section
     if section == "auth":
         return "auth", action
+    if "run-pipeline" in path:
+        return "data", action
     if method in ("POST", "PUT", "PATCH", "DELETE"):
         return "crud", action
     if section == "dashboard" and "ml-metrics" in path:
@@ -47,6 +49,8 @@ def classify(method: str, path: str):
 
 # Login/register carry no token yet; routes/auth.py logs them with the email.
 SELF_LOGGED_PATHS = {"/api/auth/login", "/api/auth/register"}
+# Polled every few seconds by the Pipeline Runner page; the run itself is logged.
+UNLOGGED_PATHS = {"/api/admin/run-pipeline/status"}
 
 
 def submit_audit_log(entry: dict):
@@ -57,7 +61,7 @@ class AuditMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
         path = request.url.path
         if (not path.startswith("/api") or request.method == "OPTIONS"
-                or path in SELF_LOGGED_PATHS):
+                or path in SELF_LOGGED_PATHS or path in UNLOGGED_PATHS):
             return await call_next(request)
 
         started = time.perf_counter()

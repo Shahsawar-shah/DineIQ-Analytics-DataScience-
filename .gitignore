@@ -22,3 +22,6 @@ _SUCCESS
 parquet_data/*
 !parquet_data/.gitkeep
 nohup.out
+
+# Pipeline Runner logs (one per run from the Admin page)
+reports/pipeline_runs/

@@ -42,6 +42,10 @@ def create_spark_session(app_name):
         .config("spark.sql.shuffle.partitions", "8")
         .config("spark.sql.session.timeZone", "UTC")
         .config("spark.ui.showConsoleProgress", "false")
+        # Local mode: bind the driver to loopback so startup never depends on how
+        # the machine's hostname resolves (it failed on macOS and warns on the VPS)
+        .config("spark.driver.bindAddress", os.getenv("SPARK_DRIVER_BIND_ADDRESS", "127.0.0.1"))
+        .config("spark.driver.host", os.getenv("SPARK_DRIVER_HOST", "127.0.0.1"))
         .getOrCreate()
     )
     spark.sparkContext.setLogLevel("ERROR")

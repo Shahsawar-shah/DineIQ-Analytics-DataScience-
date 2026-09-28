@@ -124,5 +124,73 @@
     "metrics": {
       "queries": 17
     }
+  },
+  {
+    "job_id": "c40d7ef58c16",
+    "job_name": "ingestion",
+    "status": "success",
+    "started_at": "2026-09-28T14:56:28",
+    "finished_at": "2026-09-28T14:56:58",
+    "duration_seconds": 29.69,
+    "records_processed": 2547655,
+    "records_output": 2547655,
+    "spark_version": "4.2.0",
+    "error": null
+  },
+  {
+    "job_id": "06bd6a67f893",
+    "job_name": "data_quality",
+    "status": "success",
+    "started_at": "2026-09-28T14:57:12",
+    "finished_at": "2026-09-28T14:57:32",
+    "duration_seconds": 20.11,
+    "records_processed": 2464150,
+    "records_output": null,
+    "spark_version": "4.2.0",
+    "error": null,
+    "metrics": {
+      "errors": 3,
+      "warnings": 5
+    }
+  },
+  {
+    "job_id": "b3c7054574c4",
+    "job_name": "cleaning",
+    "status": "success",
+    "started_at": "2026-09-28T14:57:47",
+    "finished_at": "2026-09-28T14:58:48",
+    "duration_seconds": 61.11,
+    "records_processed": 2547655,
+    "records_output": 2515055,
+    "spark_version": "4.2.0",
+    "error": null
+  },
+  {
+    "job_id": "21958b98645d",
+    "job_name": "feature_engineering",
+    "status": "success",
+    "started_at": "2026-09-28T14:59:02",
+    "finished_at": "2026-09-28T15:00:02",
+    "duration_seconds": 60.85,
+    "records_processed": 2172058,
+    "records_output": 272228,
+    "spark_version": "4.2.0",
+    "error": null
+  },
+  {
+    "job_id": "70b1835e281b",
+    "job_name": "spark_ml_models",
+    "status": "success",
+    "started_at": "2026-09-28T15:00:17",
+    "finished_at": "2026-09-28T15:00:44",
+    "duration_seconds": 27.19,
+    "records_processed": 150,
+    "records_output": 150,
+    "spark_version": "4.2.0",
+    "error": null,
+    "metrics": {
+      "best_model": "Logistic Regression",
+      "best_macro_f1": 0.7708
+    }
   }
 ]

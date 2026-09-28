@@ -21,6 +21,7 @@ import AdminLocations from './pages/admin/AdminLocations'
 import AdminDataManagement from './pages/admin/AdminDataManagement'
 import AdminDataQuality from './pages/admin/AdminDataQuality'
 import AdminSystemMonitoring from './pages/admin/AdminSystemMonitoring'
+import AdminPipeline from './pages/admin/AdminPipeline'
 import AdminAuditLogs from './pages/admin/AdminAuditLogs'
 import AdminReports from './pages/admin/AdminReports'
 import AdminSettings from './pages/admin/AdminSettings'
@@ -110,6 +111,7 @@ export default function App() {
         <Route path="data-management" element={<AdminDataManagement />} />
         <Route path="data-quality" element={<AdminDataQuality />} />
         <Route path="system-monitoring" element={<AdminSystemMonitoring />} />
+        <Route path="pipeline" element={<AdminPipeline />} />
         <Route path="audit-logs" element={<AdminAuditLogs />} />
         <Route path="reports" element={<AdminReports />} />
         <Route path="settings" element={<AdminSettings />} />
@@ -160,6 +162,7 @@ export default function App() {
         <Route path="data-management" element={<AdminDataManagement />} />
         <Route path="data-quality" element={<AdminDataQuality />} />
         <Route path="system-monitoring" element={<AdminSystemMonitoring />} />
+        <Route path="pipeline" element={<AdminPipeline />} />
         <Route path="audit-logs" element={<AdminAuditLogs />} />
         <Route path="reports" element={<AdminReports />} />
         <Route path="settings" element={<AdminSettings />} />

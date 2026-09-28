@@ -139,5 +139,9 @@ export const api = {
   admin: {
     auditLogs: ({ limit = 200, eventType, q } = {}) => get(`/admin/audit-logs${qs({ limit, event_type: eventType, q })}`),
     sparkJobs: (limit = 50) => get(`/admin/spark-jobs?limit=${limit}`),
+    pipelinePresets: () => get('/admin/run-pipeline/presets'),
+    runPipeline: (preset = 'core') => send('POST', '/admin/run-pipeline', { preset }),
+    pipelineStatus: () => get('/admin/run-pipeline/status'),
+    cancelPipeline: () => send('POST', '/admin/run-pipeline/cancel'),
   },
 }

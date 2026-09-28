@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-09-28T11:29:34",
+  "generated_at": "2026-09-28T15:00:50",
   "menu_classification": {
     "task": "Menu performance classification",
-    "spark_model": "Logistic Regression (spark-menu-20260928-112528)",
-    "python_model": "Decision Tree (python-menu-20260928-112212)",
+    "spark_model": "Logistic Regression (spark-menu-20260928-150042)",
+    "python_model": "Decision Tree (python-menu-20260928-150049)",
     "total_records": 150,
     "agreement_count": 132,
     "disagreement_count": 18,

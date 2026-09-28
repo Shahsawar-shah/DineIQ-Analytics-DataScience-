@@ -1,14 +1,17 @@
 """
-Admin-only API: audit trail (SRS lxiii) and Spark job monitoring (SRS lxv).
+Admin-only API: audit trail (SRS lxiii), Spark job monitoring (SRS lxv)
+and the pipeline runner that executes the Spark / Python scripts on the server.
 """
 
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
+from pydantic import BaseModel
 
 from middleware.auth_middleware import require_admin
 from models.audit import fetch_audit_logs
 from routes.common import REPORTS, read_json
+from services import pipeline_runner
 
 router = APIRouter(dependencies=[Depends(require_admin)])
 
@@ -54,3 +57,34 @@ def get_spark_jobs(limit: int = Query(50, ge=1, le=200)):
         "latest_by_job": list(latest.values()),
         "runs": jobs[:limit],
     }
+
+
+class RunPipelineRequest(BaseModel):
+    preset: str = "core"
+
+
+@router.get("/run-pipeline/presets")
+def get_pipeline_presets():
+    return pipeline_runner.PRESETS
+
+
+@router.post("/run-pipeline", status_code=202)
+def run_pipeline(req: RunPipelineRequest, background_tasks: BackgroundTasks,
+                 payload: dict = Depends(require_admin)):
+    run, reason = pipeline_runner.start_run(req.preset, payload.get("email"))
+    if run is None:
+        raise HTTPException(status_code=409 if "in progress" in reason else 400, detail=reason)
+    background_tasks.add_task(pipeline_runner.execute, run)
+    return pipeline_runner.snapshot()
+
+
+@router.get("/run-pipeline/status")
+def get_pipeline_status():
+    return pipeline_runner.snapshot() or {"status": "idle", "steps": []}
+
+
+@router.post("/run-pipeline/cancel")
+def cancel_pipeline():
+    if not pipeline_runner.cancel_run():
+        raise HTTPException(status_code=409, detail="No pipeline run is in progress")
+    return pipeline_runner.snapshot()

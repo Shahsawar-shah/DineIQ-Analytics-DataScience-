@@ -2,7 +2,7 @@ import {
   Activity, BarChart3, Bell, BookOpen, Boxes, CalendarClock, ChefHat, ClipboardList, Cog, Database, FileBarChart,
   FileText, FlaskConical, Gauge, GitCompareArrows, Heart, LayoutDashboard, LineChart, MapPin,
   Megaphone, PackageSearch, PieChart, Receipt, ScrollText, Settings,
-  ListChecks, ShieldCheck, ShoppingCart, Star, Tags, Trash2, TrendingUp, User, UserCog, Users, UtensilsCrossed,
+  ListChecks, ShieldCheck, Workflow, ShoppingCart, Star, Tags, Trash2, TrendingUp, User, UserCog, Users, UtensilsCrossed,
 } from 'lucide-react'
 
 export const ROLE_HOME = {
@@ -32,6 +32,7 @@ export const ROLE_NAV = {
     { label: 'Data Management', path: '/admin/data-management', icon: 'Database' },
     { label: 'Data Quality', path: '/admin/data-quality', icon: 'ShieldCheck' },
     { label: 'System Monitoring', path: '/admin/system-monitoring', icon: 'Gauge' },
+    { label: 'Pipeline Runner', path: '/admin/pipeline', icon: 'Workflow' },
     { label: 'Audit Logs', path: '/admin/audit-logs', icon: 'ScrollText' },
     { label: 'Reports', path: '/admin/reports', icon: 'FileBarChart' },
     { label: 'Settings', path: '/admin/settings', icon: 'Settings' },
@@ -63,6 +64,7 @@ export const ROLE_NAV = {
     { label: 'Data Management', path: '/superadmin/data-management', icon: 'Database' },
     { label: 'Data Quality', path: '/superadmin/data-quality', icon: 'ShieldCheck' },
     { label: 'System Monitoring', path: '/superadmin/system-monitoring', icon: 'Gauge' },
+    { label: 'Pipeline Runner', path: '/superadmin/pipeline', icon: 'Workflow' },
     { label: 'Audit Logs', path: '/superadmin/audit-logs', icon: 'ScrollText' },
     { label: 'Menu Intelligence', path: '/superadmin/menu-intelligence', icon: 'UtensilsCrossed' },
     { label: 'Customer Intelligence', path: '/superadmin/customer-intelligence', icon: 'Users' },
@@ -97,7 +99,7 @@ export const ROLE_NAV = {
 /** Map of icon name -> component, used by the Sidebar renderer. */
 export const ICONS = {
   LayoutDashboard, ShoppingCart, Heart, ChefHat, ListChecks, Trash2, Activity, Tags, Star, User,
-  Users, UserCog, UtensilsCrossed, Database, ShieldCheck, Gauge, ScrollText, FileBarChart, Settings,
+  Users, UserCog, UtensilsCrossed, Database, ShieldCheck, Gauge, Workflow, ScrollText, FileBarChart, Settings,
   TrendingUp, LineChart, Megaphone, BookOpen, FlaskConical, GitCompareArrows,
   Boxes, PackageSearch, BarChart3, ClipboardList,
   Receipt, PieChart, CalendarClock, FileText, Bell, Cog, MapPin,
