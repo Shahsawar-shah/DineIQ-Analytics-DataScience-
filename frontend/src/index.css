@@ -391,18 +391,70 @@ body {
 
 /* hero */
 .hero-shell { background: #08080d; isolation: isolate; }
-.hero-video {
+.hero-clip {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  opacity: 0; transition: opacity 1.4s ease; transform: scale(1.04);
+  opacity: 0; transition: opacity 1.2s ease;
 }
-.hero-video.is-active { opacity: 1; animation: heroZoom 8s linear both; }
-@keyframes heroZoom { from { transform: scale(1.12); } to { transform: scale(1.02); } }
+.hero-clip.is-active { opacity: 1; }
+
+/* full-bleed background: same clips, dimmed and softened so the copy stays readable */
+.hero-bg { position: absolute; inset: -4%; }
+.hero-bg .hero-clip { filter: blur(4px) saturate(1.2) brightness(0.9); }
+.hero-bg .hero-clip.is-active { animation: heroZoom 8s linear both; }
+@keyframes heroZoom { from { transform: scale(1.14); } to { transform: scale(1.03); } }
+
 .hero-overlay {
   position: absolute; inset: 0; pointer-events: none;
   background:
-    radial-gradient(ellipse 60% 55% at 50% 52%, rgba(8, 8, 13, 0.84) 0%, rgba(8, 8, 13, 0.4) 60%, transparent 100%),
-    linear-gradient(180deg, rgba(8, 8, 13, 0.88) 0%, rgba(8, 8, 13, 0.35) 30%, rgba(8, 8, 13, 0.45) 70%, #08080d 100%);
+    linear-gradient(90deg, rgba(8, 8, 13, 0.92) 0%, rgba(8, 8, 13, 0.74) 36%, rgba(8, 8, 13, 0.32) 62%, rgba(8, 8, 13, 0.42) 100%),
+    linear-gradient(180deg, rgba(8, 8, 13, 0.6) 0%, transparent 20%, transparent 74%, #08080d 100%);
 }
+@media (max-width: 1023px) {
+  .hero-overlay { background: linear-gradient(180deg, rgba(8, 8, 13, 0.88) 0%, rgba(8, 8, 13, 0.72) 50%, #08080d 100%); }
+}
+
+/* 3D dashboard screen */
+@property --rim { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+.device-stage { perspective: 1800px; }
+.device {
+  position: relative; transform-style: preserve-3d;
+  transform: rotateY(calc(-14deg + var(--nx, 0) * 7deg)) rotateX(calc(5deg - var(--ny, 0) * 6deg)) rotateZ(1deg);
+  transition: transform 0.9s var(--ease-expo);
+}
+@media (max-width: 1023px) {
+  .device { transform: rotateY(-6deg) rotateX(4deg); }
+}
+.device-frame {
+  position: relative; border-radius: 26px; padding: 9px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 40%, rgba(249, 93, 11, 0.4));
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 60px 120px -30px rgba(0, 0, 0, 0.95), 0 0 90px -10px rgba(249, 93, 11, 0.45);
+}
+.device-screen { position: relative; overflow: hidden; border-radius: 18px; aspect-ratio: 16 / 9; background: #08080d; }
+.device-glare {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.13) 0%, transparent 32%, transparent 70%, rgba(249, 93, 11, 0.08) 100%);
+}
+/* light that runs around the frame edge */
+.device-rim {
+  position: absolute; inset: -14px; border-radius: 38px; padding: 2px; pointer-events: none;
+  background: conic-gradient(from var(--rim), transparent 0 62%, rgba(249, 93, 11, 0.9) 76%, #ffc39a 82%, rgba(249, 93, 11, 0.9) 88%, transparent 96%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  filter: drop-shadow(0 0 10px rgba(249, 93, 11, 0.9));
+  animation: rimSpin 7s linear infinite;
+}
+@keyframes rimSpin { to { --rim: 360deg; } }
+.device-floor {
+  position: absolute; left: 8%; right: 4%; bottom: -12%; height: 30%; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(249, 93, 11, 0.45), transparent);
+  filter: blur(30px); pointer-events: none;
+}
+@keyframes deviceIn {
+  from { opacity: 0; transform: translateX(80px) translateY(30px) scale(0.92); filter: blur(10px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+.hero-device-in { animation: deviceIn 1.6s var(--ease-expo) 0.5s both; }
+
 .hero-spotlight {
   position: absolute; inset: 0; pointer-events: none; transition: opacity 0.6s ease;
   background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 40%), rgba(249, 93, 11, 0.14), transparent 60%);
@@ -517,7 +569,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .anim-fade-up, .anim-fade-in, .anim-slide-left, .anim-pop, .anim-float, .anim-wheel, .live-dot, .page-enter,
-  .nav-enter, .hero-word, .hero-in, .hero-script, .hero-video.is-active, .hero-grain, .orb, .btn-shine::after,
+  .nav-enter, .hero-word, .hero-in, .hero-script, .hero-bg .hero-clip.is-active, .hero-device-in, .device-rim, .hero-grain, .orb, .btn-shine::after,
   .cta-blob-a, .cta-blob-b, .kenburns, .ticker, .hero-word.text-shimmer { animation: none; opacity: 1; }
   .reveal, .reveal-clip { opacity: 1; transform: none; filter: none; clip-path: none; transition: none; }
   .img-zoom { transform: none; }

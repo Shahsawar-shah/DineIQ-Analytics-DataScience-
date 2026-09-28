@@ -2,8 +2,8 @@
   "pipeline": "python",
   "platform": "scikit-learn / XGBoost",
   "task": "Menu performance classification (4 classes)",
-  "model_version": "python-menu-20260928-150049",
-  "trained_at": "2026-09-28T15:00:49",
+  "model_version": "python-menu-20260928-172420",
+  "trained_at": "2026-09-28T17:24:20",
   "train_test_split": "70/30",
   "split_method": "stratified by class, deterministic item_id hash",
   "train_size": 105,
@@ -93,8 +93,8 @@
           17
         ]
       ],
-      "prediction_latency_ms": 2.81,
-      "latency_per_record_ms": 0.0624
+      "prediction_latency_ms": 3.088,
+      "latency_per_record_ms": 0.0686
     },
     "Random Forest": {
       "accuracy": 0.8889,
@@ -161,8 +161,8 @@
           17
         ]
       ],
-      "prediction_latency_ms": 11.438,
-      "latency_per_record_ms": 0.2542
+      "prediction_latency_ms": 11.83,
+      "latency_per_record_ms": 0.2629
     },
     "Decision Tree": {
       "accuracy": 0.9556,
@@ -229,8 +229,8 @@
           18
         ]
       ],
-      "prediction_latency_ms": 1.312,
-      "latency_per_record_ms": 0.0292
+      "prediction_latency_ms": 1.25,
+      "latency_per_record_ms": 0.0278
     }
   }
 }

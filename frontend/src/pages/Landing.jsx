@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  ArrowRight, CheckCircle2, Database, Gauge, LayoutDashboard, LineChart,
-  ListChecks, Mail, MapPin, Megaphone, Menu as MenuIcon, Package, Phone, Quote, Tags,
+  ArrowRight, CheckCircle2, CirclePlay, Database, Gauge, LayoutDashboard, LineChart,
+  Leaf, ListChecks, Mail, MapPin, Megaphone, Menu as MenuIcon, Package, Phone, Quote, Tags,
   TrendingUp, TriangleAlert, Users, UtensilsCrossed, X,
 } from 'lucide-react'
 import {
@@ -62,7 +62,7 @@ function LandingNav() {
       }`}
     >
       <span ref={progressRef} className="scroll-progress" aria-hidden="true" />
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 2xl:max-w-[1480px]">
         <Link to="/" className="group flex items-center gap-2.5">
           <Logo size={40} className="shrink-0 transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-110" />
           <span>
@@ -121,7 +121,11 @@ const HERO_SCENES = [
 const HEADLINE = ["See", "what's", "selling,", "what's", "wasted", "and"]
 const HEADLINE_HOT = ['where', 'the', 'profit', 'is.']
 
-function HeroVideos({ active, onNext, bars }) {
+/**
+ * Stack of crossfading clips. The instance given `onNext` drives the playlist (progress bars +
+ * advancing); other instances just follow `active`.
+ */
+function HeroVideos({ active, onNext, bars, className }) {
   const videos = useRef([])
   const [reduced] = useState(prefersReducedMotion)
 
@@ -132,6 +136,7 @@ function HeroVideos({ active, onNext, bars }) {
     if (!v) return
     v.currentTime = 0
     v.play().catch(() => {})
+    if (!onNext) return
     let raf = 0
     let advanced = false
     const tick = () => {
@@ -147,7 +152,7 @@ function HeroVideos({ active, onNext, bars }) {
     return () => cancelAnimationFrame(raf)
   }, [active, onNext, bars, reduced])
 
-  // pause everything while the hero is off-screen
+  // pause while the hero is off-screen
   useEffect(() => {
     const root = videos.current[0]?.parentElement
     if (!root || reduced) return
@@ -163,15 +168,15 @@ function HeroVideos({ active, onNext, bars }) {
 
   const next = (active + 1) % HERO_SCENES.length
   return (
-    <div className="absolute inset-0" aria-hidden="true">
+    <div className={className} aria-hidden="true">
       {reduced ? (
-        <img src="/videos/hero-poster.jpg" alt="" className="hero-video is-active" />
+        <img src="/videos/hero-poster.jpg" alt="" className="hero-clip is-active" />
       ) : (
         HERO_SCENES.map((s, i) => (
           <video
             key={s.src}
             ref={(el) => (videos.current[i] = el)}
-            className={`hero-video ${i === active ? 'is-active' : ''}`}
+            className={`hero-clip ${i === active ? 'is-active' : ''}`}
             src={s.src}
             poster={i === 0 ? '/videos/hero-poster.jpg' : undefined}
             muted
@@ -184,11 +189,69 @@ function HeroVideos({ active, onNext, bars }) {
   )
 }
 
-function HeroChip({ className = '', style, children }) {
+function HeroChip({ className = '', delay, children }) {
   return (
-    <div className={`hero-in absolute hidden xl:block ${className}`} style={style}>
-      <div className="hero-chip anim-float rounded-2xl px-4 py-3.5" style={{ animationDelay: style?.animationDelay }}>
+    <div className={`hero-in absolute z-20 hidden md:block ${className}`} style={{ animationDelay: delay }}>
+      <div className="hero-chip anim-float rounded-2xl px-4 py-3.5" style={{ animationDelay: delay }}>
         {children}
+      </div>
+    </div>
+  )
+}
+
+function DemoModal({ open, onClose }) {
+  const [i, setI] = useState(0)
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [open, onClose])
+
+  if (!open) return null
+  return (
+    <div
+      className="anim-fade-in fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="DineIQ demo"
+    >
+      <div className="anim-pop relative w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute -top-12 right-0 grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20"
+          aria-label="Close demo"
+        >
+          <X size={17} />
+        </button>
+        <div className="device-frame">
+          <div className="device-screen">
+            <video
+              key={HERO_SCENES[i].src}
+              src={HERO_SCENES[i].src}
+              className="h-full w-full object-cover"
+              autoPlay
+              muted
+              playsInline
+              controls
+              onEnded={() => setI((n) => (n + 1) % HERO_SCENES.length)}
+            />
+          </div>
+        </div>
+        <div className="mt-5 flex flex-wrap justify-center gap-1 rounded-full">
+          {HERO_SCENES.map((s, n) => (
+            <button key={s.src} type="button" onClick={() => setI(n)} className={`scene-pill ${n === i ? 'is-active' : ''}`}>
+              <s.icon size={14} className={n === i ? 'text-brand-400' : ''} />
+              {s.label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -196,12 +259,14 @@ function HeroChip({ className = '', style, children }) {
 
 function Hero() {
   const [active, setActive] = useState(0)
+  const [demo, setDemo] = useState(false)
   const bars = useRef([])
   const sectionRef = useRef(null)
   const contentRef = useRef(null)
   const onNext = useCallback(() => setActive((i) => (i + 1) % HERO_SCENES.length), [])
+  const closeDemo = useCallback(() => setDemo(false), [])
 
-  // parallax: content drifts up and fades as the hero scrolls away
+  // parallax: text drifts up and fades as the hero scrolls away
   useEffect(() => {
     if (prefersReducedMotion()) return
     let raf = 0
@@ -210,8 +275,8 @@ function Hero() {
       raf = requestAnimationFrame(() => {
         const y = window.scrollY
         if (!contentRef.current || y > window.innerHeight) return
-        contentRef.current.style.transform = `translate3d(0, ${y * 0.28}px, 0)`
-        contentRef.current.style.opacity = String(Math.max(0, 1 - y / (window.innerHeight * 0.75)))
+        contentRef.current.style.transform = `translate3d(0, ${y * 0.22}px, 0)`
+        contentRef.current.style.opacity = String(Math.max(0, 1 - y / (window.innerHeight * 0.8)))
       })
     }
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -221,14 +286,18 @@ function Hero() {
     }
   }, [])
 
+  // spotlight + device tilt follow the pointer
   const onMove = (e) => {
-    const r = sectionRef.current.getBoundingClientRect()
-    sectionRef.current.style.setProperty('--mx', `${e.clientX - r.left}px`)
-    sectionRef.current.style.setProperty('--my', `${e.clientY - r.top}px`)
+    const el = sectionRef.current
+    const r = el.getBoundingClientRect()
+    el.style.setProperty('--mx', `${e.clientX - r.left}px`)
+    el.style.setProperty('--my', `${e.clientY - r.top}px`)
+    el.style.setProperty('--nx', ((e.clientX - r.left) / r.width - 0.5).toFixed(3))
+    el.style.setProperty('--ny', ((e.clientY - r.top) / r.height - 0.5).toFixed(3))
   }
 
   let w = 0
-  const delay = () => ({ animationDelay: `${0.45 + w++ * 0.075}s` })
+  const delay = () => ({ animationDelay: `${0.35 + w++ * 0.07}s` })
 
   return (
     <section
@@ -237,88 +306,108 @@ function Hero() {
       onMouseMove={onMove}
       className="hero-shell relative flex min-h-screen items-center overflow-hidden"
     >
-      <HeroVideos active={active} onNext={onNext} bars={bars} />
+      {/* full-bleed background video */}
+      <HeroVideos active={active} className="hero-bg" />
       <div className="hero-overlay" />
-      <div className="orb left-[-10%] top-[10%] h-[420px] w-[420px] bg-brand-600/25" />
-      <div className="orb bottom-[-10%] right-[-8%] h-[480px] w-[480px] bg-brand-800/30" style={{ animationDelay: '-6s' }} />
+      <div className="orb left-[-10%] top-[5%] h-[420px] w-[420px] bg-brand-600/20" />
+      <div className="orb bottom-[-15%] right-[10%] h-[520px] w-[520px] bg-brand-700/25" style={{ animationDelay: '-6s' }} />
       <div className="hero-spotlight" />
       <div className="hero-grain" />
 
-      <HeroChip className="left-[5%] top-[30%]" style={{ animationDelay: '1.5s' }}>
-        <div className="flex items-center gap-3">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-500/15 text-brand-400">
-            <TrendingUp size={18} />
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-14 2xl:max-w-[1480px] px-4 pt-28 pb-36 sm:px-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-8 lg:pt-24">
+        {/* copy */}
+        <div ref={contentRef} className="will-change-transform">
+          <span className="hero-in inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-white/85 backdrop-blur-md" style={{ animationDelay: '0.15s' }}>
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-500 opacity-70" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-500" />
+            </span>
+            Smarter data. Better decisions.
           </span>
-          <div>
-            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-white/45">Revenue</p>
-            <p className="font-display text-lg font-extrabold leading-tight text-white">
-              +18.4% <span className="text-xs font-semibold text-emerald-400">vs last month</span>
-            </p>
+          <h1 className="font-display mt-7 text-[2.6rem] font-extrabold leading-[1.05] tracking-[-0.025em] text-white sm:text-6xl lg:text-[3.2rem] xl:text-[3.6rem] 2xl:text-[3.9rem]">
+            {HEADLINE.map((word, i) => (
+              <span key={i}>
+                <span className="hero-word" style={delay()}>{word}</span>{' '}
+              </span>
+            ))}
+            {HEADLINE_HOT.map((word, i) => (
+              <span key={`h${i}`}>
+                <span className="hero-word text-shimmer" style={delay()}>{word}</span>
+                {i < HEADLINE_HOT.length - 1 ? ' ' : ''}
+              </span>
+            ))}
+          </h1>
+          <p className="hero-in mt-7 max-w-lg text-sm leading-relaxed text-white/75 sm:text-base" style={{ animationDelay: '1.1s' }}>
+            Sales, menu, guest and stock data from all your locations in one place, with reports your
+            managers and kitchen staff can actually use.
+          </p>
+          <div className="hero-in mt-10 flex flex-col gap-3 sm:flex-row" style={{ animationDelay: '1.3s' }}>
+            <a href="#analytics" className="btn btn-primary btn-lift btn-shine !rounded-xl !px-7 !py-4 text-sm">
+              Explore the dashboard <ArrowRight size={16} />
+            </a>
+            <button type="button" onClick={() => setDemo(true)} className="btn btn-outline btn-lift group !rounded-xl !px-6 !py-4 text-sm backdrop-blur-sm">
+              <CirclePlay size={19} className="text-brand-400 transition-transform duration-500 group-hover:scale-110" />
+              Watch demo
+            </button>
           </div>
         </div>
-        <svg viewBox="0 0 160 36" className="mt-2 h-9 w-40">
-          <path d="M0,30 C20,28 30,22 45,24 C60,26 70,14 88,15 C105,16 118,8 134,9 C146,10 152,4 160,3" fill="none" stroke="#f95d0b" strokeWidth="2.5" strokeLinecap="round" />
-        </svg>
-      </HeroChip>
-      <HeroChip className="right-[5%] top-[56%]" style={{ animationDelay: '1.7s' }}>
-        <div className="flex items-center gap-3">
-          <svg viewBox="0 0 44 44" className="h-11 w-11 -rotate-90">
-            <circle cx="22" cy="22" r="18" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="5" />
-            <circle cx="22" cy="22" r="18" fill="none" stroke="#f95d0b" strokeWidth="5" strokeLinecap="round" strokeDasharray={`${0.942 * 113} 113`} />
-          </svg>
-          <div>
-            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-white/45">Forecast accuracy</p>
-            <p className="font-display text-lg font-extrabold leading-tight text-white">94.2%</p>
-          </div>
-        </div>
-      </HeroChip>
-      <HeroChip className="left-[8%] top-[64%]" style={{ animationDelay: '1.9s' }}>
-        <div className="flex items-center gap-3">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-emerald-500/15 text-emerald-400">
-            <TriangleAlert size={17} />
-          </span>
-          <div>
-            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-white/45">Wastage</p>
-            <p className="font-display text-lg font-extrabold leading-tight text-white">
-              −23% <span className="text-xs font-semibold text-emerald-400">this quarter</span>
-            </p>
-          </div>
-        </div>
-      </HeroChip>
 
-      <div ref={contentRef} className="relative z-10 mx-auto max-w-3xl px-4 pt-28 pb-40 text-center will-change-transform sm:px-6">
-        <p className="hero-script font-script text-3xl text-brand-400 drop-shadow-[0_0_24px_rgba(249,93,11,0.45)] sm:text-4xl">
-          DineIQ Analytics
-        </p>
-        <h1 className="font-display mt-4 text-4xl font-extrabold leading-[1.12] text-white sm:text-5xl lg:text-6xl">
-          {HEADLINE.map((word, i) => (
-            <span key={i}>
-              <span className="hero-word" style={delay()}>{word}</span>{' '}
-            </span>
-          ))}
-          {HEADLINE_HOT.map((word, i) => (
-            <span key={`h${i}`}>
-              <span className="hero-word text-shimmer" style={delay()}>{word}</span>
-              {i < HEADLINE_HOT.length - 1 ? ' ' : ''}
-            </span>
-          ))}
-        </h1>
-        <p className="hero-in mx-auto mt-6 max-w-xl text-sm leading-relaxed text-white/75 sm:text-base" style={{ animationDelay: '1.2s' }}>
-          Sales, menu, guest and stock data from all your locations in one place, with reports your
-          managers and kitchen staff can actually use.
-        </p>
-        <div className="hero-in mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row" style={{ animationDelay: '1.4s' }}>
-          <a href="#features" className="btn btn-primary btn-lift btn-shine !rounded-lg !px-7 !py-3.5 text-sm">
-            See the features <ArrowRight size={16} />
-          </a>
-          <Link to="/login" className="btn btn-outline btn-lift !rounded-lg !px-7 !py-3.5 text-sm backdrop-blur-sm">
-            Log in
-          </Link>
+        {/* dashboard screen playing the same clips */}
+        <div className="device-stage hero-device-in relative lg:origin-left lg:scale-[1.04] xl:scale-[1.06] 2xl:scale-[1.1]">
+          <div className="device-floor" />
+          <div className="device">
+            <div className="device-rim" />
+            <div className="device-frame">
+              <div className="device-screen">
+                <HeroVideos active={active} onNext={onNext} bars={bars} className="absolute inset-0" />
+                <div className="device-glare" />
+              </div>
+            </div>
+          </div>
+
+          <HeroChip className="-left-6 bottom-[14%] xl:-left-14" delay="1.7s">
+            <div className="flex items-center gap-3">
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500/15 text-emerald-400">
+                <Leaf size={18} />
+              </span>
+              <div>
+                <p className="text-[0.7rem] font-semibold text-white/60">Waste Reduction</p>
+                <p className="font-display text-lg font-extrabold leading-tight text-white">
+                  −23% <span className="text-xs font-semibold text-emerald-400">this quarter</span>
+                </p>
+              </div>
+            </div>
+          </HeroChip>
+          <HeroChip className="-bottom-10 right-4" delay="1.9s">
+            <div className="flex items-center gap-3">
+              <svg viewBox="0 0 44 44" className="h-11 w-11 -rotate-90">
+                <circle cx="22" cy="22" r="18" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="5" />
+                <circle cx="22" cy="22" r="18" fill="none" stroke="#f95d0b" strokeWidth="5" strokeLinecap="round" strokeDasharray={`${0.942 * 113} 113`} />
+              </svg>
+              <div>
+                <p className="text-[0.7rem] font-semibold text-white/60">Forecast Accuracy</p>
+                <p className="font-display text-lg font-extrabold leading-tight text-white">94.2%</p>
+              </div>
+            </div>
+          </HeroChip>
+          <HeroChip className="-top-8 right-[12%]" delay="2.1s">
+            <div className="flex items-center gap-3">
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-500/15 text-brand-400">
+                <TrendingUp size={18} />
+              </span>
+              <div>
+                <p className="text-[0.7rem] font-semibold text-white/60">Revenue</p>
+                <p className="font-display text-lg font-extrabold leading-tight text-white">
+                  +18.4% <span className="text-xs font-semibold text-emerald-400">vs last month</span>
+                </p>
+              </div>
+            </div>
+          </HeroChip>
         </div>
       </div>
 
-      <div className="hero-in absolute inset-x-0 bottom-8 z-10 flex justify-center px-4" style={{ animationDelay: '1.8s' }}>
-        <div className="flex gap-1 rounded-full border border-white/10 bg-black/35 p-1.5 backdrop-blur-md">
+      <div className="hero-in absolute inset-x-0 bottom-7 z-10 flex justify-center px-4" style={{ animationDelay: '1.8s' }}>
+        <div className="flex gap-1 rounded-full border border-white/10 bg-black/40 p-1.5 backdrop-blur-md">
           {HERO_SCENES.map((s, i) => (
             <button
               key={s.src}
@@ -341,7 +430,7 @@ function Hero() {
       <button
         type="button"
         onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-        className="hero-in absolute bottom-10 right-8 z-10 hidden flex-col items-center gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-white/50 transition hover:text-white lg:flex"
+        className="hero-in absolute bottom-9 right-8 z-10 hidden flex-col items-center gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-white/50 transition hover:text-white lg:flex"
         style={{ animationDelay: '2s' }}
         aria-label="Scroll to features"
       >
@@ -350,6 +439,8 @@ function Hero() {
         </span>
         Scroll
       </button>
+
+      <DemoModal open={demo} onClose={closeDemo} />
     </section>
   )
 }
@@ -894,13 +985,13 @@ function Footer() {
         </div>
         <div className="grid gap-6 border-t border-white/10 py-8 md:grid-cols-3">
           <div className="flex items-center gap-2.5 text-xs text-white/60">
-            <MapPin size={15} className="shrink-0 text-brand-400" /> 6 E Esplanade, St Albans VIC 3021
+            <MapPin size={15} className="shrink-0 text-brand-400" /> Aptech Metro Star Gate, Karachi, Pakistan
           </div>
           <div className="flex items-center gap-2.5 text-xs text-white/60">
-            <Phone size={15} className="shrink-0 text-brand-400" /> +91 80005 89080
+            <Phone size={15} className="shrink-0 text-brand-400" /> +92 308 2496005
           </div>
           <div className="flex items-center gap-2.5 text-xs text-white/60">
-            <Mail size={15} className="shrink-0 text-brand-400" /> support@dineiq.io
+            <Mail size={15} className="shrink-0 text-brand-400" /> shahsawar.codes@gmail.com
           </div>
         </div>
         <div className="flex flex-col items-center justify-between gap-3 border-t border-white/10 py-6 text-[0.7rem] text-white/40 sm:flex-row">

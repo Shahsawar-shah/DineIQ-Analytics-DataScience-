@@ -3,8 +3,8 @@
   "platform": "scikit-learn",
   "algorithm": "StandardScaler + KMeans (k-means++, n_init=10)",
   "k": 5,
-  "model_version": "python-kmeans-20260928-112821",
-  "trained_at": "2026-09-28T11:28:21",
+  "model_version": "python-kmeans-20260928-172437",
+  "trained_at": "2026-09-28T17:24:37",
   "features": [
     "log_recency",
     "log_frequency",
@@ -15,7 +15,7 @@
   "train_size": 45980,
   "test_size": 19747,
   "test_silhouette": 0.2996,
-  "prediction_latency_ms": 15.2,
+  "prediction_latency_ms": 15.9,
   "segment_sizes": {
     "At-Risk": 19245,
     "High-Value Loyal": 15911,

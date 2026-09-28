@@ -192,5 +192,36 @@
       "best_model": "Logistic Regression",
       "best_macro_f1": 0.7708
     }
+  },
+  {
+    "job_id": "0c05d4895cd5",
+    "job_name": "spark_ml_models",
+    "status": "success",
+    "started_at": "2026-09-28T17:22:47",
+    "finished_at": "2026-09-28T17:23:29",
+    "duration_seconds": 41.83,
+    "records_processed": 150,
+    "records_output": 150,
+    "spark_version": "4.2.0",
+    "error": null,
+    "metrics": {
+      "best_model": "Logistic Regression",
+      "best_macro_f1": 0.7708
+    }
+  },
+  {
+    "job_id": "129ead005fb1",
+    "job_name": "spark_customer_segmentation",
+    "status": "success",
+    "started_at": "2026-09-28T17:23:45",
+    "finished_at": "2026-09-28T17:24:13",
+    "duration_seconds": 28.06,
+    "records_processed": 65727,
+    "records_output": 65727,
+    "spark_version": "4.2.0",
+    "error": null,
+    "metrics": {
+      "test_silhouette": 0.454
+    }
   }
 ]

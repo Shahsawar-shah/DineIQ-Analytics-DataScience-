@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-09-28T15:00:50",
+  "generated_at": "2026-09-28T17:24:39",
   "menu_classification": {
     "task": "Menu performance classification",
-    "spark_model": "Logistic Regression (spark-menu-20260928-150042)",
-    "python_model": "Decision Tree (python-menu-20260928-150049)",
+    "spark_model": "Logistic Regression (spark-menu-20260928-172323)",
+    "python_model": "Decision Tree (python-menu-20260928-172420)",
     "total_records": 150,
     "agreement_count": 132,
     "disagreement_count": 18,
@@ -16,8 +16,8 @@
   },
   "customer_segmentation": {
     "task": "Customer segmentation (K-Means, k=5)",
-    "spark_model": "spark-kmeans-20260928-112748",
-    "python_model": "python-kmeans-20260928-112821",
+    "spark_model": "spark-kmeans-20260928-172406",
+    "python_model": "python-kmeans-20260928-172437",
     "test_records": 19747,
     "agreement_count": 19699,
     "disagreement_count": 48,

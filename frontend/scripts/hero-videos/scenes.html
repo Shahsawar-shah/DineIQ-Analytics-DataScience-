@@ -1,0 +1,523 @@
+<!doctype html>
+<!--
+  DineIQ hero background scenes.
+  Rendered frame-by-frame by render.mjs (deterministic: window.renderFrame(t) draws time t in seconds).
+  Open with ?scene=sales|menu|forecast|guests&t=3 to preview a single frame in a browser.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #08080d; color: #fff;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+  #bg { position: absolute; inset: 0; overflow: hidden; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(110px); }
+  #floor { position: absolute; left: -60%; width: 220%; height: 1000px; bottom: -420px;
+    transform: perspective(900px) rotateX(74deg);
+    background-image: linear-gradient(rgba(249,93,11,.28) 1.5px, transparent 1.5px),
+                      linear-gradient(90deg, rgba(249,93,11,.28) 1.5px, transparent 1.5px);
+    background-size: 90px 90px;
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,.95), transparent 80%); }
+  .particle { position: absolute; border-radius: 50%; background: #ffc9a3; }
+
+  #stage { position: absolute; inset: 0; perspective: 2100px; perspective-origin: 50% 42%; }
+  #board { position: absolute; left: 110px; top: 70px; width: 1700px; height: 940px; transform-style: preserve-3d; }
+
+  .card { position: absolute; border-radius: 24px; padding: 26px 30px; overflow: hidden;
+    background: linear-gradient(160deg, rgba(42,42,60,.96), rgba(20,20,30,.96));
+    border: 1px solid rgba(255,255,255,.10);
+    box-shadow: 0 60px 100px -30px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.08); }
+  .card::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(105deg, transparent calc(var(--sx) - 14%), rgba(255,255,255,.07) var(--sx), transparent calc(var(--sx) + 14%)); }
+  .card.hot { border-color: rgba(249,93,11,.45); box-shadow: 0 60px 110px -30px rgba(249,93,11,.35), inset 0 1px 0 rgba(255,255,255,.08); }
+
+  .t { font-size: 16px; font-weight: 600; color: rgba(255,255,255,.55); letter-spacing: .01em; display: flex; align-items: center; justify-content: space-between; }
+  .big { font-size: 46px; font-weight: 800; letter-spacing: -.02em; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .delta { display: inline-flex; gap: 6px; font-size: 14px; font-weight: 700; padding: 5px 11px; border-radius: 99px;
+    background: rgba(16,185,129,.16); color: #34d399; margin-top: 10px; }
+  .delta.red { background: rgba(244,63,94,.16); color: #fb7185; }
+  .delta.amber { background: rgba(245,158,11,.16); color: #fbbf24; }
+  .legend { display: flex; gap: 20px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,.6); }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 4px; margin-right: 8px; vertical-align: -1px; }
+  .badge { font-size: 13px; font-weight: 700; padding: 4px 11px; border-radius: 99px; }
+  .b-high { background: rgba(16,185,129,.16); color: #34d399; }
+  .b-med { background: rgba(245,158,11,.16); color: #fbbf24; }
+  .b-low { background: rgba(244,63,94,.16); color: #fb7185; }
+  .row { display: flex; align-items: center; gap: 14px; }
+  .meter { height: 9px; border-radius: 99px; background: rgba(255,255,255,.07); overflow: hidden; }
+  .meter > span { display: block; height: 100%; border-radius: 99px; }
+  svg text { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+
+  #vig { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 75% 70% at 50% 45%, transparent 40%, rgba(0,0,0,.7) 100%); }
+</style>
+</head>
+<body>
+<div id="bg">
+  <div class="blob" id="b1" style="width:900px;height:900px;background:#f95d0b;"></div>
+  <div class="blob" id="b2" style="width:700px;height:700px;background:#7c2d12;"></div>
+  <div class="blob" id="b3" style="width:600px;height:600px;background:#1e3a8a;"></div>
+  <div id="floor"></div>
+</div>
+<div id="stage"><div id="board"></div></div>
+<div id="vig"></div>
+
+<script>
+/* ---------------- helpers ---------------- */
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+const seg = (t, a, b) => clamp((t - a) / (b - a))
+const eOut = (x) => 1 - Math.pow(1 - x, 3)
+const eInOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2)
+const eBack = (x) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2) }
+const lerp = (a, b, x) => a + (b - a) * x
+function rng(seed) { return () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 } }
+const fmt = (n, d = 0) => n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })
+const $ = (id) => document.getElementById(id)
+const NS = 'http://www.w3.org/2000/svg'
+
+function smooth(pts) {
+  let d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6]
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6]
+    d += ` C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`
+  }
+  return d
+}
+function arc(cx, cy, r, a0, a1) {
+  const p = (a) => [cx + r * Math.cos(a), cy + r * Math.sin(a)]
+  const [x0, y0] = p(a0), [x1, y1] = p(a1)
+  return `M${x0},${y0} A${r},${r} 0 ${a1 - a0 > Math.PI ? 1 : 0} 1 ${x1},${y1}`
+}
+/* line-draw helper: sets dash so that fraction p of the path is visible */
+function draw(path, p) {
+  const L = path.__len || (path.__len = path.getTotalLength())
+  path.style.strokeDasharray = `${L} ${L}`
+  path.style.strokeDashoffset = L * (1 - p)
+  return L
+}
+function sparkPts(seed, n, w, h, up = true) {
+  const r = rng(seed); const pts = []
+  for (let i = 0; i < n; i++) {
+    const trend = up ? i / (n - 1) : 1 - i / (n - 1)
+    pts.push([(i / (n - 1)) * w, h - (0.15 + trend * 0.6 + r() * 0.22) * h])
+  }
+  return pts
+}
+
+/* ---------------- scene definitions ---------------- */
+/* Each card: {id, x, y, w, h, z, d (entry delay), html, hot}. update(t) animates contents. */
+
+const KPI = (id, label, delta, cls = '') => `
+  <div class="t">${label}</div>
+  <div class="big" id="${id}-v">0</div>
+  <div class="delta ${cls}">${delta}</div>
+  <svg width="120" height="46" style="position:absolute;right:28px;top:26px;overflow:visible">
+    <path id="${id}-s" fill="none" stroke="${cls === 'red' ? '#fb7185' : '#f95d0b'}" stroke-width="3.5" stroke-linecap="round"/>
+  </svg>`
+
+function kpiRow(defs) {
+  return defs.map((k, i) => ({ id: k.id, x: i * 433, y: 0, w: 400, h: 160, z: 60, d: 0.05 + i * 0.12, html: KPI(k.id, k.label, k.delta, k.cls) }))
+}
+function kpiUpdate(t, defs) {
+  defs.forEach((k, i) => {
+    const p = eOut(seg(t, 0.3 + i * 0.12, 2.3 + i * 0.12))
+    $(`${k.id}-v`).textContent = k.render(k.value * p)
+    const s = $(`${k.id}-s`)
+    if (!s.__init) { s.setAttribute('d', smooth(sparkPts(i * 7 + 3, 9, 120, 46, !k.down))); s.__init = 1 }
+    draw(s, eInOut(seg(t, 0.5 + i * 0.12, 2.2 + i * 0.12)))
+  })
+}
+
+const SCENES = {}
+
+/* ---------- 1. Sales analytics ---------- */
+SCENES.sales = (() => {
+  const kpis = [
+    { id: 'k1', label: 'Total revenue', value: 1248390, delta: '▲ 18.4% vs last month', render: (v) => '$' + fmt(v) },
+    { id: 'k2', label: 'Orders', value: 38214, delta: '▲ 9.2%', render: (v) => fmt(v) },
+    { id: 'k3', label: 'Avg. ticket', value: 32.6, delta: '▲ 4.1%', render: (v) => '$' + fmt(v, 2) },
+    { id: 'k4', label: 'Food cost', value: 28.4, delta: '▼ 2.3 pts', render: (v) => fmt(v, 1) + '%', down: true },
+  ]
+  const W = 1040, H = 560
+  const r = rng(11)
+  const rev = [], tgt = []
+  for (let i = 0; i < 12; i++) {
+    rev.push([40 + (i / 11) * (W - 60), H - 40 - (0.18 + i * 0.058 + (r() - 0.5) * 0.12) * (H - 90)])
+    tgt.push([40 + (i / 11) * (W - 60), H - 40 - (0.22 + i * 0.05) * (H - 90)])
+  }
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+  const bars = [22,30,48,72,95,80,58,50,66,88,100,84,60,38]
+  const ch = [['Dine-in',46,'#f95d0b'],['Delivery',28,'#fb923c'],['Takeaway',16,'#fbbf24'],['App orders',10,'#60a5fa']]
+  return {
+    cards: [
+      ...kpiRow(kpis),
+      { id: 'rev', x: 0, y: 195, w: 1100, h: 745, z: 20, d: 0.2, hot: true, html: `
+        <div class="t"><span style="color:#fff;font-size:20px;font-weight:700">Revenue vs target · 2026</span>
+          <span class="legend"><span><i style="background:#f95d0b"></i>Revenue</span><span><i style="background:#60a5fa"></i>Target</span></span></div>
+        <svg width="${W}" height="${H + 40}" style="margin-top:34px;overflow:visible">
+          <defs>
+            <linearGradient id="gRev" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f95d0b" stop-opacity=".55"/><stop offset="1" stop-color="#f95d0b" stop-opacity="0"/></linearGradient>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <clipPath id="revClip"><rect id="revClipR" x="0" y="0" width="0" height="${H + 40}"/></clipPath>
+          </defs>
+          ${[0,1,2,3,4].map((i) => `<line x1="40" x2="${W - 20}" y1="${40 + i * ((H - 80) / 4)}" y2="${40 + i * ((H - 80) / 4)}" stroke="rgba(255,255,255,.07)" stroke-dasharray="4 6"/>`).join('')}
+          ${months.map((m, i) => `<text x="${40 + (i / 11) * (W - 60)}" y="${H + 14}" fill="rgba(255,255,255,.45)" font-size="15" text-anchor="middle">${m}</text>`).join('')}
+          <path id="revArea" d="${smooth(rev)} L${rev[11][0]},${H - 20} L${rev[0][0]},${H - 20} Z" fill="url(#gRev)" clip-path="url(#revClip)"/>
+          <path id="tgtLine" d="${smooth(tgt)}" fill="none" stroke="#60a5fa" stroke-width="3" stroke-dasharray="10 9" opacity=".85"/>
+          <path id="revLine" d="${smooth(rev)}" fill="none" stroke="#f95d0b" stroke-width="5" stroke-linecap="round" filter="url(#glow)"/>
+          <circle id="tipHalo" r="22" fill="#f95d0b" opacity=".25"/>
+          <circle id="tip" r="9" fill="#fff" stroke="#f95d0b" stroke-width="5"/>
+          <g id="tipTag"><rect x="-70" y="-78" width="140" height="48" rx="12" fill="#fff"/><text id="tipTxt" x="0" y="-47" text-anchor="middle" fill="#121220" font-size="19" font-weight="800">$0</text></g>
+        </svg>` },
+      { id: 'hour', x: 1135, y: 195, w: 565, h: 360, z: 90, d: 0.35, html: `
+        <div class="t"><span style="color:#fff;font-size:19px;font-weight:700">Sales by hour</span><span>Today</span></div>
+        <svg width="505" height="250" style="margin-top:22px">
+          ${bars.map((b, i) => `<rect id="hb${i}" x="${i * 36 + 4}" width="24" rx="7" fill="${b === 100 ? '#f95d0b' : 'rgba(249,93,11,.38)'}"/>`).join('')}
+          ${['11a','1p','3p','5p','7p','9p','11p'].map((l, i) => `<text x="${i * 72 + 16}" y="246" fill="rgba(255,255,255,.4)" font-size="13" text-anchor="middle">${l}</text>`).join('')}
+        </svg>` },
+      { id: 'chan', x: 1135, y: 585, w: 565, h: 355, z: 50, d: 0.5, html: `
+        <div class="t"><span style="color:#fff;font-size:19px;font-weight:700">Ordering channels</span></div>
+        <div class="row" style="margin-top:20px;gap:30px">
+          <svg width="230" height="230" viewBox="0 0 230 230">
+            <circle cx="115" cy="115" r="88" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="30"/>
+            ${ch.map((c, i) => `<path id="cs${i}" fill="none" stroke="${c[2]}" stroke-width="30"/>`).join('')}
+            <text x="115" y="112" text-anchor="middle" fill="#fff" font-size="32" font-weight="800">38.2k</text>
+            <text x="115" y="138" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="14">orders</text>
+          </svg>
+          <div style="flex:1;display:flex;flex-direction:column;gap:16px">
+            ${ch.map((c) => `<div class="row" style="justify-content:space-between;font-size:16px"><span style="color:rgba(255,255,255,.7)"><i style="display:inline-block;width:12px;height:12px;border-radius:4px;background:${c[2]};margin-right:10px"></i>${c[0]}</span><b>${c[1]}%</b></div>`).join('')}
+          </div>
+        </div>` },
+    ],
+    update(t) {
+      kpiUpdate(t, kpis)
+      const p = eInOut(seg(t, 0.5, 3.4))
+      const line = $('revLine'), L = draw(line, p)
+      draw($('tgtLine'), eInOut(seg(t, 0.8, 3.6)))
+      const pt = line.getPointAtLength(L * p)
+      $('revClipR').setAttribute('width', pt.x)
+      const pulse = 1 + 0.35 * Math.sin(t * 5)
+      $('tip').setAttribute('cx', pt.x); $('tip').setAttribute('cy', pt.y)
+      $('tipHalo').setAttribute('cx', pt.x); $('tipHalo').setAttribute('cy', pt.y); $('tipHalo').setAttribute('r', 22 * pulse)
+      $('tipTag').setAttribute('transform', `translate(${Math.min(pt.x, W - 90)},${pt.y})`)
+      $('tipTag').style.opacity = seg(t, 0.7, 1.1)
+      $('tipTxt').textContent = '$' + fmt(Math.round(62 + (1 - pt.y / H) * 90)) + '.4k'
+      bars.forEach((b, i) => {
+        const q = eBack(seg(t, 0.8 + i * 0.07, 1.6 + i * 0.07))
+        const h = Math.max(0, b * 1.9 * q)
+        const el = $('hb' + i); el.setAttribute('height', h); el.setAttribute('y', 205 - h)
+      })
+      let a = -Math.PI / 2
+      const sweep = eInOut(seg(t, 1.0, 2.8))
+      ch.forEach((c, i) => {
+        const span = (c[1] / 100) * Math.PI * 2 * sweep
+        $('cs' + i).setAttribute('d', span > 0.03 ? arc(115, 115, 88, a + 0.02, a + span - 0.02) : '')
+        a += span
+      })
+    },
+  }
+})()
+
+/* ---------- 2. Menu intelligence ---------- */
+SCENES.menu = (() => {
+  const kpis = [
+    { id: 'm1', label: 'High performers', value: 18, delta: '▲ 3 this month', render: (v) => fmt(Math.round(v)) },
+    { id: 'm2', label: 'Medium performers', value: 24, delta: '● watch pricing', cls: 'amber', render: (v) => fmt(Math.round(v)) },
+    { id: 'm3', label: 'Low performers', value: 9, delta: '▼ rework or remove', cls: 'red', render: (v) => fmt(Math.round(v)), down: true },
+    { id: 'm4', label: 'Avg. menu margin', value: 64.2, delta: '▲ 2.8 pts', render: (v) => fmt(v, 1) + '%' },
+  ]
+  const items = [
+    ['Classic Cheeseburger', 2310, 64, 'High'], ['Cold Brew Coffee', 2870, 77, 'High'], ['Truffle Mushroom Risotto', 1240, 61, 'High'],
+    ['Molten Chocolate Lava', 1310, 72, 'High'], ['Loaded Nachos', 1490, 65, 'Medium'], ['Margherita Flatbread', 1120, 66, 'Medium'],
+    ['Crispy Calamari', 860, 60, 'Medium'], ['Garden Caesar Salad', 640, 68, 'Low'],
+  ]
+  const col = { High: '#10b981', Medium: '#f59e0b', Low: '#f43f5e' }
+  const r = rng(29)
+  const W = 920, H = 610
+  const bubbles = []
+  for (let i = 0; i < 30; i++) {
+    const x = 50 + r() * (W - 100), y = 30 + r() * (H - 90)
+    const cls = x > W / 2 && y < H / 2 ? 'High' : x < W / 2 && y > H / 2 ? 'Low' : 'Medium'
+    bubbles.push({ x, y, rad: 10 + r() * 24, cls })
+  }
+  bubbles.push({ x: W * 0.8, y: H * 0.2, rad: 36, cls: 'High', star: 1 })
+  return {
+    cards: [
+      ...kpiRow(kpis),
+      { id: 'mx', x: 0, y: 195, w: 1000, h: 745, z: 30, d: 0.2, hot: true, html: `
+        <div class="t"><span style="color:#fff;font-size:20px;font-weight:700">Menu matrix · popularity vs margin</span>
+          <span class="legend"><span><i style="background:#10b981"></i>High</span><span><i style="background:#f59e0b"></i>Medium</span><span><i style="background:#f43f5e"></i>Low</span></span></div>
+        <svg width="${W}" height="${H + 20}" style="margin-top:30px;overflow:visible">
+          <rect x="${W / 2}" y="0" width="${W / 2}" height="${H / 2 - 10}" rx="16" fill="rgba(16,185,129,.06)"/>
+          <line x1="${W / 2}" x2="${W / 2}" y1="0" y2="${H - 40}" stroke="rgba(255,255,255,.14)" stroke-dasharray="6 8" stroke-width="2"/>
+          <line x1="0" x2="${W}" y1="${H / 2 - 10}" y2="${H / 2 - 10}" stroke="rgba(255,255,255,.14)" stroke-dasharray="6 8" stroke-width="2"/>
+          <text x="${W - 16}" y="30" text-anchor="end" fill="rgba(52,211,153,.8)" font-size="16" font-weight="800" letter-spacing="2">STARS</text>
+          <text x="16" y="30" fill="rgba(255,255,255,.35)" font-size="16" font-weight="800" letter-spacing="2">PUZZLES</text>
+          <text x="${W - 16}" y="${H - 54}" text-anchor="end" fill="rgba(255,255,255,.35)" font-size="16" font-weight="800" letter-spacing="2">PLOWHORSES</text>
+          <text x="16" y="${H - 54}" fill="rgba(251,113,133,.7)" font-size="16" font-weight="800" letter-spacing="2">DOGS</text>
+          <text x="${W / 2}" y="${H + 8}" text-anchor="middle" fill="rgba(255,255,255,.45)" font-size="15">Popularity →</text>
+          ${bubbles.map((b, i) => `<circle id="bb${i}" cx="${b.x}" cy="${b.y}" fill="${col[b.cls]}" fill-opacity=".75" stroke="${col[b.cls]}" stroke-width="2"/>`).join('')}
+          <circle id="ring" cx="${W * 0.8}" cy="${H * 0.2}" fill="none" stroke="#34d399" stroke-width="3"/>
+          <g id="starTag" transform="translate(${W * 0.8 - 250},${H * 0.2 + 50})"><rect width="230" height="62" rx="14" fill="#fff"/>
+            <text x="18" y="27" fill="#121220" font-size="16" font-weight="800">Classic Cheeseburger</text>
+            <text x="18" y="48" fill="#0d9459" font-size="14" font-weight="700">2,310 sold · 64% margin</text></g>
+        </svg>` },
+      { id: 'list', x: 1035, y: 195, w: 665, h: 745, z: 80, d: 0.4, html: `
+        <div class="t"><span style="color:#fff;font-size:20px;font-weight:700">Menu performance</span><span>Last 30 days</span></div>
+        <div style="margin-top:28px;display:flex;flex-direction:column;gap:22px">
+          ${items.map((it, i) => `<div id="li${i}">
+            <div class="row" style="justify-content:space-between;margin-bottom:9px">
+              <span style="font-size:17px;font-weight:600">${it[0]}</span>
+              <span class="badge b-${it[3] === 'High' ? 'high' : it[3] === 'Medium' ? 'med' : 'low'}">${it[3]}</span></div>
+            <div class="row"><div class="meter" style="flex:1"><span id="lm${i}" style="background:${col[it[3]]}"></span></div>
+              <span style="font-size:14px;color:rgba(255,255,255,.5);width:130px;text-align:right">${fmt(it[1])} · ${it[2]}%</span></div>
+          </div>`).join('')}
+        </div>` },
+    ],
+    update(t) {
+      kpiUpdate(t, kpis)
+      bubbles.forEach((b, i) => {
+        const q = eBack(seg(t, 0.5 + (b.star ? 2.0 : i * 0.06), 1.1 + (b.star ? 2.0 : i * 0.06)))
+        const bob = Math.sin(t * 1.4 + i) * 3
+        const el = $('bb' + i); el.setAttribute('r', Math.max(0, b.rad * q)); el.setAttribute('cy', b.y + bob)
+      })
+      const rp = ((t - 2.4) % 1.6 + 1.6) % 1.6 / 1.6
+      $('ring').setAttribute('r', t > 2.4 ? 38 + rp * 40 : 0); $('ring').setAttribute('opacity', 1 - rp)
+      const tg = eOut(seg(t, 2.6, 3.2)); $('starTag').style.opacity = tg
+      items.forEach((it, i) => {
+        const q = eOut(seg(t, 0.8 + i * 0.13, 2.2 + i * 0.13))
+        $('lm' + i).style.width = (it[1] / 2870) * 100 * q + '%'
+        $('li' + i).style.opacity = 0.25 + 0.75 * eOut(seg(t, 0.5 + i * 0.1, 1.1 + i * 0.1))
+      })
+    },
+  }
+})()
+
+/* ---------- 3. Forecasting ---------- */
+SCENES.forecast = (() => {
+  const W = 1640, H = 380, N = 60, TODAY = 38
+  const r = rng(47)
+  const act = [], fc = [], up = [], lo = []
+  let v = 0.35
+  for (let i = 0; i < N; i++) {
+    v += (r() - 0.45) * 0.07 + Math.sin(i / 3.2) * 0.02
+    v = clamp(v, 0.15, 0.85)
+    const x = 10 + (i / (N - 1)) * (W - 20)
+    const y = (vv) => 20 + (1 - vv) * (H - 40)
+    if (i <= TODAY) act.push([x, y(v + (i === 27 ? 0.22 : 0))])
+    if (i >= TODAY) {
+      const f = v + 0.0
+      const w = 0.03 + (i - TODAY) * 0.0065
+      fc.push([x, y(f)]); up.push([x, y(f + w)]); lo.push([x, y(f - w)])
+    }
+  }
+  const band = smooth(up) + ' L' + [...lo].reverse().map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' L') + ' Z'
+  const days = [42, 44, 47, 43, 52, 61, 58]
+  return {
+    cards: [
+      { id: 'fc', x: 0, y: 0, w: 1700, h: 560, z: 30, d: 0.05, hot: true, html: `
+        <div class="t"><span style="color:#fff;font-size:21px;font-weight:700">Revenue forecast · next 21 days</span>
+          <span class="legend"><span><i style="background:#f95d0b"></i>Actual</span><span><i style="background:#fbbf24"></i>Forecast</span><span><i style="background:rgba(251,191,36,.3)"></i>80% range</span></span></div>
+        <svg width="${W}" height="${H + 40}" style="margin-top:38px;overflow:visible">
+          <defs>
+            <linearGradient id="gAct" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f95d0b" stop-opacity=".4"/><stop offset="1" stop-color="#f95d0b" stop-opacity="0"/></linearGradient>
+            <filter id="glow2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <clipPath id="actClip"><rect id="actClipR" width="0" height="${H + 40}"/></clipPath>
+            <clipPath id="fcClip"><rect id="fcClipR" x="${fc[0][0]}" width="0" height="${H + 40}"/></clipPath>
+          </defs>
+          ${[0,1,2,3].map((i) => `<line x1="0" x2="${W}" y1="${20 + i * ((H - 40) / 3)}" y2="${20 + i * ((H - 40) / 3)}" stroke="rgba(255,255,255,.07)" stroke-dasharray="4 6"/>`).join('')}
+          <path d="${smooth(act)} L${act[act.length - 1][0]},${H} L${act[0][0]},${H} Z" fill="url(#gAct)" clip-path="url(#actClip)"/>
+          <path d="${band}" fill="rgba(251,191,36,.18)" clip-path="url(#fcClip)"/>
+          <path id="actLine" d="${smooth(act)}" fill="none" stroke="#f95d0b" stroke-width="4.5" stroke-linecap="round" filter="url(#glow2)"/>
+          <path id="fcLine" d="${smooth(fc)}" fill="none" stroke="#fbbf24" stroke-width="4" stroke-linecap="round" clip-path="url(#fcClip)" stroke-dasharray="12 10"/>
+          <g id="today" transform="translate(${fc[0][0]},0)"><line y1="0" y2="${H}" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-dasharray="3 6"/>
+            <rect x="-40" y="${H + 6}" width="80" height="30" rx="15" fill="#fff"/><text y="${H + 27}" text-anchor="middle" fill="#121220" font-size="14" font-weight="800">Today</text></g>
+          <g id="anom" transform="translate(${act[27][0]},${act[27][1]})">
+            <circle id="anR" fill="none" stroke="#f43f5e" stroke-width="3"/><circle r="9" fill="#f43f5e"/>
+            <g transform="translate(-20,-78)"><rect width="190" height="48" rx="12" fill="#f43f5e"/><text x="16" y="31" fill="#fff" font-size="16" font-weight="800">Anomaly · +31%</text></g></g>
+        </svg>` },
+      { id: 'acc', x: 0, y: 595, w: 540, h: 345, z: 90, d: 0.3, html: `
+        <div class="t"><span style="color:#fff;font-size:19px;font-weight:700">Forecast accuracy</span><span>MAPE 5.8%</span></div>
+        <svg width="480" height="250" viewBox="0 0 480 250" style="margin-top:10px">
+          <path d="${arc(240, 215, 170, Math.PI, Math.PI * 2)}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="28" stroke-linecap="round"/>
+          <path id="gauge" d="${arc(240, 215, 170, Math.PI, Math.PI * 2)}" fill="none" stroke="#f95d0b" stroke-width="28" stroke-linecap="round" filter="url(#glow2)"/>
+          <text id="accV" x="240" y="200" text-anchor="middle" fill="#fff" font-size="64" font-weight="800">0%</text>
+        </svg>` },
+      { id: 'n7', x: 575, y: 595, w: 540, h: 345, z: 60, d: 0.45, html: `
+        <div class="t"><span style="color:#fff;font-size:19px;font-weight:700">Next 7 days</span><span class="delta" style="margin:0">▲ 12.6%</span></div>
+        <div class="big" id="n7v">$0</div>
+        <svg width="480" height="150" style="margin-top:12px">
+          ${days.map((d, i) => `<g><line id="nw${i}" x1="${i * 68 + 30}" x2="${i * 68 + 30}" stroke="rgba(251,191,36,.6)" stroke-width="2"/><rect id="nb${i}" x="${i * 68 + 14}" width="32" rx="8" fill="${i === 5 ? '#f95d0b' : 'rgba(249,93,11,.45)'}"/></g>`).join('')}
+        </svg>` },
+      { id: 'al', x: 1150, y: 595, w: 550, h: 345, z: 110, d: 0.6, html: `
+        <div class="t"><span style="color:#fff;font-size:19px;font-weight:700">Live alerts</span><span style="color:#34d399">● Live</span></div>
+        <div style="margin-top:22px;display:flex;flex-direction:column;gap:14px">
+          ${[['#f43f5e','Wastage spike','Downtown Flagship · +31%'],['#f59e0b','Low stock','Mozzarella · 2 days left'],['#10b981','Promo lift','Happy Hour · +12% orders']].map((a, i) => `
+            <div id="ar${i}" class="row" style="background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px 16px">
+              <span style="width:12px;height:12px;border-radius:50%;background:${a[0]};box-shadow:0 0 0 6px ${a[0]}33"></span>
+              <div><div style="font-size:16px;font-weight:700">${a[1]}</div><div style="font-size:14px;color:rgba(255,255,255,.5)">${a[2]}</div></div></div>`).join('')}
+        </div>` },
+    ],
+    update(t) {
+      const p = eInOut(seg(t, 0.3, 2.4))
+      const L = draw($('actLine'), p)
+      const pt = $('actLine').getPointAtLength(L * p)
+      $('actClipR').setAttribute('width', pt.x)
+      const f = eInOut(seg(t, 2.2, 4.0))
+      $('fcClipR').setAttribute('width', (W - fc[0][0]) * f)
+      $('today').style.opacity = eOut(seg(t, 2.0, 2.5))
+      const an = seg(t, 1.7, 2.0); $('anom').style.opacity = an
+      const rp = ((t % 1.3) / 1.3); $('anR').setAttribute('r', 10 + rp * 30); $('anR').setAttribute('opacity', 1 - rp)
+      const g = eOut(seg(t, 0.8, 2.8)); draw($('gauge'), 0.942 * g)
+      $('accV').textContent = fmt(94.2 * g, 1) + '%'
+      $('n7v').textContent = '$' + fmt(312480 * eOut(seg(t, 0.9, 2.8)))
+      days.forEach((d, i) => {
+        const q = eBack(seg(t, 1.1 + i * 0.1, 1.8 + i * 0.1)), h = Math.max(0, d * 1.9 * q)
+        $('nb' + i).setAttribute('y', 140 - h); $('nb' + i).setAttribute('height', h)
+        $('nw' + i).setAttribute('y1', 140 - h - 14 * q); $('nw' + i).setAttribute('y2', 140 - h + 10 * q)
+      })
+      ;[0, 1, 2].forEach((i) => {
+        const q = eOut(seg(t, 1.2 + i * 0.35, 1.8 + i * 0.35))
+        $('ar' + i).style.opacity = q; $('ar' + i).style.transform = `translateX(${(1 - q) * 60}px)`
+      })
+    },
+  }
+})()
+
+/* ---------- 4. Guests, locations & stock ---------- */
+SCENES.guests = (() => {
+  const kpis = [
+    { id: 'g1', label: 'Active guests', value: 12840, delta: '▲ 6.3%', render: (v) => fmt(v) },
+    { id: 'g2', label: 'Repeat rate', value: 68, delta: '▲ 4 pts', render: (v) => fmt(v) + '%' },
+    { id: 'g3', label: 'Avg. lifetime value', value: 486, delta: '▲ $38', render: (v) => '$' + fmt(v) },
+    { id: 'g4', label: 'Food wastage', value: 23, delta: '▼ lower this quarter', render: (v) => '−' + fmt(v) + '%', down: true },
+  ]
+  const segs = [['Champions',22,'#f95d0b'],['Loyal',26,'#fb923c'],['Potential',18,'#fbbf24'],['New',12,'#60a5fa'],['At risk',13,'#f43f5e'],['Hibernating',9,'#6b7280']]
+  const nodes = [['Downtown Flagship',120,140,'$128k'],['Harbor Point',390,110,'$101k'],['Airport T2',430,420,'$119k'],['Riverside Bistro',110,480,'$86k'],['Uptown Grill',270,560,'$62k']]
+  const hub = [260, 300]
+  const stock = [['Mozzarella',14,'#f43f5e','Low'],['Basil',32,'#f59e0b','Reorder'],['Beef patties',78,'#10b981','OK'],['Salmon',64,'#10b981','OK'],['Flour',88,'#10b981','OK'],['Tomatoes',55,'#10b981','OK'],['Coffee beans',41,'#f59e0b','Reorder']]
+  return {
+    cards: [
+      ...kpiRow(kpis),
+      { id: 'rfm', x: 0, y: 195, w: 560, h: 745, z: 70, d: 0.25, html: `
+        <div class="t"><span style="color:#fff;font-size:20px;font-weight:700">Guest segments · RFM</span></div>
+        <svg width="500" height="360" viewBox="0 0 500 360" style="margin-top:20px">
+          <circle cx="250" cy="180" r="140" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="42"/>
+          ${segs.map((s, i) => `<path id="rs${i}" fill="none" stroke="${s[2]}" stroke-width="42"/>`).join('')}
+          <text id="rfmV" x="250" y="178" text-anchor="middle" fill="#fff" font-size="50" font-weight="800">0</text>
+          <text x="250" y="210" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="17">guests profiled</text>
+        </svg>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 24px;margin-top:22px">
+          ${segs.map((s) => `<div class="row" style="justify-content:space-between;font-size:16px"><span style="color:rgba(255,255,255,.7)"><i style="display:inline-block;width:12px;height:12px;border-radius:4px;background:${s[2]};margin-right:10px"></i>${s[0]}</span><b>${s[1]}%</b></div>`).join('')}
+        </div>` },
+      { id: 'loc', x: 595, y: 195, w: 560, h: 745, z: 20, d: 0.4, hot: true, html: `
+        <div class="t"><span style="color:#fff;font-size:20px;font-weight:700">Locations · live</span><span style="color:#34d399">● 5 connected</span></div>
+        <svg width="500" height="640" style="margin-top:10px;overflow:visible">
+          <defs><radialGradient id="hubG"><stop offset="0" stop-color="#f95d0b" stop-opacity=".6"/><stop offset="1" stop-color="#f95d0b" stop-opacity="0"/></radialGradient></defs>
+          ${nodes.map((n, i) => `<line id="ln${i}" x1="${hub[0]}" y1="${hub[1]}" x2="${n[1]}" y2="${n[2]}" stroke="rgba(249,93,11,.35)" stroke-width="2.5" stroke-dasharray="4 7"/><circle id="pk${i}" r="6" fill="#ffd2b3"/>`).join('')}
+          <circle id="hubHalo" cx="${hub[0]}" cy="${hub[1]}" r="90" fill="url(#hubG)"/>
+          <circle cx="${hub[0]}" cy="${hub[1]}" r="40" fill="#f95d0b"/>
+          <path transform="translate(${hub[0] - 18},${hub[1] - 22}) scale(0.18)" d="M44,190 L44,104 A56,56 0 0 1 156,104 L156,190 Z" fill="#fff"/>
+          ${nodes.map((n, i) => `<g id="nd${i}" transform="translate(${n[1]},${n[2]})"><circle r="15" fill="#1c1c28" stroke="#fb923c" stroke-width="4"/>
+            <text y="-26" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">${n[0]}</text>
+            <text y="40" text-anchor="middle" fill="#fbbf24" font-size="15" font-weight="800">${n[3]}</text></g>`).join('')}
+        </svg>` },
+      { id: 'stk', x: 1190, y: 195, w: 510, h: 745, z: 100, d: 0.55, html: `
+        <div class="t"><span style="color:#fff;font-size:20px;font-weight:700">Stock levels</span><span>Par %</span></div>
+        <div style="margin-top:28px;display:flex;flex-direction:column;gap:24px">
+          ${stock.map((s, i) => `<div><div class="row" style="justify-content:space-between;margin-bottom:9px;font-size:16px">
+            <span style="font-weight:600">${s[0]}</span><span class="badge ${s[3] === 'Low' ? 'b-low' : s[3] === 'OK' ? 'b-high' : 'b-med'}">${s[3]}</span></div>
+            <div class="meter"><span id="st${i}" style="background:${s[2]}"></span></div></div>`).join('')}
+        </div>` },
+    ],
+    update(t) {
+      kpiUpdate(t, kpis)
+      let a = -Math.PI / 2
+      const sweep = eInOut(seg(t, 0.6, 2.6))
+      segs.forEach((s, i) => {
+        const span = (s[1] / 100) * Math.PI * 2 * sweep
+        $('rs' + i).setAttribute('d', span > 0.03 ? arc(250, 180, 140, a + 0.025, a + span - 0.025) : '')
+        a += span
+      })
+      $('rfmV').textContent = fmt(12840 * eOut(seg(t, 0.6, 2.6)))
+      nodes.forEach((n, i) => {
+        const q = eBack(seg(t, 0.7 + i * 0.18, 1.3 + i * 0.18))
+        $('nd' + i).setAttribute('transform', `translate(${n[1]},${n[2]}) scale(${Math.max(0, q)})`)
+        $('ln' + i).style.opacity = seg(t, 0.7 + i * 0.18, 1.2 + i * 0.18)
+        const ph = ((t * 0.55 + i * 0.37) % 1)
+        $('pk' + i).setAttribute('cx', lerp(n[1], hub[0], ph)); $('pk' + i).setAttribute('cy', lerp(n[2], hub[1], ph))
+        $('pk' + i).setAttribute('opacity', t > 1.4 ? Math.sin(ph * Math.PI) : 0)
+      })
+      $('hubHalo').setAttribute('r', 80 + Math.sin(t * 3) * 14)
+      stock.forEach((s, i) => { $('st' + i).style.width = s[1] * eOut(seg(t, 0.9 + i * 0.12, 2.3 + i * 0.12)) + '%' })
+    },
+  }
+})()
+
+/* ---------------- shared stage ---------------- */
+const params = new URLSearchParams(location.search)
+const SCENE = SCENES[params.get('scene') || 'sales']
+const DUR = Number(params.get('dur') || 7)
+const board = $('board')
+const cardEls = SCENE.cards.map((c) => {
+  const el = document.createElement('div')
+  el.className = 'card' + (c.hot ? ' hot' : '')
+  el.id = 'card-' + c.id
+  Object.assign(el.style, { left: c.x + 'px', top: c.y + 'px', width: c.w + 'px', height: c.h + 'px' })
+  el.innerHTML = c.html
+  board.appendChild(el)
+  return [el, c]
+})
+
+const staticText = [...document.querySelectorAll('svg text:not([id])')]
+
+const pr = rng(5)
+const particles = Array.from({ length: 70 }, () => {
+  const el = document.createElement('div'); el.className = 'particle'
+  const s = 2 + pr() * 5
+  Object.assign(el.style, { width: s + 'px', height: s + 'px', filter: s > 5 ? 'blur(2px)' : 'none' })
+  $('bg').appendChild(el)
+  return { el, x: pr() * 1920, y: pr() * 1080, v: 18 + pr() * 40, ph: pr() * 6.28, o: 0.2 + pr() * 0.6 }
+})
+
+window.renderFrame = (t) => {
+  const u = eInOut(clamp(t / DUR))
+  // slow cinematic camera: tilt eases out while dollying in
+  const rx = lerp(20, 9, u), ry = lerp(-17, -6, u), rz = lerp(2.5, 0.5, u)
+  const s = lerp(0.9, 1.02, u)
+  board.style.transform = `translateZ(${lerp(-80, 40, u)}px) rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg) scale(${s})`
+  board.style.setProperty('--sx', `${lerp(-30, 140, (t % 3.5) / 3.5)}%`)
+
+  cardEls.forEach(([el, c]) => {
+    const q = eOut(seg(t, c.d, c.d + 1.0))
+    const float = Math.sin(t * 1.1 + c.x * 0.01) * 6
+    el.style.opacity = q
+    el.style.transform = `translate3d(0, ${(1 - q) * 70 + float}px, ${lerp(-260, c.z, q)}px)`
+  })
+
+  $('b1').style.transform = `translate(${-200 + Math.sin(t * 0.5) * 120}px, ${420 + Math.cos(t * 0.4) * 80}px)`
+  $('b2').style.transform = `translate(${1300 + Math.cos(t * 0.45) * 140}px, ${-180 + Math.sin(t * 0.5) * 90}px)`
+  $('b3').style.transform = `translate(${1250 + Math.sin(t * 0.35) * 100}px, ${620 + Math.cos(t * 0.3) * 70}px)`
+  $('b1').style.opacity = 0.42; $('b2').style.opacity = 0.55; $('b3').style.opacity = 0.28
+  $('floor').style.backgroundPosition = `0 ${(t * 60) % 90}px`
+
+  particles.forEach((p) => {
+    const y = ((p.y - t * p.v) % 1080 + 1080) % 1080
+    p.el.style.transform = `translate(${p.x + Math.sin(t * 0.8 + p.ph) * 20}px, ${y}px)`
+    p.el.style.opacity = p.o * (0.6 + 0.4 * Math.sin(t * 2 + p.ph))
+  })
+
+  SCENE.update(t)
+  // Chrome keeps SVG text laid out for the transform it first saw; re-set it so labels track the moving camera
+  staticText.forEach((n) => { n.textContent = n.textContent })
+}
+
+window.sceneReady = document.fonts.ready.then(() => { window.renderFrame(Number(params.get('t') || 0)); return true })
+</script>
+</body>
+</html>
