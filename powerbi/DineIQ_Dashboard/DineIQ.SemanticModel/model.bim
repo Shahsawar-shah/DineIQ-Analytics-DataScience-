@@ -1,0 +1,1543 @@
+{
+  "compatibilityLevel": 1567,
+  "model": {
+    "culture": "en-US",
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "sourceQueryCulture": "en-US",
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "tables": [
+      {
+        "name": "dim_customer",
+        "columns": [
+          {
+            "name": "customer_id",
+            "dataType": "int64",
+            "sourceColumn": "customer_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "customer_code",
+            "dataType": "string",
+            "sourceColumn": "customer_code",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "age_group",
+            "dataType": "string",
+            "sourceColumn": "age_group",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "gender",
+            "dataType": "string",
+            "sourceColumn": "gender",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "city",
+            "dataType": "string",
+            "sourceColumn": "city",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "registration_date",
+            "dataType": "dateTime",
+            "sourceColumn": "registration_date",
+            "formatString": "Short Date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "preferred_channel",
+            "dataType": "string",
+            "sourceColumn": "preferred_channel",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "customer_segment",
+            "dataType": "string",
+            "sourceColumn": "customer_segment",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_active",
+            "dataType": "boolean",
+            "sourceColumn": "is_active",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "recency_days",
+            "dataType": "double",
+            "sourceColumn": "recency_days",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "frequency",
+            "dataType": "double",
+            "sourceColumn": "frequency",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "monetary_value",
+            "dataType": "double",
+            "sourceColumn": "monetary_value",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "rfm_score",
+            "dataType": "double",
+            "sourceColumn": "rfm_score",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "recency_score",
+            "dataType": "double",
+            "sourceColumn": "recency_score",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "frequency_score",
+            "dataType": "double",
+            "sourceColumn": "frequency_score",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "monetary_score",
+            "dataType": "double",
+            "sourceColumn": "monetary_score",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "favorite_category",
+            "dataType": "double",
+            "sourceColumn": "favorite_category",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "churn_status",
+            "dataType": "string",
+            "sourceColumn": "churn_status",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_customer",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(PG_Server, PG_Database),",
+                "    Data = Source{[Schema=\"bi\",Item=\"dim_customer\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"customer_id\", \"customer_code\", \"age_group\", \"gender\", \"city\", \"registration_date\", \"preferred_channel\", \"customer_segment\", \"is_active\", \"recency_days\", \"frequency\", \"monetary_value\", \"rfm_score\", \"recency_score\", \"frequency_score\", \"monetary_score\", \"favorite_category\", \"churn_status\"})",
+                "in",
+                "    Selected"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_date",
+        "columns": [
+          {
+            "name": "date",
+            "dataType": "dateTime",
+            "sourceColumn": "date",
+            "formatString": "Short Date",
+            "summarizeBy": "none",
+            "isKey": true
+          },
+          {
+            "name": "year",
+            "dataType": "int64",
+            "sourceColumn": "year",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "quarter",
+            "dataType": "int64",
+            "sourceColumn": "quarter",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "quarter_label",
+            "dataType": "string",
+            "sourceColumn": "quarter_label",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "month_no",
+            "dataType": "int64",
+            "sourceColumn": "month_no",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "month_name",
+            "dataType": "string",
+            "sourceColumn": "month_name",
+            "summarizeBy": "none",
+            "sortByColumn": "month_no"
+          },
+          {
+            "name": "year_month",
+            "dataType": "string",
+            "sourceColumn": "year_month",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "weekday_no",
+            "dataType": "int64",
+            "sourceColumn": "weekday_no",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "weekday_name",
+            "dataType": "string",
+            "sourceColumn": "weekday_name",
+            "summarizeBy": "none",
+            "sortByColumn": "weekday_no"
+          },
+          {
+            "name": "is_weekend",
+            "dataType": "boolean",
+            "sourceColumn": "is_weekend",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "week_no",
+            "dataType": "int64",
+            "sourceColumn": "week_no",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_date",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(PG_Server, PG_Database),",
+                "    Data = Source{[Schema=\"bi\",Item=\"dim_date\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"date\", \"year\", \"quarter\", \"quarter_label\", \"month_no\", \"month_name\", \"year_month\", \"weekday_no\", \"weekday_name\", \"is_weekend\", \"week_no\"})",
+                "in",
+                "    Selected"
+              ]
+            }
+          }
+        ],
+        "dataCategory": "Time"
+      },
+      {
+        "name": "dim_menu_item",
+        "columns": [
+          {
+            "name": "item_id",
+            "dataType": "int64",
+            "sourceColumn": "item_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "item_name",
+            "dataType": "string",
+            "sourceColumn": "item_name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "category_name",
+            "dataType": "string",
+            "sourceColumn": "category_name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "base_price",
+            "dataType": "double",
+            "sourceColumn": "base_price",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "preparation_cost",
+            "dataType": "double",
+            "sourceColumn": "preparation_cost",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "unit_margin",
+            "dataType": "double",
+            "sourceColumn": "unit_margin",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "preparation_time_minutes",
+            "dataType": "int64",
+            "sourceColumn": "preparation_time_minutes",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "is_available",
+            "dataType": "boolean",
+            "sourceColumn": "is_available",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_seasonal",
+            "dataType": "boolean",
+            "sourceColumn": "is_seasonal",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "launch_date",
+            "dataType": "dateTime",
+            "sourceColumn": "launch_date",
+            "formatString": "Short Date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "contribution_margin",
+            "dataType": "double",
+            "sourceColumn": "contribution_margin",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "profit_percentage",
+            "dataType": "double",
+            "sourceColumn": "profit_percentage",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "avg_rating",
+            "dataType": "double",
+            "sourceColumn": "avg_rating",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "rating_trend",
+            "dataType": "double",
+            "sourceColumn": "rating_trend",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "wastage_percentage",
+            "dataType": "double",
+            "sourceColumn": "wastage_percentage",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "weekend_ratio",
+            "dataType": "double",
+            "sourceColumn": "weekend_ratio",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "promotion_dependency",
+            "dataType": "double",
+            "sourceColumn": "promotion_dependency",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "repeat_purchase_rate",
+            "dataType": "double",
+            "sourceColumn": "repeat_purchase_rate",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "menu_class",
+            "dataType": "string",
+            "sourceColumn": "menu_class",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "predicted_class",
+            "dataType": "string",
+            "sourceColumn": "predicted_class",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "prediction_confidence",
+            "dataType": "double",
+            "sourceColumn": "prediction_confidence",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "model_used",
+            "dataType": "string",
+            "sourceColumn": "model_used",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_menu_item",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(PG_Server, PG_Database),",
+                "    Data = Source{[Schema=\"bi\",Item=\"dim_menu_item\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"item_id\", \"item_name\", \"category_name\", \"base_price\", \"preparation_cost\", \"unit_margin\", \"preparation_time_minutes\", \"is_available\", \"is_seasonal\", \"launch_date\", \"contribution_margin\", \"profit_percentage\", \"avg_rating\", \"rating_trend\", \"wastage_percentage\", \"weekend_ratio\", \"promotion_dependency\", \"repeat_purchase_rate\", \"menu_class\", \"predicted_class\", \"prediction_confidence\", \"model_used\"})",
+                "in",
+                "    Selected"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_promotion",
+        "columns": [
+          {
+            "name": "promotion_id",
+            "dataType": "int64",
+            "sourceColumn": "promotion_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "promo_name",
+            "dataType": "string",
+            "sourceColumn": "promo_name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "promo_type",
+            "dataType": "string",
+            "sourceColumn": "promo_type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "discount_percentage",
+            "dataType": "int64",
+            "sourceColumn": "discount_percentage",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "discount_amount",
+            "dataType": "double",
+            "sourceColumn": "discount_amount",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "start_date",
+            "dataType": "dateTime",
+            "sourceColumn": "start_date",
+            "formatString": "Short Date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "end_date",
+            "dataType": "dateTime",
+            "sourceColumn": "end_date",
+            "formatString": "Short Date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "min_order_value",
+            "dataType": "int64",
+            "sourceColumn": "min_order_value",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "is_active",
+            "dataType": "boolean",
+            "sourceColumn": "is_active",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_promotion_trap",
+            "dataType": "boolean",
+            "sourceColumn": "is_promotion_trap",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_promotion",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(PG_Server, PG_Database),",
+                "    Data = Source{[Schema=\"bi\",Item=\"dim_promotion\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"promotion_id\", \"promo_name\", \"promo_type\", \"discount_percentage\", \"discount_amount\", \"start_date\", \"end_date\", \"min_order_value\", \"is_active\", \"is_promotion_trap\"})",
+                "in",
+                "    Selected"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_restaurant",
+        "columns": [
+          {
+            "name": "restaurant_id",
+            "dataType": "int64",
+            "sourceColumn": "restaurant_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "restaurant_name",
+            "dataType": "string",
+            "sourceColumn": "restaurant_name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "location_city",
+            "dataType": "string",
+            "sourceColumn": "location_city",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "location_area",
+            "dataType": "string",
+            "sourceColumn": "location_area",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "seating_capacity",
+            "dataType": "int64",
+            "sourceColumn": "seating_capacity",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "is_active",
+            "dataType": "boolean",
+            "sourceColumn": "is_active",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "top_channel",
+            "dataType": "string",
+            "sourceColumn": "top_channel",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_restaurant",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(PG_Server, PG_Database),",
+                "    Data = Source{[Schema=\"bi\",Item=\"dim_restaurant\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"restaurant_id\", \"restaurant_name\", \"location_city\", \"location_area\", \"seating_capacity\", \"is_active\", \"top_channel\"})",
+                "in",
+                "    Selected"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_inventory",
+        "columns": [
+          {
+            "name": "inventory_id",
+            "dataType": "int64",
+            "sourceColumn": "inventory_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "item_id",
+            "dataType": "int64",
+            "sourceColumn": "item_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "restaurant_id",
+            "dataType": "int64",
+            "sourceColumn": "restaurant_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "stock_quantity",
+            "dataType": "int64",
+            "sourceColumn": "stock_quantity",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "reorder_level",
+            "dataType": "int64",
+            "sourceColumn": "reorder_level",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "needs_reorder",
+            "dataType": "boolean",
+            "sourceColumn": "needs_reorder",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "last_restocked_date",
+            "dataType": "dateTime",
+            "sourceColumn": "last_restocked_date",
+            "formatString": "Short Date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "unit_cost",
+            "dataType": "double",
+            "sourceColumn": "unit_cost",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "stock_value",
+            "dataType": "double",
+            "sourceColumn": "stock_value",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_inventory",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(PG_Server, PG_Database),",
+                "    Data = Source{[Schema=\"bi\",Item=\"fact_inventory\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"inventory_id\", \"item_id\", \"restaurant_id\", \"stock_quantity\", \"reorder_level\", \"needs_reorder\", \"last_restocked_date\", \"unit_cost\", \"stock_value\"})",
+                "in",
+                "    Selected"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_order_items",
+        "columns": [
+          {
+            "name": "order_item_id",
+            "dataType": "int64",
+            "sourceColumn": "order_item_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_id",
+            "dataType": "int64",
+            "sourceColumn": "order_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_date",
+            "dataType": "dateTime",
+            "sourceColumn": "order_date",
+            "formatString": "Short Date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "customer_id",
+            "dataType": "int64",
+            "sourceColumn": "customer_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "restaurant_id",
+            "dataType": "int64",
+            "sourceColumn": "restaurant_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "promotion_id",
+            "dataType": "int64",
+            "sourceColumn": "promotion_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_channel",
+            "dataType": "string",
+            "sourceColumn": "order_channel",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_cancelled",
+            "dataType": "boolean",
+            "sourceColumn": "is_cancelled",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "item_id",
+            "dataType": "int64",
+            "sourceColumn": "item_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "quantity",
+            "dataType": "int64",
+            "sourceColumn": "quantity",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "unit_price",
+            "dataType": "double",
+            "sourceColumn": "unit_price",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "cost_price",
+            "dataType": "double",
+            "sourceColumn": "cost_price",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "discount_applied",
+            "dataType": "double",
+            "sourceColumn": "discount_applied",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "revenue",
+            "dataType": "double",
+            "sourceColumn": "revenue",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "cost",
+            "dataType": "double",
+            "sourceColumn": "cost",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "profit",
+            "dataType": "double",
+            "sourceColumn": "profit",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "is_loss_making",
+            "dataType": "boolean",
+            "sourceColumn": "is_loss_making",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_order_items",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(PG_Server, PG_Database),",
+                "    Data = Source{[Schema=\"bi\",Item=\"fact_order_items\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"order_item_id\", \"order_id\", \"order_date\", \"customer_id\", \"restaurant_id\", \"promotion_id\", \"order_channel\", \"is_cancelled\", \"item_id\", \"quantity\", \"unit_price\", \"cost_price\", \"discount_applied\", \"revenue\", \"cost\", \"profit\", \"is_loss_making\"})",
+                "in",
+                "    Selected"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_orders",
+        "columns": [
+          {
+            "name": "order_id",
+            "dataType": "int64",
+            "sourceColumn": "order_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_date",
+            "dataType": "dateTime",
+            "sourceColumn": "order_date",
+            "formatString": "Short Date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "customer_id",
+            "dataType": "int64",
+            "sourceColumn": "customer_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "restaurant_id",
+            "dataType": "int64",
+            "sourceColumn": "restaurant_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "promotion_id",
+            "dataType": "int64",
+            "sourceColumn": "promotion_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_channel",
+            "dataType": "string",
+            "sourceColumn": "order_channel",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_status",
+            "dataType": "string",
+            "sourceColumn": "order_status",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_cancelled",
+            "dataType": "boolean",
+            "sourceColumn": "is_cancelled",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "subtotal",
+            "dataType": "double",
+            "sourceColumn": "subtotal",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "discount_amount",
+            "dataType": "double",
+            "sourceColumn": "discount_amount",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "total_amount",
+            "dataType": "double",
+            "sourceColumn": "total_amount",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "basket_size",
+            "dataType": "int64",
+            "sourceColumn": "basket_size",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_peak_hour",
+            "dataType": "int64",
+            "sourceColumn": "is_peak_hour",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "has_promotion",
+            "dataType": "int64",
+            "sourceColumn": "has_promotion",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "order_hour",
+            "dataType": "int64",
+            "sourceColumn": "order_hour",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_orders",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(PG_Server, PG_Database),",
+                "    Data = Source{[Schema=\"bi\",Item=\"fact_orders\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"order_id\", \"order_date\", \"customer_id\", \"restaurant_id\", \"promotion_id\", \"order_channel\", \"order_status\", \"is_cancelled\", \"subtotal\", \"discount_amount\", \"total_amount\", \"basket_size\", \"is_peak_hour\", \"has_promotion\", \"order_hour\"})",
+                "in",
+                "    Selected"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_price_changes",
+        "columns": [
+          {
+            "name": "price_id",
+            "dataType": "int64",
+            "sourceColumn": "price_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "change_date",
+            "dataType": "dateTime",
+            "sourceColumn": "change_date",
+            "formatString": "Short Date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "item_id",
+            "dataType": "int64",
+            "sourceColumn": "item_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "restaurant_id",
+            "dataType": "int64",
+            "sourceColumn": "restaurant_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "old_price",
+            "dataType": "double",
+            "sourceColumn": "old_price",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "new_price",
+            "dataType": "double",
+            "sourceColumn": "new_price",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "price_delta",
+            "dataType": "double",
+            "sourceColumn": "price_delta",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "price_change_pct",
+            "dataType": "double",
+            "sourceColumn": "price_change_pct",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "change_reason",
+            "dataType": "string",
+            "sourceColumn": "change_reason",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_price_changes",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(PG_Server, PG_Database),",
+                "    Data = Source{[Schema=\"bi\",Item=\"fact_price_changes\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"price_id\", \"change_date\", \"item_id\", \"restaurant_id\", \"old_price\", \"new_price\", \"price_delta\", \"price_change_pct\", \"change_reason\"})",
+                "in",
+                "    Selected"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_ratings",
+        "columns": [
+          {
+            "name": "rating_id",
+            "dataType": "int64",
+            "sourceColumn": "rating_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "rating_date",
+            "dataType": "dateTime",
+            "sourceColumn": "rating_date",
+            "formatString": "Short Date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "customer_id",
+            "dataType": "int64",
+            "sourceColumn": "customer_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "item_id",
+            "dataType": "int64",
+            "sourceColumn": "item_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "restaurant_id",
+            "dataType": "int64",
+            "sourceColumn": "restaurant_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "rating_value",
+            "dataType": "double",
+            "sourceColumn": "rating_value",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "rating_source",
+            "dataType": "string",
+            "sourceColumn": "rating_source",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_ratings",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(PG_Server, PG_Database),",
+                "    Data = Source{[Schema=\"bi\",Item=\"fact_ratings\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"rating_id\", \"rating_date\", \"customer_id\", \"item_id\", \"restaurant_id\", \"rating_value\", \"rating_source\"})",
+                "in",
+                "    Selected"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "fact_wastage",
+        "columns": [
+          {
+            "name": "wastage_id",
+            "dataType": "int64",
+            "sourceColumn": "wastage_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "wastage_date",
+            "dataType": "dateTime",
+            "sourceColumn": "wastage_date",
+            "formatString": "Short Date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "item_id",
+            "dataType": "int64",
+            "sourceColumn": "item_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "restaurant_id",
+            "dataType": "int64",
+            "sourceColumn": "restaurant_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "wastage_quantity",
+            "dataType": "int64",
+            "sourceColumn": "wastage_quantity",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "wastage_cost",
+            "dataType": "double",
+            "sourceColumn": "wastage_cost",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00"
+          },
+          {
+            "name": "wastage_reason",
+            "dataType": "string",
+            "sourceColumn": "wastage_reason",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "recorded_by",
+            "dataType": "string",
+            "sourceColumn": "recorded_by",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_wastage",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(PG_Server, PG_Database),",
+                "    Data = Source{[Schema=\"bi\",Item=\"fact_wastage\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"wastage_id\", \"wastage_date\", \"item_id\", \"restaurant_id\", \"wastage_quantity\", \"wastage_cost\", \"wastage_reason\", \"recorded_by\"})",
+                "in",
+                "    Selected"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "model_metrics",
+        "columns": [
+          {
+            "name": "pipeline",
+            "dataType": "string",
+            "sourceColumn": "pipeline",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "model",
+            "dataType": "string",
+            "sourceColumn": "model",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "metric",
+            "dataType": "string",
+            "sourceColumn": "metric",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "value",
+            "dataType": "double",
+            "sourceColumn": "value",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "trained_at",
+            "dataType": "dateTime",
+            "sourceColumn": "trained_at",
+            "formatString": "General Date",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "model_metrics",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(PG_Server, PG_Database),",
+                "    Data = Source{[Schema=\"bi\",Item=\"model_metrics\"]}[Data],",
+                "    Selected = Table.SelectColumns(Data, {\"pipeline\", \"model\", \"metric\", \"value\", \"trained_at\"})",
+                "in",
+                "    Selected"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "_Measures",
+        "columns": [
+          {
+            "type": "calculatedTableColumn",
+            "name": "x",
+            "dataType": "int64",
+            "isHidden": true,
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "sourceColumn": "[x]",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "_Measures",
+            "mode": "import",
+            "source": {
+              "type": "calculated",
+              "expression": "ROW(\"x\", 0)"
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "Total Revenue",
+            "expression": "CALCULATE(SUM(fact_order_items[revenue]), fact_order_items[is_cancelled] = FALSE())",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+            "displayFolder": "Sales"
+          },
+          {
+            "name": "Total Cost",
+            "expression": "CALCULATE(SUM(fact_order_items[cost]), fact_order_items[is_cancelled] = FALSE())",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+            "displayFolder": "Sales"
+          },
+          {
+            "name": "Gross Profit",
+            "expression": "[Total Revenue] - [Total Cost]",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+            "displayFolder": "Sales"
+          },
+          {
+            "name": "Profit Margin %",
+            "expression": "DIVIDE([Gross Profit], [Total Revenue])",
+            "formatString": "0.0%",
+            "displayFolder": "Sales"
+          },
+          {
+            "name": "Units Sold",
+            "expression": "CALCULATE(SUM(fact_order_items[quantity]), fact_order_items[is_cancelled] = FALSE())",
+            "formatString": "#,0",
+            "displayFolder": "Sales"
+          },
+          {
+            "name": "Total Orders",
+            "expression": "CALCULATE(DISTINCTCOUNT(fact_orders[order_id]), fact_orders[is_cancelled] = FALSE())",
+            "formatString": "#,0",
+            "displayFolder": "Sales"
+          },
+          {
+            "name": "Avg Order Value",
+            "expression": "DIVIDE([Total Revenue], [Total Orders])",
+            "formatString": "\\$#,0.00",
+            "displayFolder": "Sales"
+          },
+          {
+            "name": "Avg Basket Size",
+            "expression": "AVERAGE(fact_orders[basket_size])",
+            "formatString": "#,0.00",
+            "displayFolder": "Sales"
+          },
+          {
+            "name": "Cancellation Rate",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(fact_orders), fact_orders[is_cancelled] = TRUE()), COUNTROWS(fact_orders))",
+            "formatString": "0.00%",
+            "displayFolder": "Sales"
+          },
+          {
+            "name": "Revenue MoM %",
+            "expression": "VAR prev = CALCULATE([Total Revenue], DATEADD(dim_date[date], -1, MONTH)) RETURN DIVIDE([Total Revenue] - prev, prev)",
+            "formatString": "0.0%",
+            "displayFolder": "Time"
+          },
+          {
+            "name": "Revenue MTD",
+            "expression": "TOTALMTD([Total Revenue], dim_date[date])",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+            "displayFolder": "Time"
+          },
+          {
+            "name": "Customer Count",
+            "expression": "COUNTROWS(dim_customer)",
+            "formatString": "#,0",
+            "displayFolder": "Customers"
+          },
+          {
+            "name": "Active Customers",
+            "expression": "CALCULATE(DISTINCTCOUNT(fact_orders[customer_id]), fact_orders[is_cancelled] = FALSE())",
+            "formatString": "#,0",
+            "displayFolder": "Customers"
+          },
+          {
+            "name": "At-Risk Customers",
+            "expression": "CALCULATE(COUNTROWS(dim_customer), dim_customer[churn_status] = \"At Risk\")",
+            "formatString": "#,0",
+            "displayFolder": "Customers"
+          },
+          {
+            "name": "Churn Risk %",
+            "expression": "DIVIDE([At-Risk Customers], [Customer Count])",
+            "formatString": "0.0%",
+            "displayFolder": "Customers"
+          },
+          {
+            "name": "Avg RFM Score",
+            "expression": "AVERAGE(dim_customer[rfm_score])",
+            "formatString": "#,0.00",
+            "displayFolder": "Customers"
+          },
+          {
+            "name": "Discount Given",
+            "expression": "CALCULATE(SUM(fact_orders[discount_amount]), fact_orders[is_cancelled] = FALSE())",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+            "displayFolder": "Promotions"
+          },
+          {
+            "name": "Promo Revenue",
+            "expression": "CALCULATE([Total Revenue], fact_order_items[promotion_id] <> 0)",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+            "displayFolder": "Promotions"
+          },
+          {
+            "name": "Promo Share %",
+            "expression": "DIVIDE([Promo Revenue], [Total Revenue])",
+            "formatString": "0.0%",
+            "displayFolder": "Promotions"
+          },
+          {
+            "name": "Promo ROI",
+            "expression": "DIVIDE([Promo Revenue] - [Discount Given], [Discount Given])",
+            "formatString": "0.00\"x\"",
+            "displayFolder": "Promotions"
+          },
+          {
+            "name": "Promo Orders",
+            "expression": "CALCULATE([Total Orders], fact_orders[promotion_id] <> 0)",
+            "formatString": "#,0",
+            "displayFolder": "Promotions"
+          },
+          {
+            "name": "Wastage Cost",
+            "expression": "SUM(fact_wastage[wastage_cost])",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+            "displayFolder": "Wastage"
+          },
+          {
+            "name": "Wastage Qty",
+            "expression": "SUM(fact_wastage[wastage_quantity])",
+            "formatString": "#,0",
+            "displayFolder": "Wastage"
+          },
+          {
+            "name": "Wastage % of Cost",
+            "expression": "DIVIDE([Wastage Cost], [Total Cost])",
+            "formatString": "0.00%",
+            "displayFolder": "Wastage"
+          },
+          {
+            "name": "Avg Rating",
+            "expression": "AVERAGE(fact_ratings[rating_value])",
+            "formatString": "0.00",
+            "displayFolder": "Ratings"
+          },
+          {
+            "name": "Rating Count",
+            "expression": "COUNTROWS(fact_ratings)",
+            "formatString": "#,0",
+            "displayFolder": "Ratings"
+          },
+          {
+            "name": "Stock Value",
+            "expression": "SUM(fact_inventory[stock_value])",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0",
+            "displayFolder": "Inventory"
+          },
+          {
+            "name": "Items To Reorder",
+            "expression": "CALCULATE(COUNTROWS(fact_inventory), fact_inventory[needs_reorder] = TRUE())",
+            "formatString": "#,0",
+            "displayFolder": "Inventory"
+          },
+          {
+            "name": "Item Count",
+            "expression": "COUNTROWS(dim_menu_item)",
+            "formatString": "#,0",
+            "displayFolder": "ML"
+          },
+          {
+            "name": "Correct Predictions",
+            "expression": "COUNTROWS(FILTER(dim_menu_item, dim_menu_item[menu_class] = dim_menu_item[predicted_class]))",
+            "formatString": "#,0",
+            "displayFolder": "ML"
+          },
+          {
+            "name": "Prediction Accuracy",
+            "expression": "DIVIDE([Correct Predictions], [Item Count])",
+            "formatString": "0.0%",
+            "displayFolder": "ML"
+          },
+          {
+            "name": "Precision",
+            "expression": "DIVIDE([Correct Predictions], [Item Count])",
+            "formatString": "0.0%",
+            "displayFolder": "ML"
+          },
+          {
+            "name": "Recall",
+            "expression": "DIVIDE([Correct Predictions], [Item Count])",
+            "formatString": "0.0%",
+            "displayFolder": "ML"
+          },
+          {
+            "name": "Avg Confidence",
+            "expression": "AVERAGE(dim_menu_item[prediction_confidence])",
+            "formatString": "0.0%",
+            "displayFolder": "ML"
+          },
+          {
+            "name": "Metric Value",
+            "expression": "SUM(model_metrics[value])",
+            "formatString": "0.0000",
+            "displayFolder": "ML"
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "a45ebf06-bcc2-53e7-aee3-3eb80bddce94",
+        "fromTable": "fact_order_items",
+        "fromColumn": "order_date",
+        "toTable": "dim_date",
+        "toColumn": "date"
+      },
+      {
+        "name": "6f20a8d2-559c-5cbc-9377-1653113fc6a6",
+        "fromTable": "fact_order_items",
+        "fromColumn": "item_id",
+        "toTable": "dim_menu_item",
+        "toColumn": "item_id"
+      },
+      {
+        "name": "d2198979-3f6d-5387-a197-28934ca3312e",
+        "fromTable": "fact_order_items",
+        "fromColumn": "restaurant_id",
+        "toTable": "dim_restaurant",
+        "toColumn": "restaurant_id"
+      },
+      {
+        "name": "78321d15-a940-5ae8-89d3-9a96884bebed",
+        "fromTable": "fact_order_items",
+        "fromColumn": "customer_id",
+        "toTable": "dim_customer",
+        "toColumn": "customer_id"
+      },
+      {
+        "name": "85646814-22ee-5d87-9aaf-50ed06f90870",
+        "fromTable": "fact_order_items",
+        "fromColumn": "promotion_id",
+        "toTable": "dim_promotion",
+        "toColumn": "promotion_id"
+      },
+      {
+        "name": "8cc87366-b29e-5df9-ac95-84b0a7dd86de",
+        "fromTable": "fact_orders",
+        "fromColumn": "order_date",
+        "toTable": "dim_date",
+        "toColumn": "date"
+      },
+      {
+        "name": "3e2fe0e4-0810-5df8-85f7-bed1ef03ffa3",
+        "fromTable": "fact_orders",
+        "fromColumn": "restaurant_id",
+        "toTable": "dim_restaurant",
+        "toColumn": "restaurant_id"
+      },
+      {
+        "name": "fd8c7458-12e9-5c29-97b6-ad96579c3149",
+        "fromTable": "fact_orders",
+        "fromColumn": "customer_id",
+        "toTable": "dim_customer",
+        "toColumn": "customer_id"
+      },
+      {
+        "name": "1d0b73d7-5a1d-53ff-a94f-d0adadaf5c9e",
+        "fromTable": "fact_orders",
+        "fromColumn": "promotion_id",
+        "toTable": "dim_promotion",
+        "toColumn": "promotion_id"
+      },
+      {
+        "name": "7a00bcdf-c310-5683-89ff-9636a6f9455c",
+        "fromTable": "fact_wastage",
+        "fromColumn": "wastage_date",
+        "toTable": "dim_date",
+        "toColumn": "date"
+      },
+      {
+        "name": "d0ed85ee-5933-53a2-a6e2-6919bb9cf86e",
+        "fromTable": "fact_wastage",
+        "fromColumn": "item_id",
+        "toTable": "dim_menu_item",
+        "toColumn": "item_id"
+      },
+      {
+        "name": "33f5978c-ad63-5e7b-919e-64f6453285f7",
+        "fromTable": "fact_wastage",
+        "fromColumn": "restaurant_id",
+        "toTable": "dim_restaurant",
+        "toColumn": "restaurant_id"
+      },
+      {
+        "name": "082e71e4-369f-5044-bd40-73807e99a1ab",
+        "fromTable": "fact_ratings",
+        "fromColumn": "rating_date",
+        "toTable": "dim_date",
+        "toColumn": "date"
+      },
+      {
+        "name": "d6b8245c-32a9-550b-b76b-12880f5bcf64",
+        "fromTable": "fact_ratings",
+        "fromColumn": "item_id",
+        "toTable": "dim_menu_item",
+        "toColumn": "item_id"
+      },
+      {
+        "name": "b82ceb51-363c-5a44-871a-9404994d4dd0",
+        "fromTable": "fact_ratings",
+        "fromColumn": "restaurant_id",
+        "toTable": "dim_restaurant",
+        "toColumn": "restaurant_id"
+      },
+      {
+        "name": "1dfb0c4b-f0ba-503e-a9ae-f4c6f92bcbc5",
+        "fromTable": "fact_inventory",
+        "fromColumn": "item_id",
+        "toTable": "dim_menu_item",
+        "toColumn": "item_id"
+      },
+      {
+        "name": "5633a85b-cf07-5f94-be4f-e8b060e7ca2b",
+        "fromTable": "fact_inventory",
+        "fromColumn": "restaurant_id",
+        "toTable": "dim_restaurant",
+        "toColumn": "restaurant_id"
+      },
+      {
+        "name": "44ad3bd3-aa34-56d5-bd83-01b0a3632503",
+        "fromTable": "fact_price_changes",
+        "fromColumn": "item_id",
+        "toTable": "dim_menu_item",
+        "toColumn": "item_id"
+      }
+    ],
+    "expressions": [
+      {
+        "name": "PG_Server",
+        "kind": "m",
+        "expression": "\"187.127.98.233:5432\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ]
+      },
+      {
+        "name": "PG_Database",
+        "kind": "m",
+        "expression": "\"dineiq_analytics\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"PG_Server\", \"PG_Database\", \"dim_customer\", \"dim_date\", \"dim_menu_item\", \"dim_promotion\", \"dim_restaurant\", \"fact_inventory\", \"fact_order_items\", \"fact_orders\", \"fact_price_changes\", \"fact_ratings\", \"fact_wastage\", \"model_metrics\"]"
+      },
+      {
+        "name": "__PBI_TimeIntelligenceEnabled",
+        "value": "0"
+      }
+    ]
+  }
+}
