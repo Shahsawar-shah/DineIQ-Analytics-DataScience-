@@ -1,12 +1,12 @@
 """Packs DineIQ_Dashboard (pbip) into a Power BI template: DineIQ_Dashboard.pbit
 Usage: python powerbi/build_pbit.py   (run build_pbip.py first)
 """
-import json, zipfile, uuid
+import json, os, zipfile, uuid
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 SRC = HERE / "DineIQ_Dashboard"
-OUT = HERE / "DineIQ_Dashboard.pbit"
+OUT = HERE / os.getenv("PBIT_NAME", "DineIQ_Dashboard.pbit")
 
 model = json.loads((SRC / "DineIQ.SemanticModel" / "model.bim").read_text())
 model = {"name": str(uuid.uuid4()), **model}

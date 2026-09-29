@@ -1,8 +1,14 @@
 """Generates the DineIQ Power BI Project (.pbip): semantic model (model.bim) + report (report.json).
 Usage: python powerbi/build_pbip.py <cols.txt>   (cols.txt = table|column|pg_type from information_schema)
 """
-import json, sys, uuid, hashlib
+import json, os, sys, uuid, hashlib
 from pathlib import Path
+
+# SOURCE=github -> load Parquet files from the public repo (no database / login needed)
+SOURCE = os.getenv("SOURCE", "postgres")
+DATA_URL = "https://raw.githubusercontent.com/Shahsawar-shah/DineIQ-Analytics-DataScience-/main/powerbi/data/"
+GITHUB_DROP = {"fact_order_items": {"order_item_id", "order_id", "unit_price", "cost_price", "discount_applied",
+                                    "profit", "is_loss_making"}}
 
 OUT = Path(__file__).resolve().parent / "DineIQ_Dashboard"
 NAME = "DineIQ"
@@ -23,6 +29,8 @@ for line in Path(sys.argv[1]).read_text().splitlines():
     t, c, ty = line.split("|")
     if ty.startswith("time "):
         continue
+    if SOURCE == "github" and c in GITHUB_DROP.get(t, ()):
+        continue
     cols.setdefault(t, []).append((c, TYPE_MAP[ty]))
 
 
@@ -41,6 +49,20 @@ def column(c, dt):
 
 
 def m_partition(t, cnames):
+    if SOURCE == "github" and t == "fact_order_items":   # split in 2 files (GitHub web upload limit)
+        return {"name": t, "mode": "import", "source": {"type": "m", "expression": [
+            "let",
+            '    Part1 = Parquet.Document(Binary.Buffer(Web.Contents(DataUrl & "fact_order_items_1.parquet"))),',
+            '    Part2 = Parquet.Document(Binary.Buffer(Web.Contents(DataUrl & "fact_order_items_2.parquet"))),',
+            "    Source = Table.Combine({Part1, Part2})",
+            "in",
+            "    Source"]}}
+    if SOURCE == "github":
+        return {"name": t, "mode": "import", "source": {"type": "m", "expression": [
+            "let",
+            f'    Source = Parquet.Document(Binary.Buffer(Web.Contents(DataUrl & "{t}.parquet")))',
+            "in",
+            "    Source"]}}
     sel = ", ".join(f'"{c}"' for c in cnames)
     return {"name": t, "mode": "import", "source": {"type": "m", "expression": [
         "let",
@@ -150,7 +172,9 @@ model = {
         "dataAccessOptions": {"legacyRedirects": True, "returnErrorValuesAsNull": True},
         "tables": tables,
         "relationships": relationships,
-        "expressions": [
+        "expressions": [{"name": "DataUrl", "kind": "m",
+             "expression": f"\"{DATA_URL}\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
+             "annotations": [{"name": "PBI_ResultType", "value": "Text"}]}] if SOURCE == "github" else [
             {"name": "PG_Server", "kind": "m",
              "expression": "\"187.127.98.233:5432\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
              "annotations": [{"name": "PBI_ResultType", "value": "Text"}]},
@@ -159,7 +183,7 @@ model = {
              "annotations": [{"name": "PBI_ResultType", "value": "Text"}]},
         ],
         "annotations": [
-            {"name": "PBI_QueryOrder", "value": json.dumps(["PG_Server", "PG_Database"] + [t["name"] for t in tables if t["name"] != "_Measures"])},
+            {"name": "PBI_QueryOrder", "value": json.dumps((["DataUrl"] if SOURCE == "github" else ["PG_Server", "PG_Database"]) + [t["name"] for t in tables if t["name"] != "_Measures"])},
             {"name": "__PBI_TimeIntelligenceEnabled", "value": "0"},
         ],
     },
