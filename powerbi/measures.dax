@@ -1,0 +1,49 @@
+// DineIQ Analytics — DAX measures
+// In Power BI: Modeling > New table:  _Measures = {BLANK()}   then add each measure below to it.
+
+// ---------- Sales ----------
+Total Revenue      = CALCULATE(SUM(fact_order_items[revenue]), fact_order_items[is_cancelled] = FALSE())
+Total Cost         = CALCULATE(SUM(fact_order_items[cost]),    fact_order_items[is_cancelled] = FALSE())
+Gross Profit       = [Total Revenue] - [Total Cost]
+Profit Margin %    = DIVIDE([Gross Profit], [Total Revenue])
+Units Sold         = CALCULATE(SUM(fact_order_items[quantity]), fact_order_items[is_cancelled] = FALSE())
+Total Orders       = CALCULATE(DISTINCTCOUNT(fact_orders[order_id]), fact_orders[is_cancelled] = FALSE())
+Avg Order Value    = DIVIDE([Total Revenue], [Total Orders])
+Avg Basket Size    = AVERAGE(fact_orders[basket_size])
+Cancellation Rate  = DIVIDE(CALCULATE(COUNTROWS(fact_orders), fact_orders[is_cancelled] = TRUE()), COUNTROWS(fact_orders))
+
+// ---------- Time intelligence (mark dim_date as Date table first) ----------
+Revenue MoM %      = VAR prev = CALCULATE([Total Revenue], DATEADD(dim_date[date], -1, MONTH))
+                     RETURN DIVIDE([Total Revenue] - prev, prev)
+Revenue 7D Avg     = AVERAGEX(DATESINPERIOD(dim_date[date], MAX(dim_date[date]), -7, DAY), [Total Revenue])
+Revenue MTD        = TOTALMTD([Total Revenue], dim_date[date])
+
+// ---------- Customers ----------
+Active Customers   = CALCULATE(DISTINCTCOUNT(fact_orders[customer_id]), fact_orders[is_cancelled] = FALSE())
+At-Risk Customers  = CALCULATE(COUNTROWS(dim_customer), dim_customer[churn_status] = "At Risk")
+Churn Risk %       = DIVIDE([At-Risk Customers], COUNTROWS(dim_customer))
+
+// ---------- Promotions ----------
+Discount Given     = SUM(fact_orders[discount_amount])
+Promo Revenue      = CALCULATE([Total Revenue], fact_order_items[promotion_id] <> 0)
+Promo Share %      = DIVIDE([Promo Revenue], [Total Revenue])
+Promo ROI          = DIVIDE([Promo Revenue] - [Discount Given], [Discount Given])
+
+// ---------- Wastage ----------
+Wastage Cost       = SUM(fact_wastage[wastage_cost])
+Wastage Qty        = SUM(fact_wastage[wastage_quantity])
+Wastage % of Cost  = DIVIDE([Wastage Cost], [Total Cost])
+
+// ---------- Ratings ----------
+Avg Rating         = AVERAGE(fact_ratings[rating_value])
+Rating Count       = COUNTROWS(fact_ratings)
+
+// ---------- Inventory ----------
+Stock Value        = SUM(fact_inventory[stock_value])
+Items To Reorder   = CALCULATE(COUNTROWS(fact_inventory), fact_inventory[needs_reorder] = TRUE())
+
+// ---------- ML / Menu engineering ----------
+Prediction Accuracy = DIVIDE(
+                        COUNTROWS(FILTER(dim_menu_item, dim_menu_item[menu_class] = dim_menu_item[predicted_class])),
+                        COUNTROWS(dim_menu_item))
+Avg Confidence      = AVERAGE(dim_menu_item[prediction_confidence])
