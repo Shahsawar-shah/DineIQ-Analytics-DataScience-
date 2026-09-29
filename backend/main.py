@@ -8,19 +8,26 @@ from fastapi.middleware.cors import CORSMiddleware
 import settings  # noqa: F401  (loads config/.env before anything else)
 from middleware.audit_middleware import AuditMiddleware
 from models.audit import ensure_audit_table
+from models.notifications import ensure_notifications_table
 from routes import (admin, anomalies, auth, basket_real, customers, dashboard,
-                    dual_pipeline, forecasting_real, locations, menu, orders,
-                    pricing, promotions, recommendations, wastage, whatif)
+                    dual_pipeline, forecasting_real, locations, menu, notifications,
+                    orders, pricing, promotions, recommendations, wastage, whatif)
 
 logger = logging.getLogger("dineiq")
 
 
+# Tests set DB_SETUP_ON_STARTUP=false so starting the app never touches the real database
+DB_SETUP_ON_STARTUP = os.getenv("DB_SETUP_ON_STARTUP", "true").lower() != "false"
+
+
 @asynccontextmanager
 async def lifespan(app):
-    try:
-        ensure_audit_table()
-    except Exception as exc:  # API still serves analytics without the DB
-        logger.warning("audit_logs table check failed: %s", exc)
+    if DB_SETUP_ON_STARTUP:
+        for name, ensure in (("audit_logs", ensure_audit_table), ("notification_dismissals", ensure_notifications_table)):
+            try:
+                ensure()
+            except Exception as exc:  # API still serves analytics without the DB
+                logger.warning("%s table check failed: %s", name, exc)
     yield
 
 
@@ -55,6 +62,7 @@ app.include_router(locations.router, prefix="/api/locations")
 app.include_router(anomalies.router, prefix="/api/anomalies")
 app.include_router(whatif.router, prefix="/api/whatif")
 app.include_router(admin.router, prefix="/api/admin")
+app.include_router(notifications.router, prefix="/api/notifications")
 
 
 @app.get("/")

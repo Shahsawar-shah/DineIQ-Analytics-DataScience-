@@ -3,7 +3,7 @@ import { api } from '../../services/api'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
   Bell, ChevronDown, CircleUser, House, LogOut, Menu as MenuIcon, PanelsTopLeft, Search, Settings, X,
-  ShieldCheck, TrendingUp, TriangleAlert,
+  ShieldCheck, Sparkles, TriangleAlert,
 } from 'lucide-react'
 import { ROLE_NAV, ROLE_HOME, ICONS } from '../../data/navigation'
 import { useAuth } from '../../context/AuthContext'
@@ -18,10 +18,11 @@ const ROLE_LABEL = {
   Cashier: 'Point of sale',
 }
 
-// Roles allowed to read /api/anomalies (backend ANALYTICS_ROLES)
-const ANALYTICS_ROLES = new Set(['Admin', 'Restaurant Manager', 'Inventory Manager'])
-const MAX_NOTIFICATIONS = 5
-const SEVERITY_ICON = { Critical: [TriangleAlert, '#d92d20'], High: [ShieldCheck, '#b54708'], Medium: [TrendingUp, '#1d4ed8'] }
+// Notification icon per severity; "Info" is the one-time welcome message
+const SEVERITY_ICON = { Critical: [TriangleAlert, '#d92d20'], High: [ShieldCheck, '#b54708'], Info: [Sparkles, '#1d4ed8'] }
+const MAX_NOTIFICATIONS = 6
+// Where "View all activity" and an anomaly notification lead, per role
+const ANOMALY_PAGE = { Admin: '/admin/anomalies', 'Restaurant Manager': '/manager/anomalies' }
 
 function LayoutFallback(props) {
   return <CircleUser {...props} />
@@ -42,21 +43,27 @@ export default function DashboardLayout({ role }) {
   const nav = ROLE_NAV[role]
   const [notifications, setNotifications] = useState([])
 
-  // Notifications = the most severe anomalies currently detected (real data)
+  // Welcome message + current Critical/High anomalies, minus the ones this user dismissed (server-side)
   useEffect(() => {
-    if (!ANALYTICS_ROLES.has(role)) return
-    api.anomalies.sales()
-      .then((d) => setNotifications(
-        d.anomalies
-          .filter((a) => a.severity === 'Critical' || a.severity === 'High')
-          .slice(0, MAX_NOTIFICATIONS)
-          .map((a) => {
-            const [icon, color] = SEVERITY_ICON[a.severity] ?? SEVERITY_ICON.Medium
-            return { icon, color, title: `${a.type}: ${a.item_name}`, text: a.description, time: a.date ?? a.severity }
-          }),
-      ))
+    api.notifications.list()
+      .then((d) => setNotifications(d.notifications))
       .catch(() => setNotifications([]))
   }, [role])
+
+  // Clicking a notification dismisses it for good; anomalies also open the Anomaly Detection page
+  const openNotification = (n) => {
+    setNotifications((list) => list.filter((x) => x.key !== n.key))
+    api.notifications.dismiss([n.key]).catch(() => undefined)
+    if (n.link === 'anomalies' && ANOMALY_PAGE[role]) {
+      setNotifOpen(false)
+      navigate(ANOMALY_PAGE[role])
+    }
+  }
+
+  const dismissAllNotifications = () => {
+    setNotifications([])
+    api.notifications.dismissAll().catch(() => undefined)
+  }
 
   useEffect(() => {
     setDrawerOpen(false)
@@ -220,8 +227,8 @@ export default function DashboardLayout({ role }) {
                 >
                   <Bell size={16} />
                   {notifications.length > 0 && (
-                    <span className="absolute -right-1 -top-1 grid h-4.5 w-4.5 place-items-center rounded-full bg-brand-500 px-1 text-[0.58rem] font-bold text-white">
-                      {notifications.length}
+                    <span className="absolute -right-1 -top-1 grid h-4.5 min-w-4.5 place-items-center rounded-full bg-brand-500 px-1 text-[0.58rem] font-bold text-white">
+                      {notifications.length > 9 ? '9+' : notifications.length}
                     </span>
                   )}
                 </button>
@@ -229,17 +236,36 @@ export default function DashboardLayout({ role }) {
                   <div className="anim-pop absolute right-0 top-12 z-40 w-[320px] rounded-xl border border-ink-100 bg-white p-2 shadow-lg sm:w-[360px]">
                     <div className="flex items-center justify-between px-3 py-2">
                       <p className="font-display text-sm font-bold text-ink-900">Notifications</p>
-                      <span className="badge badge-orange">{notifications.length} alerts</span>
+                      {notifications.length > 0 ? (
+                        <button className="text-[0.7rem] font-semibold text-brand-600 hover:underline" onClick={dismissAllNotifications}>
+                          Mark all as read ({notifications.length})
+                        </button>
+                      ) : (
+                        <span className="badge badge-gray">All caught up</span>
+                      )}
                     </div>
-                    <div className="space-y-0.5">
-                      {notifications.length === 0 && <p className="px-3 py-4 text-xs text-ink-400">No critical alerts.</p>}
-                      {notifications.map((n) => (
-                        <NotificationRow key={n.title} {...n} />
-                      ))}
+                    <div className="max-h-[380px] space-y-0.5 overflow-y-auto">
+                      {notifications.length === 0 && <p className="px-3 py-4 text-xs text-ink-400">No new notifications.</p>}
+                      {notifications.slice(0, MAX_NOTIFICATIONS).map((n) => {
+                        const [icon, color] = SEVERITY_ICON[n.severity] ?? SEVERITY_ICON.Info
+                        return (
+                          <button key={n.key} className="block w-full text-left" onClick={() => openNotification(n)} title="Click to dismiss">
+                            <NotificationRow icon={icon} color={color} title={n.title} text={n.text} time={n.time} />
+                          </button>
+                        )
+                      })}
+                      {notifications.length > MAX_NOTIFICATIONS && (
+                        <p className="px-3 py-1.5 text-[0.68rem] text-ink-400">+{notifications.length - MAX_NOTIFICATIONS} more</p>
+                      )}
                     </div>
-                    <button className="mt-1 w-full rounded-lg py-2 text-center text-xs font-semibold text-ink-600 hover:bg-ink-50">
-                      View all activity
-                    </button>
+                    {ANOMALY_PAGE[role] && (
+                      <button
+                        className="mt-1 w-full rounded-lg py-2 text-center text-xs font-semibold text-ink-600 hover:bg-ink-50"
+                        onClick={() => { setNotifOpen(false); navigate(ANOMALY_PAGE[role]) }}
+                      >
+                        View all activity
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

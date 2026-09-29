@@ -18,6 +18,7 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 os.environ.setdefault("SECRET_KEY", "test-secret-key")
 os.environ["AUDIT_ENABLED"] = "false"
+os.environ["DB_SETUP_ON_STARTUP"] = "false"
 sys.path.insert(0, str(ROOT / "backend"))
 
 PROCESSED = ROOT / "processed_data"

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T17:24:39",
+  "generated_at": "2026-09-28T20:45:56",
   "menu_classification": {
     "task": "Menu performance classification",
     "spark_model": "Logistic Regression (spark-menu-20260928-172323)",

@@ -406,7 +406,7 @@ function MlPipelinesTab() {
                   <td><span className={`badge ${CLASS_BADGE[r.python_result] ?? 'badge-gray'}`}>{r.python_result}</span> <span className="text-[0.65rem] text-ink-400">{r.python_probability}</span></td>
                   <td>{r.probability_difference}</td>
                   <td>{r.match ? <span className="font-semibold text-emerald-600">Yes</span> : <span className="font-semibold text-amber-600">No</span>}</td>
-                  <td className="max-w-xs text-xs text-ink-500">{r.explanation}</td>
+                  <td className="min-w-[280px] max-w-md !whitespace-normal text-xs leading-snug text-ink-500">{r.explanation}</td>
                 </tr>
               ))}
             </tbody>

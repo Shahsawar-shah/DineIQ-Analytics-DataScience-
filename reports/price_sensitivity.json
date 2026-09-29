@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-28T11:58:38",
+ "generated_at": "2026-09-28T20:46:01",
  "method": "Median over price changes of (%\u0394 demand share / %\u0394 price), 28-day windows",
  "thresholds": {
   "high": 1.5,
@@ -35,7 +35,7 @@
    "max_abs_price_change_pct": 12.74,
    "elasticity": -6.424,
    "sensitivity": "Highly Price Sensitive",
-   "note": "",
+   "note": "Demand fell 6.42% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 1,
@@ -85,7 +85,7 @@
    "max_abs_price_change_pct": 10.85,
    "elasticity": -4.111,
    "sensitivity": "Highly Price Sensitive",
-   "note": "",
+   "note": "Demand fell 4.11% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 223,
@@ -137,7 +137,7 @@
    "max_abs_price_change_pct": 8.45,
    "elasticity": -1.74,
    "sensitivity": "Highly Price Sensitive",
-   "note": "",
+   "note": "Demand fell 1.74% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 230,
@@ -291,7 +291,7 @@
    "max_abs_price_change_pct": 11.06,
    "elasticity": -1.398,
    "sensitivity": "Moderately Price Sensitive",
-   "note": "",
+   "note": "Demand fell 1.40% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 19,
@@ -427,7 +427,7 @@
    "max_abs_price_change_pct": 11.68,
    "elasticity": -1.281,
    "sensitivity": "Moderately Price Sensitive",
-   "note": "",
+   "note": "Demand fell 1.28% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 5,
@@ -611,7 +611,7 @@
    "max_abs_price_change_pct": 14.42,
    "elasticity": -0.968,
    "sensitivity": "Moderately Price Sensitive",
-   "note": "",
+   "note": "Demand fell 0.97% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 22,
@@ -695,7 +695,7 @@
    "max_abs_price_change_pct": 11.45,
    "elasticity": -0.916,
    "sensitivity": "Moderately Price Sensitive",
-   "note": "",
+   "note": "Demand fell 0.92% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 296,
@@ -881,7 +881,7 @@
    "max_abs_price_change_pct": 12.56,
    "elasticity": -0.79,
    "sensitivity": "Moderately Price Sensitive",
-   "note": "",
+   "note": "Demand fell 0.79% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 217,
@@ -1643,7 +1643,7 @@
    "max_abs_price_change_pct": 13.22,
    "elasticity": -0.514,
    "sensitivity": "Moderately Price Sensitive",
-   "note": "",
+   "note": "Demand fell 0.51% for every 1% price rise, supported by 2 statistically significant price change(s)",
    "events": [
     {
      "price_id": 33,
@@ -1711,7 +1711,7 @@
    "max_abs_price_change_pct": 23.9,
    "elasticity": -0.505,
    "sensitivity": "Moderately Price Sensitive",
-   "note": "",
+   "note": "Demand fell 0.51% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 25,
@@ -2133,7 +2133,7 @@
    "max_abs_price_change_pct": 9.21,
    "elasticity": -0.387,
    "sensitivity": "Low Price Sensitivity",
-   "note": "",
+   "note": "Demand fell 0.39% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 164,
@@ -2569,7 +2569,7 @@
    "max_abs_price_change_pct": 8.71,
    "elasticity": -0.287,
    "sensitivity": "Low Price Sensitivity",
-   "note": "",
+   "note": "Demand fell 0.29% for every 1% price rise, supported by 2 statistically significant price change(s)",
    "events": [
     {
      "price_id": 396,
@@ -2891,7 +2891,7 @@
    "max_abs_price_change_pct": 23.73,
    "elasticity": -0.213,
    "sensitivity": "Low Price Sensitivity",
-   "note": "",
+   "note": "Demand fell 0.21% for every 1% price rise, supported by 2 statistically significant price change(s)",
    "events": [
     {
      "price_id": 203,
@@ -3007,7 +3007,7 @@
    "max_abs_price_change_pct": 24.81,
    "elasticity": -0.21,
    "sensitivity": "Low Price Sensitivity",
-   "note": "",
+   "note": "Demand fell 0.21% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 26,
@@ -3363,7 +3363,7 @@
    "max_abs_price_change_pct": 22.7,
    "elasticity": -0.163,
    "sensitivity": "Low Price Sensitivity",
-   "note": "",
+   "note": "Demand fell 0.16% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 188,
@@ -4171,7 +4171,7 @@
    "max_abs_price_change_pct": 12.51,
    "elasticity": -0.045,
    "sensitivity": "Low Price Sensitivity",
-   "note": "",
+   "note": "Demand fell 0.04% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 4,
@@ -4389,7 +4389,7 @@
    "max_abs_price_change_pct": 19.26,
    "elasticity": -0.012,
    "sensitivity": "Low Price Sensitivity",
-   "note": "",
+   "note": "Demand fell 0.01% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 11,
@@ -4471,7 +4471,7 @@
    "max_abs_price_change_pct": 13.89,
    "elasticity": -0.001,
    "sensitivity": "Low Price Sensitivity",
-   "note": "",
+   "note": "Demand fell 0.00% for every 1% price rise, supported by 1 statistically significant price change(s)",
    "events": [
     {
      "price_id": 51,
@@ -4539,7 +4539,7 @@
    "max_abs_price_change_pct": 24.84,
    "elasticity": 0.006,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 63,
@@ -4655,7 +4655,7 @@
    "max_abs_price_change_pct": 13.76,
    "elasticity": 0.008,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 34,
@@ -4723,7 +4723,7 @@
    "max_abs_price_change_pct": 22.97,
    "elasticity": 0.019,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 108,
@@ -4805,7 +4805,7 @@
    "max_abs_price_change_pct": 11.98,
    "elasticity": 0.036,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 67,
@@ -4887,7 +4887,7 @@
    "max_abs_price_change_pct": 12.74,
    "elasticity": 0.042,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 2,
@@ -4937,7 +4937,7 @@
    "max_abs_price_change_pct": 12.07,
    "elasticity": 0.045,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 89,
@@ -5021,7 +5021,7 @@
    "max_abs_price_change_pct": 14.02,
    "elasticity": 0.055,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 155,
@@ -5073,7 +5073,7 @@
    "max_abs_price_change_pct": 9.15,
    "elasticity": 0.062,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 227,
@@ -5125,7 +5125,7 @@
    "max_abs_price_change_pct": 14.82,
    "elasticity": 0.064,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 309,
@@ -5177,7 +5177,7 @@
    "max_abs_price_change_pct": 12.79,
    "elasticity": 0.088,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 7,
@@ -5259,7 +5259,7 @@
    "max_abs_price_change_pct": 9.55,
    "elasticity": 0.105,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 39,
@@ -5311,7 +5311,7 @@
    "max_abs_price_change_pct": 10.41,
    "elasticity": 0.137,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 119,
@@ -5363,7 +5363,7 @@
    "max_abs_price_change_pct": 11.41,
    "elasticity": 0.139,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 43,
@@ -5447,7 +5447,7 @@
    "max_abs_price_change_pct": 11.5,
    "elasticity": 0.141,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 128,
@@ -5515,7 +5515,7 @@
    "max_abs_price_change_pct": 10.77,
    "elasticity": 0.144,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 45,
@@ -5583,7 +5583,7 @@
    "max_abs_price_change_pct": 8.36,
    "elasticity": 0.146,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 132,
@@ -5635,7 +5635,7 @@
    "max_abs_price_change_pct": 13.68,
    "elasticity": 0.164,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 110,
@@ -5687,7 +5687,7 @@
    "max_abs_price_change_pct": 14.29,
    "elasticity": 0.175,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 87,
@@ -5771,7 +5771,7 @@
    "max_abs_price_change_pct": 13.67,
    "elasticity": 0.177,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 38,
@@ -5839,7 +5839,7 @@
    "max_abs_price_change_pct": 21.86,
    "elasticity": 0.178,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 126,
@@ -5923,7 +5923,7 @@
    "max_abs_price_change_pct": 23.53,
    "elasticity": 0.18,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 123,
@@ -6021,7 +6021,7 @@
    "max_abs_price_change_pct": 9.8,
    "elasticity": 0.201,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 98,
@@ -6103,7 +6103,7 @@
    "max_abs_price_change_pct": 14.59,
    "elasticity": 0.208,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 83,
@@ -6185,7 +6185,7 @@
    "max_abs_price_change_pct": 14.72,
    "elasticity": 0.209,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 54,
@@ -6269,7 +6269,7 @@
    "max_abs_price_change_pct": 9.03,
    "elasticity": 0.21,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 42,
@@ -6353,7 +6353,7 @@
    "max_abs_price_change_pct": 14.24,
    "elasticity": 0.217,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 48,
@@ -6437,7 +6437,7 @@
    "max_abs_price_change_pct": 13.19,
    "elasticity": 0.219,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 195,
@@ -6489,7 +6489,7 @@
    "max_abs_price_change_pct": 11.78,
    "elasticity": 0.227,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 32,
@@ -6557,7 +6557,7 @@
    "max_abs_price_change_pct": 13.17,
    "elasticity": 0.236,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 35,
@@ -6625,7 +6625,7 @@
    "max_abs_price_change_pct": 11.14,
    "elasticity": 0.238,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 127,
@@ -6693,7 +6693,7 @@
    "max_abs_price_change_pct": 13.89,
    "elasticity": 0.259,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 114,
@@ -6777,7 +6777,7 @@
    "max_abs_price_change_pct": 5.56,
    "elasticity": 0.272,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 263,
@@ -6829,7 +6829,7 @@
    "max_abs_price_change_pct": 14.45,
    "elasticity": 0.305,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 69,
@@ -6897,7 +6897,7 @@
    "max_abs_price_change_pct": 14.8,
    "elasticity": 0.316,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 55,
@@ -6981,7 +6981,7 @@
    "max_abs_price_change_pct": 9.89,
    "elasticity": 0.33,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 9,
@@ -7059,7 +7059,7 @@
    "max_abs_price_change_pct": 9.87,
    "elasticity": 0.356,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 122,
@@ -7111,7 +7111,7 @@
    "max_abs_price_change_pct": 9.01,
    "elasticity": 0.356,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 139,
@@ -7163,7 +7163,7 @@
    "max_abs_price_change_pct": 14.82,
    "elasticity": 0.359,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 229,
@@ -7231,7 +7231,7 @@
    "max_abs_price_change_pct": 12.34,
    "elasticity": 0.368,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 58,
@@ -7299,7 +7299,7 @@
    "max_abs_price_change_pct": 12.75,
    "elasticity": 0.388,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 12,
@@ -7381,7 +7381,7 @@
    "max_abs_price_change_pct": 10.73,
    "elasticity": 0.415,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 153,
@@ -7465,7 +7465,7 @@
    "max_abs_price_change_pct": 14.78,
    "elasticity": 0.441,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 112,
@@ -7549,7 +7549,7 @@
    "max_abs_price_change_pct": 12.25,
    "elasticity": 0.456,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 74,
@@ -7601,7 +7601,7 @@
    "max_abs_price_change_pct": 10.96,
    "elasticity": 0.467,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 14,
@@ -7681,7 +7681,7 @@
    "max_abs_price_change_pct": 11.08,
    "elasticity": 0.517,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 95,
@@ -7749,7 +7749,7 @@
    "max_abs_price_change_pct": 13.89,
    "elasticity": 0.626,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 20,
@@ -7833,7 +7833,7 @@
    "max_abs_price_change_pct": 6.03,
    "elasticity": 0.633,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 65,
@@ -7901,7 +7901,7 @@
    "max_abs_price_change_pct": 13.42,
    "elasticity": 0.635,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 150,
@@ -7953,7 +7953,7 @@
    "max_abs_price_change_pct": 12.81,
    "elasticity": 0.695,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 8,
@@ -8003,7 +8003,7 @@
    "max_abs_price_change_pct": 7.48,
    "elasticity": 0.729,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 144,
@@ -8071,7 +8071,7 @@
    "max_abs_price_change_pct": 11.3,
    "elasticity": 0.784,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 194,
@@ -8155,7 +8155,7 @@
    "max_abs_price_change_pct": 8.19,
    "elasticity": 0.789,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 204,
@@ -8223,7 +8223,7 @@
    "max_abs_price_change_pct": 14.61,
    "elasticity": 0.858,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 44,
@@ -8305,7 +8305,7 @@
    "max_abs_price_change_pct": 12.1,
    "elasticity": 0.874,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 85,
@@ -8373,7 +8373,7 @@
    "max_abs_price_change_pct": 13.67,
    "elasticity": 0.92,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 28,
@@ -8441,7 +8441,7 @@
    "max_abs_price_change_pct": 12.75,
    "elasticity": 1.046,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 140,
@@ -8493,7 +8493,7 @@
    "max_abs_price_change_pct": 11.42,
    "elasticity": 1.083,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 50,
@@ -8577,7 +8577,7 @@
    "max_abs_price_change_pct": 21.78,
    "elasticity": 1.175,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 46,
@@ -8661,7 +8661,7 @@
    "max_abs_price_change_pct": 13.73,
    "elasticity": 1.187,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 61,
@@ -8713,7 +8713,7 @@
    "max_abs_price_change_pct": 13.27,
    "elasticity": 1.217,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 13,
@@ -8779,7 +8779,7 @@
    "max_abs_price_change_pct": 13.5,
    "elasticity": 1.232,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 131,
@@ -8847,7 +8847,7 @@
    "max_abs_price_change_pct": 6.15,
    "elasticity": 1.282,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 157,
@@ -8899,7 +8899,7 @@
    "max_abs_price_change_pct": 11.89,
    "elasticity": 1.392,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 245,
@@ -8965,7 +8965,7 @@
    "max_abs_price_change_pct": 14.37,
    "elasticity": 1.52,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 149,
@@ -9049,7 +9049,7 @@
    "max_abs_price_change_pct": 10.34,
    "elasticity": 1.66,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 99,
@@ -9101,7 +9101,7 @@
    "max_abs_price_change_pct": 13.71,
    "elasticity": 1.76,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 105,
@@ -9153,7 +9153,7 @@
    "max_abs_price_change_pct": 13.33,
    "elasticity": 2.32,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 118,
@@ -9205,7 +9205,7 @@
    "max_abs_price_change_pct": 6.01,
    "elasticity": 2.55,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 219,
@@ -9257,7 +9257,7 @@
    "max_abs_price_change_pct": 12.44,
    "elasticity": 2.66,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 29,
@@ -9309,7 +9309,7 @@
    "max_abs_price_change_pct": 11.93,
    "elasticity": 2.672,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 27,
@@ -9377,7 +9377,7 @@
    "max_abs_price_change_pct": 7.87,
    "elasticity": 2.928,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 37,
@@ -9429,7 +9429,7 @@
    "max_abs_price_change_pct": 9.5,
    "elasticity": 3.358,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 16,
@@ -9481,7 +9481,7 @@
    "max_abs_price_change_pct": 9.51,
    "elasticity": 3.652,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 21,
@@ -9565,7 +9565,7 @@
    "max_abs_price_change_pct": 14.31,
    "elasticity": 5.056,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 10,
@@ -9645,7 +9645,7 @@
    "max_abs_price_change_pct": 11.3,
    "elasticity": 12.486,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 403,
@@ -9725,7 +9725,7 @@
    "max_abs_price_change_pct": 9.57,
    "elasticity": 62.792,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 417,
@@ -9789,7 +9789,7 @@
    "max_abs_price_change_pct": 13.14,
    "elasticity": 82.446,
    "sensitivity": "Low Price Sensitivity",
-   "note": "Demand moved in the same direction as price \u2014 no evidence of price sensitivity",
+   "note": "Demand moved in the same direction as price, so there is no evidence of price sensitivity",
    "events": [
     {
      "price_id": 400,
@@ -9841,7 +9841,7 @@
    "max_abs_price_change_pct": 9.71,
    "elasticity": null,
    "sensitivity": "Insufficient Data",
-   "note": "",
+   "note": "Not enough order history around its price changes to measure elasticity",
    "events": [
     {
      "price_id": 428,
@@ -9889,7 +9889,7 @@
    "max_abs_price_change_pct": 10.35,
    "elasticity": null,
    "sensitivity": "Insufficient Data",
-   "note": "",
+   "note": "Not enough order history around its price changes to measure elasticity",
    "events": [
     {
      "price_id": 433,
@@ -9951,7 +9951,7 @@
    "max_abs_price_change_pct": 8.8,
    "elasticity": null,
    "sensitivity": "Insufficient Data",
-   "note": "",
+   "note": "Not enough order history around its price changes to measure elasticity",
    "events": [
     {
      "price_id": 452,
@@ -10027,7 +10027,7 @@
    "max_abs_price_change_pct": 9.36,
    "elasticity": null,
    "sensitivity": "Insufficient Data",
-   "note": "",
+   "note": "Not enough order history around its price changes to measure elasticity",
    "events": [
     {
      "price_id": 402,
@@ -10089,7 +10089,7 @@
    "max_abs_price_change_pct": 13.51,
    "elasticity": null,
    "sensitivity": "Insufficient Data",
-   "note": "",
+   "note": "Not enough order history around its price changes to measure elasticity",
    "events": [
     {
      "price_id": 419,
@@ -10165,7 +10165,7 @@
    "max_abs_price_change_pct": 6.12,
    "elasticity": null,
    "sensitivity": "Insufficient Data",
-   "note": "",
+   "note": "Not enough order history around its price changes to measure elasticity",
    "events": [
     {
      "price_id": 425,
@@ -10213,7 +10213,7 @@
    "max_abs_price_change_pct": 12.87,
    "elasticity": null,
    "sensitivity": "Insufficient Data",
-   "note": "",
+   "note": "Not enough order history around its price changes to measure elasticity",
    "events": [
     {
      "price_id": 446,

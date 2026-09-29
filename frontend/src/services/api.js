@@ -136,6 +136,12 @@ export const api = {
     simulate: (data) => send('POST', '/whatif/simulate', data),
   },
 
+  notifications: {
+    list: () => get('/notifications'),
+    dismiss: (keys) => send('POST', '/notifications/dismiss', { keys }),
+    dismissAll: () => send('POST', '/notifications/dismiss-all'),
+  },
+
   admin: {
     auditLogs: ({ limit = 200, eventType, q } = {}) => get(`/admin/audit-logs${qs({ limit, event_type: eventType, q })}`),
     sparkJobs: (limit = 50) => get(`/admin/spark-jobs?limit=${limit}`),

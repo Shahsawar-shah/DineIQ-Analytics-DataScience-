@@ -48,6 +48,14 @@ CREATE TABLE IF NOT EXISTS recommendations (
     created_at       TIMESTAMP DEFAULT NOW()
 );
 
+-- Notifications a user has dismissed (the bell in the top bar); dismissed = gone for good
+CREATE TABLE IF NOT EXISTS notification_dismissals (
+    user_email        VARCHAR(255) NOT NULL,
+    notification_key  VARCHAR(255) NOT NULL,
+    dismissed_at      TIMESTAMP DEFAULT NOW(),
+    PRIMARY KEY (user_email, notification_key)
+);
+
 CREATE TABLE IF NOT EXISTS model_versions (
     id         SERIAL PRIMARY KEY,
     model_name VARCHAR(255),

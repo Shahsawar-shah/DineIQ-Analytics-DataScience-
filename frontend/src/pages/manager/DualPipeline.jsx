@@ -18,6 +18,18 @@ const SEGMENT_TONE = {
   Occasional: 'badge-gray',
 }
 
+/** "Logistic Regression (spark-menu-2026…)" -> model name on one line, version below, wrapping inside its cell. */
+function ModelLabel({ text }) {
+  const match = /^(.*?)\s*\((.+)\)$/.exec(text ?? '')
+  const [name, version] = match ? [match[1], match[2]] : [null, text]
+  return (
+    <div className="min-w-0 whitespace-normal">
+      {name && <p className="font-semibold text-ink-900">{name}</p>}
+      <p className="break-all font-mono text-[0.68rem] text-ink-500">{version}</p>
+    </div>
+  )
+}
+
 function Stat({ label, value, sub, tone = 'text-ink-900' }) {
   return (
     <div className="card p-5 text-center">
@@ -57,7 +69,7 @@ export default function DualPipeline() {
     { key: 'diff', header: 'Distance Δ', align: 'right', render: (r) => r.numerical_difference.toFixed(4) },
     { key: 'margin', header: 'Margin (S / P)', align: 'right', render: (r) => `${r.spark_margin.toFixed(2)} / ${r.python_margin.toFixed(2)}` },
     { key: 'rfm', header: 'R / F / M', render: (r) => <span className="text-xs text-ink-500">{r.recency_days}d / {r.frequency} / ${fmtNum(r.monetary_value)}</span> },
-    { key: 'why', header: 'Explanation', render: (r) => <span className="text-xs text-ink-500">{r.explanation || '—'}</span> },
+    { key: 'why', header: 'Explanation', render: (r) => <span className="block min-w-[320px] whitespace-normal text-xs leading-snug text-ink-500">{r.explanation || '—'}</span> },
   ]
 
   return (
@@ -73,14 +85,17 @@ export default function DualPipeline() {
 
       <div className="mt-5 grid gap-5 xl:grid-cols-2">
         <ChartCard title="Models compared" subtitle="Each pipeline's own saved model version">
-          <table className="dq-table w-full text-sm">
-            <thead><tr><th>Task</th><th>Spark</th><th>Python</th></tr></thead>
-            <tbody>
-              <tr><td className="font-semibold">{menu.task}</td><td className="text-xs">{menu.spark_model}</td><td className="text-xs">{menu.python_model}</td></tr>
-              <tr><td className="font-semibold">{cust.task}</td><td className="text-xs">{cust.spark_model}</td><td className="text-xs">{cust.python_model}</td></tr>
-              <tr><td className="font-semibold">Test silhouette</td><td>{cust.spark_test_silhouette}</td><td>{cust.python_test_silhouette}</td></tr>
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="dq-table w-full table-fixed text-sm">
+              <colgroup><col className="w-[36%]" /><col className="w-[32%]" /><col className="w-[32%]" /></colgroup>
+              <thead><tr><th>Task</th><th>Spark MLlib</th><th>Python + scikit-learn</th></tr></thead>
+              <tbody>
+                <tr><td className="!whitespace-normal font-semibold">{menu.task}</td><td><ModelLabel text={menu.spark_model} /></td><td><ModelLabel text={menu.python_model} /></td></tr>
+                <tr><td className="!whitespace-normal font-semibold">{cust.task}</td><td><ModelLabel text={cust.spark_model} /></td><td><ModelLabel text={cust.python_model} /></td></tr>
+                <tr><td className="!whitespace-normal font-semibold">Test silhouette</td><td>{cust.spark_test_silhouette}</td><td>{cust.python_test_silhouette}</td></tr>
+              </tbody>
+            </table>
+          </div>
           <p className="mt-3 text-xs text-ink-400">{cust.silhouette_note}</p>
         </ChartCard>
 

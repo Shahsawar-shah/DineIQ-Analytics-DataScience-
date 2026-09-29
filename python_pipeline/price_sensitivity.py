@@ -121,12 +121,15 @@ def main():
         median_e = float(np.median(measured)) if measured else None
         f = features.loc[item_id] if item_id in features.index else None
         n_significant = sum(e["significant"] for e in events)
-        if median_e is not None and median_e > 0:
+        if median_e is None:
+            note = "Not enough order history around its price changes to measure elasticity"
+        elif median_e > 0:
             note = "Demand moved in the same direction as price, so there is no evidence of price sensitivity"
-        elif median_e is not None and n_significant == 0:
+        elif n_significant == 0:
             note = "No statistically significant demand shift after any price change"
         else:
-            note = ""
+            note = (f"Demand fell {abs(median_e):.2f}% for every 1% price rise, supported by "
+                    f"{n_significant} statistically significant price change(s)")
         items.append({
             "item_id": int(item_id),
             "item_name": f["item_name"] if f is not None else f"Item {item_id}",

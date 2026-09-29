@@ -214,3 +214,34 @@ def test_last_admin_cannot_be_deactivated(client, token_for, monkeypatch):
 
     monkeypatch.setattr(auth_routes, "get_connection", lambda: _ScriptedConnection([("Admin",), (0,)], []))
     assert client.delete("/api/auth/users/7", headers=token_for("Admin")).status_code == 409
+
+
+# --- Notifications: welcome once, dismissed stays dismissed -------------------
+@pytest.fixture()
+def fake_dismissals(monkeypatch):
+    """In-memory stand-in for the notification_dismissals table."""
+    import routes.notifications as notif
+
+    store = {}
+    monkeypatch.setattr(notif, "dismissed_keys", lambda email: set(store.get(email, set())))
+    monkeypatch.setattr(notif, "dismiss", lambda email, keys: store.setdefault(email, set()).update(keys) or len(keys))
+    return store
+
+
+def test_welcome_notification_shows_once(client, token_for, fake_dismissals):
+    headers = token_for("Cashier")
+    first = client.get("/api/notifications", headers=headers).json()
+    assert [n["key"] for n in first["notifications"]] == ["welcome"]   # cashier: welcome only
+    assert client.post("/api/notifications/dismiss", json={"keys": ["welcome"]}, headers=headers).json()["dismissed"] == 1
+    assert client.get("/api/notifications", headers=headers).json()["unread"] == 0
+
+
+@requires_processed_data
+def test_anomaly_notifications_are_real_and_dismissable(client, token_for, fake_dismissals):
+    headers = token_for("Admin")
+    body = client.get("/api/notifications", headers=headers).json()
+    alerts = [n for n in body["notifications"] if n["type"] == "anomaly"]
+    assert alerts and all(n["severity"] in ("Critical", "High") for n in alerts)
+    assert client.post("/api/notifications/dismiss", json={"keys": ["not-a-real-key"]}, headers=headers).json()["dismissed"] == 0
+    client.post("/api/notifications/dismiss-all", headers=headers)
+    assert client.get("/api/notifications", headers=headers).json()["notifications"] == []

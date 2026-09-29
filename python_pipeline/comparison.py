@@ -39,22 +39,27 @@ def pct(part, whole):
 # ---------------------------------------------------------------------------
 # Task 1: menu classification
 # ---------------------------------------------------------------------------
-def explain_menu(row):
+def explain_menu(row, spark_model, python_model):
+    """One sentence for every item: why the two pipelines agree or differ."""
+    actual = row["actual_class"]
+    confidence = f"confidence Spark {row['spark_probability']:.2f} / Python {row['python_probability']:.2f}"
     if row["match"]:
-        return ""
+        if row["spark_result"] == actual:
+            return f"Both predict {actual}, matching the rule-based label ({confidence})"
+        return (f"Both predict {row['spark_result']} but the rule-based label is {actual}: the item sits "
+                f"close to a class threshold that both models draw slightly differently ({confidence})")
     correct = []
-    if row["spark_result"] == row["actual_class"]:
+    if row["spark_result"] == actual:
         correct.append("Spark matches the rule-based label")
-    if row["python_result"] == row["actual_class"]:
+    if row["python_result"] == actual:
         correct.append("Python matches the rule-based label")
     verdict = "; ".join(correct) if correct else "neither pipeline matches the rule-based label"
-    low_conf = min(row["spark_probability"], row["python_probability"]) < 0.6
-    reason = (
-        "low confidence in at least one model: the item sits near a class threshold"
-        if low_conf else
-        "different model families (Spark Logistic Regression is linear; the Python tree model splits on thresholds)"
-    )
-    return f"{verdict}; {reason}"
+    if min(row["spark_probability"], row["python_probability"]) < 0.6:
+        reason = "low confidence in at least one model: the item sits near a class threshold"
+    else:
+        reason = (f"different model families ({spark_model} in Spark, {python_model} in Python) "
+                  "draw different decision boundaries")
+    return f"{verdict}; {reason} ({confidence})"
 
 
 def compare_menu():
@@ -78,7 +83,8 @@ def compare_menu():
     out["python_correct"] = out["python_result"] == out["actual_class"]
     out["final_consistency_status"] = out.apply(
         lambda r: "Consistent" if r["match"] else "Inconsistent", axis=1)
-    out["explanation"] = out.apply(explain_menu, axis=1)
+    out["explanation"] = out.apply(
+        explain_menu, axis=1, spark_model=spark["model_used"].iloc[0], python_model=python["model_used"].iloc[0])
     out.to_csv(REPORTS / "menu_classification_comparison.csv", index=False)
 
     test = out[out["split"] == "test"]
@@ -101,18 +107,30 @@ def compare_menu():
 # ---------------------------------------------------------------------------
 # Task 2: customer segmentation
 # ---------------------------------------------------------------------------
+def _behaviour(row):
+    return (f"last order {row['recency_days']:.0f} days ago, {row['frequency']:.0f} order(s), "
+            f"${row['monetary_value']:,.0f} spent")
+
+
 def explain_customer(row):
-    if row["match"]:
-        return ""
+    """One sentence for every customer: why both pipelines agree, or why not."""
     spark_edge = row["spark_margin"] < BOUNDARY_MARGIN
     python_edge = row["python_margin"] < BOUNDARY_MARGIN
+    if row["match"]:
+        certainty = ("close to another segment in at least one pipeline" if spark_edge or python_edge
+                     else "clear-cut in both pipelines")
+        designed = ("" if row["actual_segment"] == row["spark_result"]
+                    else f"; designed as {row['actual_segment']}, but the order behaviour fits "
+                         f"{row['spark_result']}")
+        return (f"Both assign {row['spark_result']}: {_behaviour(row)}. Assignment is {certainty} "
+                f"(margin Spark {row['spark_margin']:.2f} / Python {row['python_margin']:.2f}){designed}")
     if spark_edge or python_edge:
         side = "both pipelines" if spark_edge and python_edge else ("Spark" if spark_edge else "Python")
-        return (f"Boundary customer: nearest/second-nearest centroid margin is small in {side} "
-                f"(Spark {row['spark_margin']:.2f}, Python {row['python_margin']:.2f}), so slightly "
+        return (f"Boundary customer ({_behaviour(row)}): nearest/second-nearest centroid margin is small in "
+                f"{side} (Spark {row['spark_margin']:.2f}, Python {row['python_margin']:.2f}), so slightly "
                 "different centroids flip the assignment")
-    return ("Centroid placement differs: Spark uses k-means|| initialisation and a sample-std scaler, "
-            "scikit-learn uses k-means++ with 10 restarts and a population-std scaler")
+    return (f"Centroid placement differs ({_behaviour(row)}): Spark uses k-means|| initialisation and a "
+            "sample-std scaler, scikit-learn uses k-means++ with 10 restarts and a population-std scaler")
 
 
 def compare_customers():
