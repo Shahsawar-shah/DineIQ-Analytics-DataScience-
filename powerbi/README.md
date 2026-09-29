@@ -108,3 +108,17 @@ Modeling → New table: `_Measures = {BLANK()}`, then paste each line of `measur
 Add slicers: dim_date[year_month], dim_restaurant[restaurant_name], fact_orders[order_channel].
 
 Save as `powerbi/DineIQ_Analytics.pbix`. After each `refresh_bi.sh`, press **Refresh** in Power BI.
+
+## 7. Ready-made dashboard (DineIQ_Dashboard/)
+
+The model, relationships, 35 measures and 7 report pages are already built. You don't need to do steps 3–6 by hand:
+
+1. Power BI Desktop → File → Options → Preview features → enable **Power BI Project (.pbip) save option** → restart.
+2. Open `powerbi/DineIQ_Dashboard/DineIQ.pbip`.
+3. Home → **Refresh** → credentials: **Database** → `powerbi_reader` / password → OK on "unencrypted".
+4. To point at another server: Transform data → Edit parameters → `PG_Server`, `PG_Database`.
+
+Pages: Executive · Menu Engineering · ML Model Evidence (confusion matrix, precision, recall) · Customers & Churn · Promotions & Pricing · Wastage & Inventory · Locations & Channels.
+
+To regenerate after schema changes: `python powerbi/build_pbip.py cols.txt`, where cols.txt comes from
+`psql -At -c "select table_name||'|'||column_name||'|'||data_type from information_schema.columns where table_schema='bi'"`.
