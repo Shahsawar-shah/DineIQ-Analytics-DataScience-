@@ -6,6 +6,8 @@ import KpiDebug from './pages/_debug/KpiDebug'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 
+import { CustomerProvider } from './context/CustomerContext'
+import BasketButton from './components/customer/Basket'
 import CustomerDashboard from './pages/customer/CustomerDashboard'
 import CustomerOrders from './pages/customer/CustomerOrders'
 import CustomerFavorites from './pages/customer/CustomerFavorites'
@@ -80,7 +82,9 @@ export default function App() {
         path="/customer"
         element={
           <ProtectedRoute role="Customer">
-            <DashboardLayout role="Customer" />
+            <CustomerProvider>
+              <DashboardLayout role="Customer" topbarActions={<BasketButton />} />
+            </CustomerProvider>
           </ProtectedRoute>
         }
       >

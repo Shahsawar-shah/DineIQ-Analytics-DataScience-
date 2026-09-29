@@ -344,6 +344,11 @@ body {
 .anim-fade-up { animation: fadeUp 0.35s ease-out both; }
 .anim-fade-in { animation: fadeIn 0.25s ease both; }
 .anim-slide-left { animation: slideInLeft 0.25s ease-out both; }
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.anim-slide-right { animation: slideInRight 0.25s ease-out both; }
 .anim-pop { animation: popIn 0.15s ease-out both; }
 .anim-float { animation: floatY 5s ease-in-out infinite; }
 .anim-wheel { animation: scrollWheel 1.8s ease-in-out infinite; }
@@ -568,7 +573,7 @@ body {
 @keyframes wheelPulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .anim-fade-up, .anim-fade-in, .anim-slide-left, .anim-pop, .anim-float, .anim-wheel, .live-dot, .page-enter,
+  .anim-fade-up, .anim-fade-in, .anim-slide-left, .anim-slide-right, .anim-pop, .anim-float, .anim-wheel, .live-dot, .page-enter,
   .nav-enter, .hero-word, .hero-in, .hero-script, .hero-bg .hero-clip.is-active, .hero-device-in, .device-rim, .hero-grain, .orb, .btn-shine::after,
   .cta-blob-a, .cta-blob-b, .kenburns, .ticker, .hero-word.text-shimmer { animation: none; opacity: 1; }
   .reveal, .reveal-clip { opacity: 1; transform: none; filter: none; clip-path: none; transition: none; }

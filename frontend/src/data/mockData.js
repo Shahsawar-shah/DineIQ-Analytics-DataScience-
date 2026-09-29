@@ -300,48 +300,59 @@ export const PIPELINE_COMPARISON = {
 
 /* ---------------- Customer (self) ---------------- */
 
-export const MY_ORDERS = [
-  { id: 'ORD-8841', customer: 'Amelia Hart', date: '2026-09-25 19:42', items: 3, channel: 'Dine-in', location: 'Downtown Flagship', total: 52.4, status: 'Completed' },
-  { id: 'ORD-8790', customer: 'Amelia Hart', date: '2026-09-21 13:18', items: 2, channel: 'Delivery', location: 'Downtown Flagship', total: 38.9, status: 'Delivered' },
-  { id: 'ORD-8712', customer: 'Amelia Hart', date: '2026-09-17 20:05', items: 4, channel: 'Dine-in', location: 'Riverside Bistro', total: 74.3, status: 'Completed' },
-  { id: 'ORD-8633', customer: 'Amelia Hart', date: '2026-09-12 12:44', items: 1, channel: 'App Orders', location: 'Harbor Point', total: 21.0, status: 'Delivered' },
-  { id: 'ORD-8521', customer: 'Amelia Hart', date: '2026-09-04 19:31', items: 3, channel: 'Dine-in', location: 'Downtown Flagship', total: 47.6, status: 'Completed' },
-  { id: 'ORD-8410', customer: 'Amelia Hart', date: '2026-08-29 18:22', items: 2, channel: 'Takeaway', location: 'Uptown Grill', total: 26.4, status: 'Cancelled' },
+// Dish photos for the customer pages; dishes without one show a category placeholder
+export const DISH_IMAGES = {
+  M01: 'https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&w=640&q=80',
+  M02: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=640&q=80',
+  M03: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=640&q=80',
+  M06: 'https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?auto=format&fit=crop&w=640&q=80',
+  M08: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=640&q=80',
+  M10: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=640&q=80',
+  M11: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=640&q=80',
+  M12: 'https://images.unsplash.com/photo-1518013431117-eb1465fa5752?auto=format&fit=crop&w=640&q=80',
+}
+
+// Starting history for a customer account. Orders keep their lines ([menu id, qty])
+// so Reorder can rebuild the basket; totals are priced from MENU_ITEMS.
+export const SEED_ORDERS = [
+  { id: 'ORD-8841', placedAt: '2026-09-25T19:42', channel: 'Dine-in', location: 'Downtown Flagship', status: 'Completed', lines: [['M01', 1], ['M03', 1], ['M04', 1]] },
+  { id: 'ORD-8790', placedAt: '2026-09-21T13:18', channel: 'Delivery', location: 'Downtown Flagship', status: 'Delivered', promoCode: 'BUNDLE20', lines: [['M01', 1], ['M14', 1], ['M10', 1]] },
+  { id: 'ORD-8712', placedAt: '2026-09-17T20:05', channel: 'Dine-in', location: 'Riverside Bistro', status: 'Completed', lines: [['M01', 2], ['M05', 1], ['M08', 1]] },
+  { id: 'ORD-8633', placedAt: '2026-09-12T12:44', channel: 'App Orders', location: 'Harbor Point', status: 'Completed', lines: [['M03', 1], ['M10', 1]] },
+  { id: 'ORD-8521', placedAt: '2026-09-04T19:31', channel: 'Dine-in', location: 'Downtown Flagship', status: 'Completed', lines: [['M01', 1], ['M08', 1], ['M10', 1]] },
+  { id: 'ORD-8410', placedAt: '2026-08-29T18:22', channel: 'Takeaway', location: 'Uptown Grill', status: 'Cancelled', lines: [['M03', 1], ['M13', 1]] },
 ]
 
-export const FAVORITES = [
-  { id: 'M01', name: 'Truffle Mushroom Risotto', category: 'Main Course', price: 18.5, rating: 4.8, orders: 12, image: 'https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&w=640&q=80' },
-  { id: 'M10', name: 'Cold Brew Coffee', category: 'Beverages', price: 4.8, rating: 4.6, orders: 21, image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=640&q=80' },
-  { id: 'M08', name: 'Molten Chocolate Lava', category: 'Desserts', price: 7.5, rating: 4.9, orders: 9, image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=640&q=80' },
-  { id: 'M03', name: 'Classic Cheeseburger', category: 'Main Course', price: 12.9, rating: 4.6, orders: 14, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=640&q=80' },
-]
+export const SEED_FAVORITES = ['M01', 'M10', 'M08', 'M03']
 
 export const RECOMMENDED = [
-  { id: 'M02', name: 'Grilled Salmon Bowl', reason: 'Loved by customers with similar taste', match: 94, price: 21.0, rating: 4.7, image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=640&q=80' },
-  { id: 'M12', name: 'Sweet Potato Fries', reason: 'Perfect pair with your usual burger', match: 89, price: 5.2, rating: 4.5, image: 'https://images.unsplash.com/photo-1518013431117-eb1465fa5752?auto=format&fit=crop&w=640&q=80' },
-  { id: 'M11', name: 'Berry Hibiscus Cooler', reason: 'Trending in Beverages this week', match: 85, price: 5.6, rating: 4.4, image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=640&q=80' },
-  { id: 'M06', name: 'Loaded Nachos', reason: 'Popular starter at Downtown Flagship', match: 82, price: 9.5, rating: 4.3, image: 'https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?auto=format&fit=crop&w=640&q=80' },
+  { id: 'M02', reason: 'Loved by customers with similar taste', match: 94 },
+  { id: 'M12', reason: 'Perfect pair with your usual burger', match: 89 },
+  { id: 'M11', reason: 'Trending in Beverages this week', match: 85 },
+  { id: 'M06', reason: 'Popular starter at Downtown Flagship', match: 82 },
 ]
 
+// One code per order. `terms` is shown to the customer and is exactly what
+// evaluatePromo() in pages/customer/shared.js enforces.
 export const CUSTOMER_PROMOS = [
-  { id: 'P-01', title: '20% off Combo Meals', code: 'BUNDLE20', valid: 'Until Sep 30', minSpend: 25 },
-  { id: 'P-03', title: 'Dessert Happy Hour −30%', code: 'SWEET30', valid: 'Tue & Wed 3–6 PM', minSpend: 10 },
-  { id: 'P-08', title: 'Free Delivery over $30', code: 'FREESHIP', valid: 'This weekend', minSpend: 30 },
+  { id: 'P-01', title: '20% off Combo Meals', code: 'BUNDLE20', terms: 'A main course plus a side or drink', minSpend: 25, percent: 20, combo: true },
+  { id: 'P-03', title: '30% off Desserts', code: 'SWEET30', terms: 'On every dessert in your basket', minSpend: 10, percent: 30, category: 'Desserts' },
+  { id: 'P-08', title: 'Free Delivery over $30', code: 'FREESHIP', terms: 'Delivery orders only', minSpend: 30, freeDelivery: true },
 ]
 
-export const MY_REVIEWS = [
-  { id: 'RV-1', item: 'Truffle Mushroom Risotto', rating: 5, date: '2026-09-21', comment: 'Really good. Best risotto I have had in the city.' },
-  { id: 'RV-2', item: 'Cold Brew Coffee', rating: 4, date: '2026-09-12', comment: 'Smooth and strong. Wish the cup were bigger!' },
-  { id: 'RV-3', item: 'Molten Chocolate Lava', rating: 5, date: '2026-09-04', comment: 'Perfect dessert. Warm, gooey center every single time.' },
+export const SEED_REVIEWS = [
+  { id: 'RV-1', itemId: 'M01', rating: 5, date: '2026-09-21', comment: 'Really good. Best risotto I have had in the city.' },
+  { id: 'RV-2', itemId: 'M10', rating: 4, date: '2026-09-12', comment: 'Smooth and strong. Wish the cup were bigger!' },
+  { id: 'RV-3', itemId: 'M08', rating: 5, date: '2026-09-04', comment: 'Perfect dessert. Warm, gooey center every single time.' },
 ]
 
-export const CUSTOMER_ACTIVITY = [
-  { time: 'Sep 25 · 19:42', text: 'Placed order ORD-8841 at Downtown Flagship', kind: 'order' },
-  { time: 'Sep 25 · 19:45', text: 'Rated Truffle Mushroom Risotto 5 stars', kind: 'rating' },
-  { time: 'Sep 21 · 13:18', text: 'Redeemed promo code BUNDLE20', kind: 'promo' },
-  { time: 'Sep 17 · 20:05', text: 'Added Truffle Mushroom Risotto to favorites', kind: 'fav' },
-  { time: 'Sep 12 · 12:44', text: 'Placed order ORD-8633 via mobile app', kind: 'order' },
-  { time: 'Aug 29 · 18:22', text: 'Order ORD-8410 was cancelled', kind: 'alert' },
+export const SEED_ACTIVITY = [
+  { at: '2026-09-25T19:42', text: 'Placed order ORD-8841 at Downtown Flagship', kind: 'order' },
+  { at: '2026-09-21T14:05', text: 'Rated Truffle Mushroom Risotto 5 stars', kind: 'rating' },
+  { at: '2026-09-21T13:18', text: 'Redeemed promo code BUNDLE20 on ORD-8790', kind: 'promo' },
+  { at: '2026-09-17T20:05', text: 'Added Truffle Mushroom Risotto to favorites', kind: 'fav' },
+  { at: '2026-09-12T12:44', text: 'Placed order ORD-8633 via mobile app', kind: 'order' },
+  { at: '2026-08-29T18:22', text: 'Order ORD-8410 was cancelled', kind: 'alert' },
 ]
 
 /* ---------------- Charts helpers ---------------- */

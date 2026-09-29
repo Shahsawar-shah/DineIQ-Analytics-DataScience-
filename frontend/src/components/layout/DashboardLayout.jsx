@@ -28,8 +28,8 @@ function LayoutFallback(props) {
   return <CircleUser {...props} />
 }
 
-/** Shared dashboard shell for all four roles; the sidebar adapts to the signed-in role. */
-export default function DashboardLayout({ role }) {
+/** Shared dashboard shell for all roles; the sidebar adapts to the signed-in role. `topbarActions` adds role-specific buttons (the Customer basket). */
+export default function DashboardLayout({ role, topbarActions = null }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -214,6 +214,8 @@ export default function DashboardLayout({ role }) {
               <Link to="/" className="topbar-icon-btn !hidden sm:!inline-flex" title="Back to website" aria-label="Back to website">
                 <House size={16} />
               </Link>
+
+              {topbarActions}
 
               {/* Notifications */}
               <div className="relative">
